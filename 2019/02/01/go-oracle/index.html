@@ -11,16 +11,16 @@
     
     
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"在linux下可以正常运行oracledb_exporter，在windows64下启动时报错12pkg-config --cflags oci8Package oci8 was not found in the pkg-config search path.\n因为linux中已经安装了oracle客户端，所以怀疑可能是windows下没有导致的。1.go-oci8\n地址：https://github.com/wendal/go-oci8\n它是 https://github.com/mattn/go-oci8 的分支，增加了windows下中文的安装说明及相关文件。\n从oracledb_exporter的代码中可以看到引用的是go-oci8_ &quot;github.com/mattn/go-oci8&quot;,所以需要安装windows的oracle连接。\n\n2.安装oci\n地址：https://www.oracle.com/technetwork/database/database-technologies/instant-client/downloads/index.html\n我的安装目录为：F:\\instantclient_18 _3\n\n3.安装oci-sdk\n地址：同上。\n我的安装目录为F:\\instantclient_18 _3\\sdk\n\n4.安装MinGW\n地址：https://sourceforge.net/projects/mingw-w64/files/\n我的安装目录为F:\\mingw-w64\n配置环境变量：在系统变量path中追加 F:\\mingw-w64\\x86_64-8.1.0-posix-seh-rt_v6-rev0\\mingw64\\bin\n\n5.下载go-oci8驱动\n地址：https://github.com/wendal/go-oci8\n运行命令 go get github.com/wendal/go-oci8 (报错先不管)\n复制GOPATH目下的\\src\\github.com\\wendal\\go-oci8\\windows\\pkg-config.exe到到mingw的安装目录mingw64\\bin下。\n复制GOPATH目下的\\src\\github.com\\wendal\\go-oci8\\windows\\oci8.pc到到mingw的安装目录mingw64\\lib\\pkg-config的下。\n修改oci8.pc\n#Package Information for pkg-configprefix=F:/instantclient_18_3exec_prefix=F:/instantclient_18_3libdir=${exec_prefix}includedir=${prefix}/sdk/include/\nName: OCIDescription: Oracle database engineVersion: 18.3Libs: -L${libdir} -lociLibs.private:Cflags: -I${includedir}\n\n\n\n6.环境变量配置\nPATH=原有PATH;F:\\instantclient_18_3;\nPKG_CONFIG_PATH=F:\\mingw-w64\\x86_64-8.1.0-posix-seh-rt_v6-rev0\\mingw64\\lib\\pkg-config\n\n启动报错1234F:\\GOENV\\src\\github.com\\wendal\\go-oci8\\oci8.go:119: cannot use (**_Ctype_struct_OCIServer)(unsafe.Pointer(&amp;conn.svc)) (type **_Ctype_struct_OCIServer) as type **_Ctype_struct_OCISvcCtx in argument to func literalF:\\GOENV\\src\\github.com\\wendal\\go-oci8\\oci8.go:136: cannot use (*_Ctype_struct_OCIServer)(c.svc) (type *_Ctype_struct_OCIServer) as type *_Ctype_struct_OCISvcCtx in argument to func literalF:\\GOENV\\src\\github.com\\wendal\\go-oci8\\oci8.go:263: cannot use (*_Ctype_struct_OCIServer)(s.c.svc) (type *_Ctype_struct_OCIServer) as type *_Ctype_struct_OCISvcCtx in argument to func literalF:\\GOENV\\src\\github.com\\wendal\\go-oci8\\oci8.go:383: cannot use (*_Ctype_struct_OCIServer)(s.c.svc) (type *_Ctype_struct_OCIServer) as type *_Ctype_struct_OCISvcCtx in argument to func literal\n替换GOPATH目下的\\src\\github.com\\wendal\\go-oci8里四处OCIServer为OCISvcCtx。参考：https://www.cnblogs.com/ghj1976/p/3437250.htmlhttps://blog.csdn.net/wq57885/article/details/82841792\n","dateCreated":"2019-02-01T17:53:41+08:00","dateModified":"2019-02-01T17:53:24+08:00","datePublished":"2019-02-01T17:53:41+08:00","description":"","headline":"pkg-config --cflags oci8, Package oci8 was not found in the pkg-config search path.","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/02/01/go-oracle/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/02/01/go-oracle/","keywords":"bvgv"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"在linux下可以正常运行oracledb_exporter，在windows64下启动时报错12pkg-config --cflags oci8Package oci8 was not found in the pkg-config search path.\n因为linux中已经安装了oracle客户端，所以怀疑可能是windows下没有导致的。1.go-oci8\n地址：https://github.com/wendal/go-oci8\n它是 https://github.com/mattn/go-oci8 的分支，增加了windows下中文的安装说明及相关文件。\n从oracledb_exporter的代码中可以看到引用的是go-oci8_ &quot;github.com/mattn/go-oci8&quot;,所以需要安装windows的oracle连接。\n\n2.安装oci\n地址：https://www.oracle.com/technetwork/database/database-technologies/instant-client/downloads/index.html\n我的安装目录为：F:\\instantclient_18 _3\n\n3.安装oci-sdk\n地址：同上。\n我的安装目录为F:\\instantclient_18 _3\\sdk\n\n4.安装MinGW\n地址：https://sourceforge.net/projects/mingw-w64/files/\n我的安装目录为F:\\mingw-w64\n配置环境变量：在系统变量path中追加 F:\\mingw-w64\\x86_64-8.1.0-posix-seh-rt_v6-rev0\\mingw64\\bin\n\n5.下载go-oci8驱动\n地址：https://github.com/wendal/go-oci8\n运行命令 go get github.com/wendal/go-oci8 (报错先不管)\n复制GOPATH目下的\\src\\github.com\\wendal\\go-oci8\\windows\\pkg-config.exe到到mingw的安装目录mingw64\\bin下。\n复制GOPATH目下的\\src\\github.com\\wendal\\go-oci8\\windows\\oci8.pc到到mingw的安装目录mingw64\\lib\\pkg-config的下。\n修改oci8.pc\n#Package Information for pkg-configprefix=F:/instantclient_18_3exec_prefix=F:/instantclient_18_3libdir=${exec_prefix}includedir=${prefix}/sdk/include/\nName: OCIDescription: Oracle database engineVersion: 18.3Libs: -L${libdir} -lociLibs.private:Cflags: -I${includedir}\n\n\n\n6.环境变量配置\nPATH=原有PATH;F:\\instantclient_18_3;\nPKG_CONFIG_PATH=F:\\mingw-w64\\x86_64-8.1.0-posix-seh-rt_v6-rev0\\mingw64\\lib\\pkg-config\n\n启动报错1234F:\\GOENV\\src\\github.com\\wendal\\go-oci8\\oci8.go:119: cannot use (**_Ctype_struct_OCIServer)(unsafe.Pointer(&amp;conn.svc)) (type **_Ctype_struct_OCIServer) as type **_Ctype_struct_OCISvcCtx in argument to func literalF:\\GOENV\\src\\github.com\\wendal\\go-oci8\\oci8.go:136: cannot use (*_Ctype_struct_OCIServer)(c.svc) (type *_Ctype_struct_OCIServer) as type *_Ctype_struct_OCISvcCtx in argument to func literalF:\\GOENV\\src\\github.com\\wendal\\go-oci8\\oci8.go:263: cannot use (*_Ctype_struct_OCIServer)(s.c.svc) (type *_Ctype_struct_OCIServer) as type *_Ctype_struct_OCISvcCtx in argument to func literalF:\\GOENV\\src\\github.com\\wendal\\go-oci8\\oci8.go:383: cannot use (*_Ctype_struct_OCIServer)(s.c.svc) (type *_Ctype_struct_OCIServer) as type *_Ctype_struct_OCISvcCtx in argument to func literal\n替换GOPATH目下的\\src\\github.com\\wendal\\go-oci8里四处OCIServer为OCISvcCtx。参考：https://www.cnblogs.com/ghj1976/p/3437250.htmlhttps://blog.csdn.net/wq57885/article/details/82841792\n","dateCreated":"2019-02-01T17:56:58+08:00","dateModified":"2019-02-01T17:56:37+08:00","datePublished":"2019-02-01T17:56:58+08:00","description":"","headline":"pkg-config --cflags oci8, Package oci8 was not found in the pkg-config search path.","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/02/01/go-oracle/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/02/01/go-oracle/","keywords":"go"}</script>
     <meta name="description" content="在linux下可以正常运行oracledb_exporter，在windows64下启动时报错12pkg-config --cflags oci8Package oci8 was not found in the pkg-config search path. 因为linux中已经安装了oracle客户端，所以怀疑可能是windows下没有导致的。1.go-oci8 地址：https://gith">
-<meta name="keywords" content="bvgv">
+<meta name="keywords" content="go">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="pkg-config --cflags oci8, Package oci8 was not found in the pkg-config search path.">
 <meta property="og:url" content="http://yoursite.com/2019/02/01/go-oracle/index.html">
 <meta property="og:site_name" content="Brotherc">
 <meta property="og:description" content="在linux下可以正常运行oracledb_exporter，在windows64下启动时报错12pkg-config --cflags oci8Package oci8 was not found in the pkg-config search path. 因为linux中已经安装了oracle客户端，所以怀疑可能是windows下没有导致的。1.go-oci8 地址：https://gith">
 <meta property="og:locale" content="zh-cn">
-<meta property="og:updated_time" content="2019-02-01T09:53:24.767Z">
+<meta property="og:updated_time" content="2019-02-01T09:56:37.529Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="pkg-config --cflags oci8, Package oci8 was not found in the pkg-config search path.">
 <meta name="twitter:description" content="在linux下可以正常运行oracledb_exporter，在windows64下启动时报错12pkg-config --cflags oci8Package oci8 was not found in the pkg-config search path. 因为linux中已经安装了oracle客户端，所以怀疑可能是windows下没有导致的。1.go-oci8 地址：https://gith">
@@ -173,7 +173,7 @@
     
     
         <div class="post-meta">
-    <time datetime="2019-02-01T17:53:41+08:00">
+    <time datetime="2019-02-01T17:56:58+08:00">
 	
 		    2月 01, 2019
     	
@@ -233,7 +233,7 @@
             <div class="post-footer-tags">
                 <span class="text-color-light text-small">标签</span><br>
                 
-    <a class="tag tag--primary tag--small t-link" href="/tags/bvgv/">bvgv</a>
+    <a class="tag tag--primary tag--small t-link" href="/tags/go/">go</a>
 
             </div>
         
@@ -261,7 +261,7 @@
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
@@ -295,7 +295,7 @@
         
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
             
                 <i class="fa fa-list" aria-hidden="true"></i>
             </a>
@@ -345,7 +345,7 @@
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
@@ -379,7 +379,7 @@
         
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
             
                 <i class="fa fa-list" aria-hidden="true"></i>
             </a>
