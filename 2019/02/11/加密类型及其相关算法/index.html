@@ -1,0 +1,483 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Brotherc">
+    <title>加密类型及其相关算法 - Brotherc</title>
+    <meta name="author" content="Brotherc">
+    
+    
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"一、数据传输安全性在TCP/IP层中不涉及安全\n机密性：明文传输（ftp,smtp,talnet）别人一拦截就能看到请求的内容。\n完整性：10颗原子弹（被改成100）所以数据在互联网上传播的时候，不应该也不能够被其他人非法篡改掉当收到的和发送的不一致时拒绝接受这就能保证数据的完整性。\n身份验证：通过有效的手段保证所访问的对象就是我们所要的那个人。\n\n保证数据的机密性\nplaintext(明文) –&gt; 加密（转换规则）–&gt; ciphertext（密文）\nciphertext –&gt; 转换规则 –&gt; plaintext\n转换算法：依赖密钥（即使得到了转换规则也没用）\n对称加密：加密和解密使用同一个密钥（有加密算法和解密算法，算法不同，但密钥相同）。好处是计算速度快，在一定程度上解决了机密性问题。坏处是不能解决密钥有效管理的问题。假如a跟b，c,d通信，如果密钥相同，则c只要用密钥就可以看到a发送给b的内容，显然密钥不能相同，那就得维护很多密钥。\n\n保证数据的完整性\nA：plaintext:footprint –&gt; BB使用同样的加密算法去重复计算这个明文的特征码，并跟A所发过来的特征码进行比较，如果一样，则说明没被篡改。\n单项加密算法：提取数据特征码，追加到数据后面。数据的输入一样：特征码必然相同。\n特点：雪崩效应（输入的微小改变，将其会引起结果的巨大改变）、定长输出（无论原始数据是多长，结果大小都是相同的）、不可逆（无法根据原始特征码还原原来的数据）。\n\n中间人攻击问题\nE(A)：plaintext2:footprint2 –&gt; BA生成一段数据，并对它计算特征码，E在中间经过的路由时拿到这个明文，并重新修改明文和再计算特征码发给B，还声称自己是A，B拿到数据之后就算使用了数据完整性的算法之后，计算特征码还是一模一样，还认为是A发过来的，所以需要借助额外的机制。\n解决办法：A：plaintext:footprint(加密) –&gt; B B拿到特征码之后通过密钥进行解密，能解密说明数据没有被改过。如果E拿到plaintext并修改为plaintext2，并重新生成特征码，就没办法加密特征码或者加密后就不是A和B之间实现约定的密码。\n\nA与B之间如何进行密码约定\n假如A与B之间从未通信或从未见过面，如何进行密码约定呢？\n协商生成密码：密码交换（Internet Key Exchange / IKE）,密码交换是不让第三方得到密钥，密码交换需要特殊的互联网协议支撑。比如：Dffie-Hellman协议。\nA和B事先约定两个数p(大素数)，g(生成数)。A生成一个自己知道的x，B生成一个自己知道的y。A将 g^x % p 发送给B，B将g^y % p 发送给A。A拿到之后进行计算 （g^y % p）^x = g^xy % p，B拿到之后进行计算 （g^x % p）^y = g^xy % p。这个相同的结果就是密钥。在互联网上可以看到g、p、g^x % p、g^y % p，但看不到x、y。\nA和B只需要选好几个数，让这些数的计算结果作为密钥来用，使得彼此不用计算密码，只要双方生成密钥的软件一样就可以随时生成密钥。\n\n身份验证\n之前是A和B一起约定好的密码，所以身份验证没问题。但是密钥是交换生成的，事先之前谁也不知道。E跳出来，截取了数据并篡改，然后与B进行连接通信，还告诉它自己是A。\n解决办法：公钥加密算法（非对称加密算法）\n特点：拥有一对密钥对，分别是公钥（是从私钥中提取出来的）、私钥。用公钥加密的，只能用私钥解密，反之亦然。\n\n结论\n机密性：用B的公钥加密，B的私钥解密。发送方用对方的公钥加密数据，可以保证数据机密性。\n身份验证：用A的私钥加密，A的公钥加密。发送方用自己的私钥加密数据，可以实现身份验证。\n公钥加密算法很少用来加密数据：速度太慢。\n\n二、数据传输A beautiful sunrise\n— — — — — — —|&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;||&emsp;&emsp;&emsp;&emsp;A&emsp;&emsp;&emsp;&ensp;&ensp; ||&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;||&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;|— — — — — — —\n","dateCreated":"2019-02-11T23:57:28+08:00","dateModified":"2019-02-11T23:56:50+08:00","datePublished":"2019-02-11T23:57:28+08:00","description":"","headline":"加密类型及其相关算法","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/02/11/加密类型及其相关算法/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/02/11/加密类型及其相关算法/","keywords":"加密"}</script>
+    <meta name="description" content="一、数据传输安全性在TCP/IP层中不涉及安全 机密性：明文传输（ftp,smtp,talnet）别人一拦截就能看到请求的内容。 完整性：10颗原子弹（被改成100）所以数据在互联网上传播的时候，不应该也不能够被其他人非法篡改掉当收到的和发送的不一致时拒绝接受这就能保证数据的完整性。 身份验证：通过有效的手段保证所访问的对象就是我们所要的那个人。  保证数据的机密性 plaintext(明文) –">
+<meta name="keywords" content="加密">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="加密类型及其相关算法">
+<meta property="og:url" content="http://yoursite.com/2019/02/11/加密类型及其相关算法/index.html">
+<meta property="og:site_name" content="Brotherc">
+<meta property="og:description" content="一、数据传输安全性在TCP/IP层中不涉及安全 机密性：明文传输（ftp,smtp,talnet）别人一拦截就能看到请求的内容。 完整性：10颗原子弹（被改成100）所以数据在互联网上传播的时候，不应该也不能够被其他人非法篡改掉当收到的和发送的不一致时拒绝接受这就能保证数据的完整性。 身份验证：通过有效的手段保证所访问的对象就是我们所要的那个人。  保证数据的机密性 plaintext(明文) –">
+<meta property="og:locale" content="zh-cn">
+<meta property="og:image" content="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1549910657881&di=d2fc870939ca6c578fe48c2c09b261f3&imgtype=0&src=http%3A%2F%2Fcdn.youxiputao.com%2Fattach%2Fnews%2F2017%2F04%2F10%2F756a66b15b335082.jpg">
+<meta property="og:updated_time" content="2019-02-11T15:56:50.672Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="加密类型及其相关算法">
+<meta name="twitter:description" content="一、数据传输安全性在TCP/IP层中不涉及安全 机密性：明文传输（ftp,smtp,talnet）别人一拦截就能看到请求的内容。 完整性：10颗原子弹（被改成100）所以数据在互联网上传播的时候，不应该也不能够被其他人非法篡改掉当收到的和发送的不一致时拒绝接受这就能保证数据的完整性。 身份验证：通过有效的手段保证所访问的对象就是我们所要的那个人。  保证数据的机密性 plaintext(明文) –">
+<meta name="twitter:image" content="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1549910657881&di=d2fc870939ca6c578fe48c2c09b261f3&imgtype=0&src=http%3A%2F%2Fcdn.youxiputao.com%2Fattach%2Fnews%2F2017%2F04%2F10%2F756a66b15b335082.jpg">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://yoursite.com/assets/images/head.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-c4ozcsklz4kht2pebhp44xorvyverh23toayhn7i6ubrpyedak24hv1v0hyd.min.css">
+    <!--STYLES END-->
+    
+
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/ ">Brotherc</a>
+    </div>
+    
+        
+            <a class="header-right-picture " href="#about">
+        
+        
+            <img class="header-picture" src="/assets/images/head.jpg" alt="作者的图片">
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/#about">
+                    <img class="sidebar-profile-picture" src="/assets/images/head.jpg" alt="作者的图片">
+                </a>
+                <h4 class="sidebar-profile-name">Brotherc</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>java development</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/ " title="首页">
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">首页</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-categories" title="分类">
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">分类</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-tags" title="标签">
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">标签</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link open-algolia-search" href="/all-archives" title="归档">
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">归档</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="#about" title="关于">
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">关于</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://github.com/Brotherc" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="4"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            加密类型及其相关算法
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-02-11T23:57:28+08:00">
+	
+		    2月 11, 2019
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <h2 id="一、数据传输安全性"><a href="#一、数据传输安全性" class="headerlink" title="一、数据传输安全性"></a>一、数据传输安全性</h2><h5 id="在TCP-IP层中不涉及安全"><a href="#在TCP-IP层中不涉及安全" class="headerlink" title="在TCP/IP层中不涉及安全"></a>在TCP/IP层中不涉及安全</h5><ul>
+<li>机密性：明文传输（ftp,smtp,talnet）别人一拦截就能看到请求的内容。</li>
+<li>完整性：10颗原子弹（被改成100）所以数据在互联网上传播的时候，<br>不应该也不能够被其他人非法篡改掉当收到的和发送的不一致时拒绝接受这就能保证数据的完整性。</li>
+<li>身份验证：通过有效的手段保证所访问的对象就是我们所要的那个人。</li>
+</ul>
+<h4 id="保证数据的机密性"><a href="#保证数据的机密性" class="headerlink" title="保证数据的机密性"></a>保证数据的机密性</h4><ul>
+<li>plaintext(明文) –&gt; 加密（转换规则）–&gt; ciphertext（密文）</li>
+<li>ciphertext –&gt; 转换规则 –&gt; plaintext</li>
+<li>转换算法：依赖密钥（即使得到了转换规则也没用）</li>
+<li>对称加密：加密和解密使用同一个密钥（有加密算法和解密算法，算法不同，但密钥相同）。<br>好处是计算速度快，在一定程度上解决了机密性问题。坏处是不能解决密钥有效管理的问题。<br>假如a跟b，c,d通信，如果密钥相同，则c只要用密钥就可以看到a发送给b的内容，显然密钥不能相同，<br>那就得维护很多密钥。</li>
+</ul>
+<h4 id="保证数据的完整性"><a href="#保证数据的完整性" class="headerlink" title="保证数据的完整性"></a>保证数据的完整性</h4><ul>
+<li>A：plaintext:footprint –&gt; B<br>B使用同样的加密算法去重复计算这个明文的特征码，并跟A所发过来的特征码进行比较，<br>如果一样，则说明没被篡改。</li>
+<li>单项加密算法：提取数据特征码，追加到数据后面。数据的输入一样：特征码必然相同。</li>
+<li>特点：雪崩效应（输入的微小改变，将其会引起结果的巨大改变）、<br>定长输出（无论原始数据是多长，结果大小都是相同的）、<br>不可逆（无法根据原始特征码还原原来的数据）。</li>
+</ul>
+<h4 id="中间人攻击问题"><a href="#中间人攻击问题" class="headerlink" title="中间人攻击问题"></a>中间人攻击问题</h4><ul>
+<li>E(A)：plaintext2:footprint2 –&gt; B<br>A生成一段数据，并对它计算特征码，E在中间经过的路由时拿到这个明文，并重新修改明文和再计算<br>特征码发给B，还声称自己是A，B拿到数据之后就算使用了数据完整性的算法之后，计算特征码还是<br>一模一样，还认为是A发过来的，所以需要借助额外的机制。</li>
+<li>解决办法：A：plaintext:footprint(加密) –&gt; B B拿到特征码之后通过密钥进行解密，能解密<br>说明数据没有被改过。如果E拿到plaintext并修改为plaintext2，并重新生成特征码，就没办法加密<br>特征码或者加密后就不是A和B之间实现约定的密码。</li>
+</ul>
+<h4 id="A与B之间如何进行密码约定"><a href="#A与B之间如何进行密码约定" class="headerlink" title="A与B之间如何进行密码约定"></a>A与B之间如何进行密码约定</h4><ul>
+<li>假如A与B之间从未通信或从未见过面，如何进行密码约定呢？</li>
+<li>协商生成密码：密码交换（Internet Key Exchange / IKE）,密码交换是不让第三方得到密钥，<br>密码交换需要特殊的互联网协议支撑。比如：Dffie-Hellman协议。</li>
+<li>A和B事先约定两个数p(大素数)，g(生成数)。A生成一个自己知道的x，B生成一个自己知道的y。<br>A将 g^x % p 发送给B，B将g^y % p 发送给A。<br>A拿到之后进行计算 （g^y % p）^x = g^xy % p，<br>B拿到之后进行计算 （g^x % p）^y = g^xy % p。<br>这个相同的结果就是密钥。<br>在互联网上可以看到g、p、g^x % p、g^y % p，但看不到x、y。</li>
+<li>A和B只需要选好几个数，让这些数的计算结果作为密钥来用，使得彼此不用计算密码，只要双方<br>生成密钥的软件一样就可以随时生成密钥。</li>
+</ul>
+<h4 id="身份验证"><a href="#身份验证" class="headerlink" title="身份验证"></a>身份验证</h4><ul>
+<li>之前是A和B一起约定好的密码，所以身份验证没问题。但是密钥是交换生成的，事先之前谁也不知道。<br>E跳出来，截取了数据并篡改，然后与B进行连接通信，还告诉它自己是A。</li>
+<li>解决办法：公钥加密算法（非对称加密算法）</li>
+<li>特点：拥有一对密钥对，分别是公钥（是从私钥中提取出来的）、私钥。用公钥加密的，只能用私钥<br>解密，反之亦然。</li>
+</ul>
+<h4 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h4><ul>
+<li>机密性：用B的公钥加密，B的私钥解密。发送方用对方的公钥加密数据，可以保证数据机密性。</li>
+<li>身份验证：用A的私钥加密，A的公钥加密。发送方用自己的私钥加密数据，可以实现身份验证。</li>
+<li>公钥加密算法很少用来加密数据：速度太慢。</li>
+</ul>
+<h2 id="二、数据传输"><a href="#二、数据传输" class="headerlink" title="二、数据传输"></a>二、数据传输</h2><div class="figure right" style="width:150px;"><a class="fancybox" href="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1549910657881&di=d2fc870939ca6c578fe48c2c09b261f3&imgtype=0&src=http%3A%2F%2Fcdn.youxiputao.com%2Fattach%2Fnews%2F2017%2F04%2F10%2F756a66b15b335082.jpg" title="A beautiful sunrise" data-caption="A beautiful sunrise" data-fancybox="travel" target="_blank" rel="noopener"><img class="fig-img" src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1549910657881&di=d2fc870939ca6c578fe48c2c09b261f3&imgtype=0&src=http%3A%2F%2Fcdn.youxiputao.com%2Fattach%2Fnews%2F2017%2F04%2F10%2F756a66b15b335082.jpg" style="width:150px;height:300px;" alt="A beautiful sunrise"></a><span class="caption">A beautiful sunrise</span></div><div style="clear:both;"></div>
+<p>— — — — — — —<br>|&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;|<br>|&emsp;&emsp;&emsp;&emsp;A&emsp;&emsp;&emsp;&ensp;&ensp; |<br>|&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;|<br>|&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;|<br>— — — — — — —</p>
+
+            
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">标签</span><br>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/加密/">加密</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/02/01/go-oracle/" data-tooltip="pkg-config --cflags oci8, Package oci8 was not found in the pkg-config search path." aria-label="下一篇: pkg-config --cflags oci8, Package oci8 was not found in the pkg-config search path.">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/02/11/加密类型及其相关算法/" title="分享到 Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/02/11/加密类型及其相关算法/" title="分享到 Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/02/11/加密类型及其相关算法/" title="分享到 Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 Brotherc. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/02/01/go-oracle/" data-tooltip="pkg-config --cflags oci8, Package oci8 was not found in the pkg-config search path." aria-label="下一篇: pkg-config --cflags oci8, Package oci8 was not found in the pkg-config search path.">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/02/11/加密类型及其相关算法/" title="分享到 Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/02/11/加密类型及其相关算法/" title="分享到 Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/02/11/加密类型及其相关算法/" title="分享到 Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/02/11/加密类型及其相关算法/">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>分享到 Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/02/11/加密类型及其相关算法/">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/02/11/加密类型及其相关算法/">
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>分享到 Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/head.jpg" alt="作者的图片">
+        
+            <h4 id="about-card-name">Brotherc</h4>
+        
+            <div id="about-card-bio"><p>java development</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br>
+                <p>java</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br>
+                zhuhai
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-dbd16rvloemmuxdzniplmnxxvwoz24eya9wol0b7vvmlokgqsjivmb8dnscy.min.js"></script>
+<!--SCRIPTS END-->
+
+    
+
+
+
+    </body>
+</html>
