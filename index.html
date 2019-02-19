@@ -165,6 +165,182 @@
             <div class="postShorten-header">
                 <h1 class="postShorten-title">
                     
+                        <a class="link-unstyled" href="/2019/02/19/linux常用指令/">
+                            linux常用指令
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2019-02-19T22:08:27+08:00">
+	
+		    2月 19, 2019
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <h3 id="1-查看目录下有什么文件-目录"><a href="#1-查看目录下有什么文件-目录" class="headerlink" title="1.查看目录下有什么文件/目录"></a>1.查看目录下有什么文件/目录</h3><blockquote>
+<p>ls &emsp;&emsp;&emsp;&emsp;&emsp; //list 列出目录的文件信息<br>ls -l或ll &emsp;&emsp;&ensp; //list -list 以”详细信息”查看目录文件<br>ls -a &ensp;&emsp;&emsp; &emsp; //list -all 查看目录”全部”（包括隐藏文件）文件<br>ls -al &ensp;&emsp;&emsp;&emsp; //list -all list 查看目录”全部”（包括隐藏文件）文件，以”详细信息”显示<br>ls 目录 &ensp;&emsp; &emsp; //查看指定目录下有什么文件<br>ls -i &emsp;&emsp;&emsp;&emsp; //查看文件索引号码</p>
+</blockquote>
+<h3 id="2-进行目录切换"><a href="#2-进行目录切换" class="headerlink" title="2.进行目录切换"></a>2.进行目录切换</h3><blockquote>
+<p>cd dirname &emsp;//进行目录切换<br>cd .. &emsp;&emsp;&emsp;&emsp;&ensp;//想上级目录切换<br>cd ~ 或 cd &emsp;&ensp;//直接切换到当前用户</p>
+</blockquote>
+<h3 id="3-查看完整的操作位置"><a href="#3-查看完整的操作位置" class="headerlink" title="3.查看完整的操作位置"></a>3.查看完整的操作位置</h3><blockquote>
+<p>pwd</p>
+</blockquote>
+<h3 id="4-用户切换"><a href="#4-用户切换" class="headerlink" title="4.用户切换"></a>4.用户切换</h3><blockquote>
+<p>su -  或 su - root &emsp;//向root用户切换<br>exit &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp; //退回到原用户<br>su 用户名 &emsp;&emsp;&emsp;&emsp;//普通用户切换</p>
+</blockquote>
+<p>多次使用su指令，会造成用户的”叠加”：<br>（su和exit最好配合使用）<br>lcs—&gt;root—&gt;lcs—&gt;root—&gt;lcs</p>
+<h3 id="5-查看当前用户是谁"><a href="#5-查看当前用户是谁" class="headerlink" title="5.查看当前用户是谁"></a>5.查看当前用户是谁</h3><blockquote>
+<p>whoami</p>
+</blockquote>
+<h3 id="6-图形界面与命令界面切换"><a href="#6-图形界面与命令界面切换" class="headerlink" title="6.图形界面与命令界面切换"></a>6.图形界面与命令界面切换</h3><p>root用户可以切换</p>
+<blockquote>
+<p>#init 3</p>
+<p>#init 5</p>
+</blockquote>
+<h3 id="7-查看一个指令对应的执行程序文件在哪"><a href="#7-查看一个指令对应的执行程序文件在哪" class="headerlink" title="7.查看一个指令对应的执行程序文件在哪"></a>7.查看一个指令对应的执行程序文件在哪</h3><blockquote>
+<p>which 指令</p>
+</blockquote>
+<h3 id="8-目录相关操作"><a href="#8-目录相关操作" class="headerlink" title="8.目录相关操作"></a>8.目录相关操作</h3><p>1）创建目录 make directory</p>
+<blockquote>
+<p>mkdir 目录名字<br>mkdir -p newdir/newdir/newdir //递归方式创建多个连续目录，新的多级目录数目如果大于等于2个，<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; 就要使用-p参数<br>mkdir dir/newdir &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;//不用-p参数<br>mkdir -p dir/newdir/newdir &emsp;&emsp;//使用-p参数</p>
+</blockquote>
+<p>2）移动目录 move</p>
+<blockquote>
+<p>mv dir1 dir2  &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;//把dir1移动到dir2目录下<br>mv dir1/dir2 dir3  &emsp;&emsp;&emsp;&ensp; //把dir2移动到dir3目录下<br>mv dir1/dir2 dir3/dir4  &emsp;&ensp;//把dir2移动到dir4目录下<br>mv dir1/dir2 ./ &emsp;&emsp;&emsp;&emsp;&emsp;//把dir2移动到当前目录下</p>
+</blockquote>
+<p>3）改名字</p>
+<blockquote>
+<p>mv dir1 newdir &emsp;&emsp;&emsp;&emsp;//修改dir1的名字为newdir</p>
+<p>mv是”移动”和”改名字”合并的指令<br>mv dir1 ./newdir &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;//dir1移动到当前目录下，并改名字为newdir<br>mv dir1/dir2 dir3 &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp; //dir2移动到dir3目录下，并改名字为”原名”<br>mv dir1/dir2 dir3/newdir &emsp;&emsp;&emsp;&emsp;//dir2移动到dir3目录下，并改名字为newdir<br>mv dir1/dir2 dir3/dir4 &emsp;&emsp;&emsp;&emsp;&emsp; //dir2移动到dir4目录下，并改名字为”原名”<br>mv dir1/dir2 dir3/dir4/newdir &emsp;&ensp;//dir2移动到dir4目录下，并改名字为newdir</p>
+</blockquote>
+<p>4）复制（文件和目录）copy</p>
+<p>①文件的复制</p>
+<blockquote>
+<p>cp file1 dir/newfile2  &emsp;&emsp;&emsp;&emsp;//file1被复制一份到dir目录下，并改名字为newfile2<br>cp file1 dir  &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;//file1被复制一份到dir目录下，并改名字为”原名”<br>cp dir1/filea dir2/newfile  &emsp;&ensp; //filea被复制一份到dir目录下，并改名字为newfile</p>
+</blockquote>
+<p> ②目录的复制（需要设置-r[recursive递归]参数，无视目录的层次）</p>
+<blockquote>
+<p>cp -r dir1 dir2  &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;//dir1被复制到dir2目录下，并改名字为”原名”<br>cp -r dir1/dir2 dir3/newdir  &emsp;&emsp;&emsp;//dir2被复制到dir3目录下，并改名字为newdir<br>cp -r dir1/dir2 dir3/dir4  &emsp;&emsp;&emsp;&emsp; //dir2被复制到dir4目录下，并改名字为”原名”<br>cp -r dir1/dir2 dir3/dir4/newdir &ensp;//dir2被复制到dir4目录下，并改名字为newdir<br>cp -r dir1 ../../newdir  &emsp;&emsp;&emsp;&emsp;&emsp;&ensp;//dir1被复制到上两级目录下，并改名字为newdir</p>
+</blockquote>
+<p>③删除（文件和目录）remove</p>
+<blockquote>
+<p>rm 文件<br>rm -r 目录  &emsp;&emsp;&emsp;&emsp;&emsp;//-r[recursive递归]递归方式删除目录<br>rm -rf 文件/目录  &emsp;&emsp; //-r force 递归强制方式删除文件，force强制，不需要额外导入提示</p>
+</blockquote>
+<h3 id="9-文件操作"><a href="#9-文件操作" class="headerlink" title="9.文件操作"></a>9.文件操作</h3><p>1）查看文件内容</p>
+<blockquote>
+<p>cat filename  &emsp;&emsp;&emsp;//打印文件内容到输出终端<br>more filename  &emsp;&emsp;//通过敲回车方式逐行查看文件的各个行内容，默认从第一行开始查看，<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; //不支持回看，q退出查看<br>less &emsp;&emsp;&emsp; &emsp;&emsp;&emsp;&emsp;//通过”上下左右”键查看文件的各个部分内容，支持回看，q退出查看<br>head -n filename &ensp; //查看文件的前n行内容<br>tail -n filename &emsp;&ensp; //查看文件的最末尾n行内容<br>wc filename &emsp;&emsp;&emsp; //查看文件的行数</p>
+</blockquote>
+<p>2）创建文件</p>
+<blockquote>
+<p>touch dir1/filename<br>touch filename</p>
+</blockquote>
+<p>3）给文件追加内容</p>
+<blockquote>
+<p>echo 内容 &gt; 文件名称 &emsp;&emsp;&emsp;&emsp;//把”内容”以[覆盖写]方式追加给”文件”<br>echo 内容 &gt;&gt; 文件名称 &emsp;&emsp;&emsp; //把”内容”以[追加]方式写给”文件”</p>
+</blockquote>
+<p>（如果文件不存在会创建文件）</p>
+<h3 id="10-用户操作"><a href="#10-用户操作" class="headerlink" title="10.用户操作"></a>10.用户操作</h3><p>配置文件：/etc/passwd<br>1）创建用户 user add</p>
+<blockquote>
+<p>#useradd</p>
+<p>#useradd liming &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;//创建liming用户，<br>同时会创建一个同名的组出来</p>
+<p>#useradd -g 组别编号 username &emsp;&emsp;&ensp;//把用户的组别设置好，避免创建同名的组出来</p>
+<p>#useradd -g 组编号 -u 用户编号 -d 家目录 username</p>
+</blockquote>
+<p>2）修改用户 user modify</p>
+<blockquote>
+<p>#usermod -g 组编号 -u 用户编号 -d 家目录 -l 新名字 username<br>（修改家目录时需要手动创建之）</p>
+</blockquote>
+<p>3）删除用户 user delete</p>
+<blockquote>
+<p>#userdel username</p>
+<p>#userdel -r username //删除用户同时删除其家目录</p>
+</blockquote>
+<p>4）给用户设置密码，使其登录系统</p>
+<blockquote>
+<p>passwd 用户名</p>
+</blockquote>
+<h3 id="11-组别操作"><a href="#11-组别操作" class="headerlink" title="11.组别操作"></a>11.组别操作</h3><p>配置文件：/etc/group<br>1）创建组 group add</p>
+<blockquote>
+<p>#groupadd music</p>
+<p>#groupadd movie</p>
+<p>#groupadd php</p>
+</blockquote>
+<p>2）修改组 group modify</p>
+<blockquote>
+<p>#groupmod -g gid -n 新名字 groupname</p>
+</blockquote>
+<p>3）删除组 group delete</p>
+<blockquote>
+<p>#groupdel groupname //组下边如果有用户存在，就禁止删除</p>
+</blockquote>
+<h3 id="12-查看指令可设置的参数"><a href="#12-查看指令可设置的参数" class="headerlink" title="12.查看指令可设置的参数"></a>12.查看指令可设置的参数</h3><blockquote>
+<p>man 指令</p>
+</blockquote>
+<h3 id="13-给文件设置权限"><a href="#13-给文件设置权限" class="headerlink" title="13.给文件设置权限"></a>13.给文件设置权限</h3><p>1）字母相对方式设置权限<br>// 针对一个组别设置权限，其他组别权限没有变化，称为“相对方式”权限设置<br>chmod指令<br>chmod u+rwx filename //给filename文件的主人增加“读、写、执行”权限<br>chmod g-rx filename //给filename文件的同组用户 删除“读、执行”权限</p>
+<p>chmod u+/-rwx,g+/-rwx,o+/-rwx filename<br>说明：<br>①每个单元“+” “-”只能使用一个<br>②可以同时给一个组或多个组设置权限，组别之间使用“，”分割<br>③每个单元的权限可以是“rwx”中的一个或多个</p>
+<blockquote>
+<p>chmod u+w,g-rx,o+rw filename //给filename文件主人增加写权限，同组删除读、执行权限，其他组增加读、写权限<br>chmod u+w,u-x filename //给filename文件主人“增加写权限”同时“删除执行权限”</p>
+</blockquote>
+<p>chmod +/-rwx filename //无视具体组别，统一给全部的组设置权限</p>
+<blockquote>
+<p>chmod +rw filename //给filename全部用户增加“读、写”权限</p>
+</blockquote>
+<p>2）数字绝对方式设置权限<br>r读：4 &emsp;&emsp; w写：2 &emsp;&emsp; x执行：1<br>0：没有权限<br>1：执行<br>2：写<br>3：写、执行<br>4：读<br>5：读、执行<br>6：读、写<br>7：读、写、执行</p>
+<p>chmod ABC filename //ABC分别代表主人、同组、其他组用户的数字权限</p>
+<blockquote>
+<p>chmod 753 filename //主人读、写、执行；同组读、执行；其他组写、执行</p>
+</blockquote>
+<p>问：字母相对 和 数字绝对 方式权限设置取舍？<br>答：修改的权限相对“比较少”的时候使用“字母”方式，相反，权限变动“非常多”的时候就使用“数字”方式</p>
+<h3 id="14-在文件中查找内容"><a href="#14-在文件中查找内容" class="headerlink" title="14.在文件中查找内容"></a>14.在文件中查找内容</h3><p>grep 被搜索内容 文件</p>
+<blockquote>
+<p>grep hello passwd //在passwd文件中搜索hello内容，会把hello所在行的内容都打印到终端显示</p>
+</blockquote>
+<h3 id="15-计算文件占据磁盘空间大小"><a href="#15-计算文件占据磁盘空间大小" class="headerlink" title="15.计算文件占据磁盘空间大小"></a>15.计算文件占据磁盘空间大小</h3><blockquote>
+<p>du -h 文件（目录）</p>
+</blockquote>
+<h3 id="16-文件查找"><a href="#16-文件查找" class="headerlink" title="16.文件查找"></a>16.文件查找</h3><p>find 查找目录 选项 选项值 选项 选项值 …<br>1）-name选项 根据名字进行查找</p>
+<blockquote>
+<p>find / -name passwd &emsp;&emsp;&emsp;&emsp;//“递归遍历”/根目录及其内部深层目录，寻找名称等于“passwd”的文件<br>find / -name “pas<em>“[模糊查找] //在系统全部目录，模糊查找一个名字是“pas”开始的文件<br>find / -name “</em>er*” &emsp;&emsp;&emsp;&emsp;&emsp; //文件名字有出现“er”字样即可，不要位置</p>
+</blockquote>
+<p>2）限制查找的目录层次 -maxdepth -mindepth<br>-maxdepth 限制查找的最深目录<br>-mindepth 限制查找的最浅目录</p>
+<blockquote>
+<p>find / -maxdepth 4 -name passwd<br>find / -maxdepth 4 -mindepth 3 -name passwd</p>
+</blockquote>
+<p>3）根据大小为条件进行文件查找<br>-size +/-数字<br>+号表示大小大于某个范围<br>-号表示大小小于某个范围<br>大小单位：<br>-size 5 &emsp;&emsp; //单位是“512字节” 5<em>512字节<br>-size 10c &emsp; //单位是“字节” 10字节<br>-size 3k &emsp;&ensp; //单位是“千字节” 3</em>1024字节<br>-size 6M &emsp; //单位是“1024*千字节” 6M兆字节</p>
+<blockquote>
+<p>find ./ -size 14c &emsp;&emsp;//在当前目录查找大小等于14千字节的文件<br>find / -size +50M  &emsp;//在系统全部目录里边查找大小大于50M的文件</p>
+</blockquote>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2019/02/19/linux常用指令/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
                         <a class="link-unstyled" href="/2019/02/14/通过策略模式和工厂模式减少代码中的if else/">
                             通过策略模式和工厂模式减少代码中的if else
                         </a>
