@@ -11,12 +11,12 @@
     
     
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"枚举类：12345678910public enum ResourceStatus &#123;    Health(1), UnHealth(0), NoAlarm(-1);    @Getter    private int seq;    private ResourceStatus(int seq) &#123;        this.seq = seq;    &#125;&#125;\n策略接口：12345678public interface Strategy &#123;    /**     *将val和状态值比较判断是否属于某种状态     * @param val 资源的健康值     * @return 是否属于某种状态     */    boolean compare(Double val);&#125;\n策略具体实现类：12345678public class HealthStrategy implements Strategy&#123;    private final Double healthVal = 60d;    @Override    public boolean compare(Double val) &#123;        return val &gt;= healthVal;    &#125;&#125;\n12345678public class UnHealthStrategy implements Strategy&#123;    private final Double healthVal = 60d;    @Override    public boolean compare(Double val) &#123;        return val &lt; healthVal &amp;&amp; val &gt;= 0;    &#125;&#125;\n12345678public class NoAlarmStrategy implements Strategy&#123;    private final Double healthVal = -1d;    @Override    public boolean compare(Double val) &#123;        return  val.equals(healthVal);    &#125;&#125;\n工厂类：1234567891011121314151617181920public class StrategyFactory &#123;    private static StrategyFactory factory = new StrategyFactory();    private static Map&lt;Integer, Strategy&gt; strategyMap = new HashMap();    static&#123;        strategyMap.put(ResourceStatus.Health.getSeq(), new HealthStrategy());        strategyMap.put(ResourceStatus.UnHealth.getSeq(), new UnHealthStrategy());        strategyMap.put(ResourceStatus.NoAlarm.getSeq(), new NoAlarmStrategy());    &#125;    private StrategyFactory()&#123;&#125;    public Strategy creator(Integer status)&#123;        return strategyMap.get(status);    &#125;    public static StrategyFactory getInstance()&#123;        return factory;    &#125;&#125;\n策略上下文：123456789@Datapublic class Context &#123;    private Strategy strategy;    public boolean compare(Double val, Integer status) &#123;        strategy = StrategyFactory.getInstance().creator(status);        return strategy.compare(val);    &#125;&#125;\n参考：https://blog.csdn.net/u011507568/article/details/70238491\n","dateCreated":"2019-02-14T21:45:23+08:00","dateModified":"2019-02-14T21:44:53+08:00","datePublished":"2019-02-14T21:45:23+08:00","description":"","headline":"通过策略模式和工厂模式减少代码中的if else","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/02/14/通过策略模式和工厂模式减少代码中的if else/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/02/14/通过策略模式和工厂模式减少代码中的if else/","keywords":"设计模式"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"枚举类：12345678910public enum ResourceStatus &#123;    Health(1), UnHealth(0), NoAlarm(-1);    @Getter    private int seq;    private ResourceStatus(int seq) &#123;        this.seq = seq;    &#125;&#125;\n策略接口：12345678public interface Strategy &#123;    /**     *将val和状态值比较判断是否属于某种状态     * @param val 资源的健康值     * @return 是否属于某种状态     */    boolean compare(Double val);&#125;\n策略具体实现类：12345678public class HealthStrategy implements Strategy&#123;    private final Double healthVal = 60d;    @Override    public boolean compare(Double val) &#123;        return val &gt;= healthVal;    &#125;&#125;\n12345678public class UnHealthStrategy implements Strategy&#123;    private final Double healthVal = 60d;    @Override    public boolean compare(Double val) &#123;        return val &lt; healthVal &amp;&amp; val &gt;= 0;    &#125;&#125;\n12345678public class NoAlarmStrategy implements Strategy&#123;    private final Double healthVal = -1d;    @Override    public boolean compare(Double val) &#123;        return  val.equals(healthVal);    &#125;&#125;\n工厂类：1234567891011121314151617181920public class StrategyFactory &#123;    private static StrategyFactory factory = new StrategyFactory();    private static Map&lt;Integer, Strategy&gt; strategyMap = new HashMap();    static&#123;        strategyMap.put(ResourceStatus.Health.getSeq(), new HealthStrategy());        strategyMap.put(ResourceStatus.UnHealth.getSeq(), new UnHealthStrategy());        strategyMap.put(ResourceStatus.NoAlarm.getSeq(), new NoAlarmStrategy());    &#125;    private StrategyFactory()&#123;&#125;    public Strategy creator(Integer status)&#123;        return strategyMap.get(status);    &#125;    public static StrategyFactory getInstance()&#123;        return factory;    &#125;&#125;\n策略上下文：123456789@Datapublic class Context &#123;    private Strategy strategy;    public boolean compare(Double val, Integer status) &#123;        strategy = StrategyFactory.getInstance().creator(status);        return strategy.compare(val);    &#125;&#125;\n参考：https://blog.csdn.net/u011507568/article/details/70238491\n","dateCreated":"2019-03-14T19:05:08+08:00","dateModified":"2019-02-14T21:44:53+08:00","datePublished":"2019-03-14T19:05:08+08:00","description":"","headline":"通过策略模式和工厂模式减少代码中的if else","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/03/14/通过策略模式和工厂模式减少代码中的if else/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/03/14/通过策略模式和工厂模式减少代码中的if else/","keywords":"设计模式"}</script>
     <meta name="description" content="枚举类：12345678910public enum ResourceStatus &amp;#123;    Health(1), UnHealth(0), NoAlarm(-1);    @Getter    private int seq;    private ResourceStatus(int seq) &amp;#123;        this.seq = seq;    &amp;#125;&amp;#125;">
 <meta name="keywords" content="设计模式">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="通过策略模式和工厂模式减少代码中的if else">
-<meta property="og:url" content="http://yoursite.com/2019/02/14/通过策略模式和工厂模式减少代码中的if else/index.html">
+<meta property="og:url" content="http://yoursite.com/2019/03/14/通过策略模式和工厂模式减少代码中的if else/index.html">
 <meta property="og:site_name" content="Brotherc">
 <meta property="og:description" content="枚举类：12345678910public enum ResourceStatus &amp;#123;    Health(1), UnHealth(0), NoAlarm(-1);    @Getter    private int seq;    private ResourceStatus(int seq) &amp;#123;        this.seq = seq;    &amp;#125;&amp;#125;">
 <meta property="og:locale" content="zh-cn">
@@ -173,9 +173,9 @@
     
     
         <div class="post-meta">
-    <time datetime="2019-02-14T21:45:23+08:00">
+    <time datetime="2019-03-14T19:05:08+08:00">
 	
-		    2月 14, 2019
+		    3月 14, 2019
     	
     </time>
     
@@ -216,7 +216,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/02/19/linux常用指令/" data-tooltip="linux常用指令" aria-label="上一篇: linux常用指令">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/angular常用操作/" data-tooltip="angular常用操作" aria-label="上一篇: angular常用操作">
                 
                     <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -225,7 +225,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/02/13/angular发送带参数的delete请求/" data-tooltip="angular2中如何在发送delete请求时携带参数" aria-label="下一篇: angular2中如何在发送delete请求时携带参数">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/加密类型及其相关算法/" data-tooltip="加密类型及其相关算法" aria-label="下一篇: 加密类型及其相关算法">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right" aria-hidden="true"></i>
@@ -243,7 +243,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/02/14/通过策略模式和工厂模式减少代码中的if else/" title="分享到 Facebook">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/14/通过策略模式和工厂模式减少代码中的if else/" title="分享到 Facebook">
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
@@ -251,7 +251,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/02/14/通过策略模式和工厂模式减少代码中的if else/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/14/通过策略模式和工厂模式减少代码中的if else/" title="分享到 Twitter">
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -259,7 +259,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/02/14/通过策略模式和工厂模式减少代码中的if else/" title="分享到 Google+">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/14/通过策略模式和工厂模式减少代码中的if else/" title="分享到 Google+">
                     <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
             </li>
@@ -302,7 +302,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/02/19/linux常用指令/" data-tooltip="linux常用指令" aria-label="上一篇: linux常用指令">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/angular常用操作/" data-tooltip="angular常用操作" aria-label="上一篇: angular常用操作">
                 
                     <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -311,7 +311,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/02/13/angular发送带参数的delete请求/" data-tooltip="angular2中如何在发送delete请求时携带参数" aria-label="下一篇: angular2中如何在发送delete请求时携带参数">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/加密类型及其相关算法/" data-tooltip="加密类型及其相关算法" aria-label="下一篇: 加密类型及其相关算法">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right" aria-hidden="true"></i>
@@ -329,7 +329,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/02/14/通过策略模式和工厂模式减少代码中的if else/" title="分享到 Facebook">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/14/通过策略模式和工厂模式减少代码中的if else/" title="分享到 Facebook">
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
@@ -337,7 +337,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/02/14/通过策略模式和工厂模式减少代码中的if else/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/14/通过策略模式和工厂模式减少代码中的if else/" title="分享到 Twitter">
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -345,7 +345,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/02/14/通过策略模式和工厂模式减少代码中的if else/" title="分享到 Google+">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/14/通过策略模式和工厂模式减少代码中的if else/" title="分享到 Google+">
                     <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
             </li>
@@ -373,7 +373,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/02/14/通过策略模式和工厂模式减少代码中的if else/">
+                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/14/通过策略模式和工厂模式减少代码中的if else/">
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>分享到 Facebook</span>
                     </a>
                 </li>
@@ -381,7 +381,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/02/14/通过策略模式和工厂模式减少代码中的if else/">
+                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/14/通过策略模式和工厂模式减少代码中的if else/">
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
                     </a>
                 </li>
@@ -389,7 +389,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/02/14/通过策略模式和工厂模式减少代码中的if else/">
+                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/14/通过策略模式和工厂模式减少代码中的if else/">
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>分享到 Google+</span>
                     </a>
                 </li>

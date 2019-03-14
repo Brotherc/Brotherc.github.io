@@ -11,12 +11,12 @@
     
     
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"1.查看目录下有什么文件/目录\nls &emsp;&emsp;&emsp;&emsp;&emsp; //list 列出目录的文件信息ls -l或ll &emsp;&emsp;&ensp; //list -list 以”详细信息”查看目录文件ls -a &ensp;&emsp;&emsp; &emsp; //list -all 查看目录”全部”（包括隐藏文件）文件ls -al &ensp;&emsp;&emsp;&emsp; //list -all list 查看目录”全部”（包括隐藏文件）文件，以”详细信息”显示ls 目录 &ensp;&emsp; &emsp; //查看指定目录下有什么文件ls -i &emsp;&emsp;&emsp;&emsp; //查看文件索引号码\n\n2.进行目录切换\ncd dirname &emsp;//进行目录切换cd .. &emsp;&emsp;&emsp;&emsp;&ensp;//想上级目录切换cd ~ 或 cd &emsp;&ensp;//直接切换到当前用户\n\n3.查看完整的操作位置\npwd\n\n4.用户切换\nsu -  或 su - root &emsp;//向root用户切换exit &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp; //退回到原用户su 用户名 &emsp;&emsp;&emsp;&emsp;//普通用户切换\n\n多次使用su指令，会造成用户的”叠加”：（su和exit最好配合使用）lcs—&gt;root—&gt;lcs—&gt;root—&gt;lcs\n5.查看当前用户是谁\nwhoami\n\n6.图形界面与命令界面切换root用户可以切换\n\n#init 3\n#init 5\n\n7.查看一个指令对应的执行程序文件在哪\nwhich 指令\n\n8.目录相关操作1）创建目录 make directory\n\nmkdir 目录名字mkdir -p newdir/newdir/newdir //递归方式创建多个连续目录，新的多级目录数目如果大于等于2个，&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; 就要使用-p参数mkdir dir/newdir &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;//不用-p参数mkdir -p dir/newdir/newdir &emsp;&emsp;//使用-p参数\n\n2）移动目录 move\n\nmv dir1 dir2  &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;//把dir1移动到dir2目录下mv dir1/dir2 dir3  &emsp;&emsp;&emsp;&ensp; //把dir2移动到dir3目录下mv dir1/dir2 dir3/dir4  &emsp;&ensp;//把dir2移动到dir4目录下mv dir1/dir2 ./ &emsp;&emsp;&emsp;&emsp;&emsp;//把dir2移动到当前目录下\n\n3）改名字\n\nmv dir1 newdir &emsp;&emsp;&emsp;&emsp;//修改dir1的名字为newdir\nmv是”移动”和”改名字”合并的指令mv dir1 ./newdir &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;//dir1移动到当前目录下，并改名字为newdirmv dir1/dir2 dir3 &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp; //dir2移动到dir3目录下，并改名字为”原名”mv dir1/dir2 dir3/newdir &emsp;&emsp;&emsp;&emsp;//dir2移动到dir3目录下，并改名字为newdirmv dir1/dir2 dir3/dir4 &emsp;&emsp;&emsp;&emsp;&emsp; //dir2移动到dir4目录下，并改名字为”原名”mv dir1/dir2 dir3/dir4/newdir &emsp;&ensp;//dir2移动到dir4目录下，并改名字为newdir\n\n4）复制（文件和目录）copy\n①文件的复制\n\ncp file1 dir/newfile2  &emsp;&emsp;&emsp;&emsp;//file1被复制一份到dir目录下，并改名字为newfile2cp file1 dir  &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;//file1被复制一份到dir目录下，并改名字为”原名”cp dir1/filea dir2/newfile  &emsp;&ensp; //filea被复制一份到dir目录下，并改名字为newfile\n\n ②目录的复制（需要设置-r[recursive递归]参数，无视目录的层次）\n\ncp -r dir1 dir2  &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;//dir1被复制到dir2目录下，并改名字为”原名”cp -r dir1/dir2 dir3/newdir  &emsp;&emsp;&emsp;//dir2被复制到dir3目录下，并改名字为newdircp -r dir1/dir2 dir3/dir4  &emsp;&emsp;&emsp;&emsp; //dir2被复制到dir4目录下，并改名字为”原名”cp -r dir1/dir2 dir3/dir4/newdir &ensp;//dir2被复制到dir4目录下，并改名字为newdircp -r dir1 ../../newdir  &emsp;&emsp;&emsp;&emsp;&emsp;&ensp;//dir1被复制到上两级目录下，并改名字为newdir\n\n③删除（文件和目录）remove\n\nrm 文件rm -r 目录  &emsp;&emsp;&emsp;&emsp;&emsp;//-r[recursive递归]递归方式删除目录rm -rf 文件/目录  &emsp;&emsp; //-r force 递归强制方式删除文件，force强制，不需要额外导入提示\n\n9.文件操作1）查看文件内容\n\ncat filename  &emsp;&emsp;&emsp;//打印文件内容到输出终端more filename  &emsp;&emsp;//通过敲回车方式逐行查看文件的各个行内容，默认从第一行开始查看，&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; //不支持回看，q退出查看less &emsp;&emsp;&emsp; &emsp;&emsp;&emsp;&emsp;//通过”上下左右”键查看文件的各个部分内容，支持回看，q退出查看head -n filename &ensp; //查看文件的前n行内容tail -n filename &emsp;&ensp; //查看文件的最末尾n行内容wc filename &emsp;&emsp;&emsp; //查看文件的行数\n\n2）创建文件\n\ntouch dir1/filenametouch filename\n\n3）给文件追加内容\n\necho 内容 &gt; 文件名称 &emsp;&emsp;&emsp;&emsp;//把”内容”以[覆盖写]方式追加给”文件”echo 内容 &gt;&gt; 文件名称 &emsp;&emsp;&emsp; //把”内容”以[追加]方式写给”文件”\n\n（如果文件不存在会创建文件）\n10.用户操作配置文件：/etc/passwd1）创建用户 user add\n\n#useradd\n#useradd liming &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;//创建liming用户，同时会创建一个同名的组出来\n#useradd -g 组别编号 username &emsp;&emsp;&ensp;//把用户的组别设置好，避免创建同名的组出来\n#useradd -g 组编号 -u 用户编号 -d 家目录 username\n\n2）修改用户 user modify\n\n#usermod -g 组编号 -u 用户编号 -d 家目录 -l 新名字 username（修改家目录时需要手动创建之）\n\n3）删除用户 user delete\n\n#userdel username\n#userdel -r username //删除用户同时删除其家目录\n\n4）给用户设置密码，使其登录系统\n\npasswd 用户名\n\n11.组别操作配置文件：/etc/group1）创建组 group add\n\n#groupadd music\n#groupadd movie\n#groupadd php\n\n2）修改组 group modify\n\n#groupmod -g gid -n 新名字 groupname\n\n3）删除组 group delete\n\n#groupdel groupname //组下边如果有用户存在，就禁止删除\n\n12.查看指令可设置的参数\nman 指令\n\n13.给文件设置权限1）字母相对方式设置权限// 针对一个组别设置权限，其他组别权限没有变化，称为“相对方式”权限设置chmod指令chmod u+rwx filename //给filename文件的主人增加“读、写、执行”权限chmod g-rx filename //给filename文件的同组用户 删除“读、执行”权限\nchmod u+/-rwx,g+/-rwx,o+/-rwx filename说明：①每个单元“+” “-”只能使用一个②可以同时给一个组或多个组设置权限，组别之间使用“，”分割③每个单元的权限可以是“rwx”中的一个或多个\n\nchmod u+w,g-rx,o+rw filename //给filename文件主人增加写权限，同组删除读、执行权限，其他组增加读、写权限chmod u+w,u-x filename //给filename文件主人“增加写权限”同时“删除执行权限”\n\nchmod +/-rwx filename //无视具体组别，统一给全部的组设置权限\n\nchmod +rw filename //给filename全部用户增加“读、写”权限\n\n2）数字绝对方式设置权限r读：4 &emsp;&emsp; w写：2 &emsp;&emsp; x执行：10：没有权限1：执行2：写3：写、执行4：读5：读、执行6：读、写7：读、写、执行\nchmod ABC filename //ABC分别代表主人、同组、其他组用户的数字权限\n\nchmod 753 filename //主人读、写、执行；同组读、执行；其他组写、执行\n\n问：字母相对 和 数字绝对 方式权限设置取舍？答：修改的权限相对“比较少”的时候使用“字母”方式，相反，权限变动“非常多”的时候就使用“数字”方式\n14.在文件中查找内容grep 被搜索内容 文件\n\ngrep hello passwd //在passwd文件中搜索hello内容，会把hello所在行的内容都打印到终端显示\n\n15.计算文件占据磁盘空间大小\ndu -h 文件（目录）\n\n16.文件查找find 查找目录 选项 选项值 选项 选项值 …1）-name选项 根据名字进行查找\n\nfind / -name passwd &emsp;&emsp;&emsp;&emsp;//“递归遍历”/根目录及其内部深层目录，寻找名称等于“passwd”的文件find / -name “pas“[模糊查找] //在系统全部目录，模糊查找一个名字是“pas”开始的文件find / -name “er*” &emsp;&emsp;&emsp;&emsp;&emsp; //文件名字有出现“er”字样即可，不要位置\n\n2）限制查找的目录层次 -maxdepth -mindepth-maxdepth 限制查找的最深目录-mindepth 限制查找的最浅目录\n\nfind / -maxdepth 4 -name passwdfind / -maxdepth 4 -mindepth 3 -name passwd\n\n3）根据大小为条件进行文件查找-size +/-数字+号表示大小大于某个范围-号表示大小小于某个范围大小单位：-size 5 &emsp;&emsp; //单位是“512字节” 5512字节-size 10c &emsp; //单位是“字节” 10字节-size 3k &emsp;&ensp; //单位是“千字节” 31024字节-size 6M &emsp; //单位是“1024*千字节” 6M兆字节\n\nfind ./ -size 14c &emsp;&emsp;//在当前目录查找大小等于14千字节的文件find / -size +50M  &emsp;//在系统全部目录里边查找大小大于50M的文件\n\n","dateCreated":"2019-02-19T22:08:27+08:00","dateModified":"2019-02-19T22:08:05+08:00","datePublished":"2019-02-19T22:08:27+08:00","description":"","headline":"linux常用指令","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/02/19/linux常用指令/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/02/19/linux常用指令/","keywords":"linux"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"1.查看目录下有什么文件/目录\nls &emsp;&emsp;&emsp;&emsp;&emsp; //list 列出目录的文件信息ls -l或ll &emsp;&emsp;&ensp; //list -list 以”详细信息”查看目录文件ls -a &ensp;&emsp;&emsp; &emsp; //list -all 查看目录”全部”（包括隐藏文件）文件ls -al &ensp;&emsp;&emsp;&emsp; //list -all list 查看目录”全部”（包括隐藏文件）文件，以”详细信息”显示ls 目录 &ensp;&emsp; &emsp; //查看指定目录下有什么文件ls -i &emsp;&emsp;&emsp;&emsp; //查看文件索引号码\n\n2.进行目录切换\ncd dirname &emsp;//进行目录切换cd .. &emsp;&emsp;&emsp;&emsp;&ensp;//想上级目录切换cd ~ 或 cd &emsp;&ensp;//直接切换到当前用户\n\n3.查看完整的操作位置\npwd\n\n4.用户切换\nsu -  或 su - root &emsp;//向root用户切换exit &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp; //退回到原用户su 用户名 &emsp;&emsp;&emsp;&emsp;//普通用户切换\n\n多次使用su指令，会造成用户的”叠加”：（su和exit最好配合使用）lcs—&gt;root—&gt;lcs—&gt;root—&gt;lcs\n5.查看当前用户是谁\nwhoami\n\n6.图形界面与命令界面切换root用户可以切换\n\n#init 3\n#init 5\n\n7.查看一个指令对应的执行程序文件在哪\nwhich 指令\n\n8.目录相关操作1）创建目录 make directory\n\nmkdir 目录名字mkdir -p newdir/newdir/newdir //递归方式创建多个连续目录，新的多级目录数目如果大于等于2个，&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; 就要使用-p参数mkdir dir/newdir &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;//不用-p参数mkdir -p dir/newdir/newdir &emsp;&emsp;//使用-p参数\n\n2）移动目录 move\n\nmv dir1 dir2  &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;//把dir1移动到dir2目录下mv dir1/dir2 dir3  &emsp;&emsp;&emsp;&ensp; //把dir2移动到dir3目录下mv dir1/dir2 dir3/dir4  &emsp;&ensp;//把dir2移动到dir4目录下mv dir1/dir2 ./ &emsp;&emsp;&emsp;&emsp;&emsp;//把dir2移动到当前目录下\n\n3）改名字\n\nmv dir1 newdir &emsp;&emsp;&emsp;&emsp;//修改dir1的名字为newdir\nmv是”移动”和”改名字”合并的指令mv dir1 ./newdir &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;//dir1移动到当前目录下，并改名字为newdirmv dir1/dir2 dir3 &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp; //dir2移动到dir3目录下，并改名字为”原名”mv dir1/dir2 dir3/newdir &emsp;&emsp;&emsp;&emsp;//dir2移动到dir3目录下，并改名字为newdirmv dir1/dir2 dir3/dir4 &emsp;&emsp;&emsp;&emsp;&emsp; //dir2移动到dir4目录下，并改名字为”原名”mv dir1/dir2 dir3/dir4/newdir &emsp;&ensp;//dir2移动到dir4目录下，并改名字为newdir\n\n4）复制（文件和目录）copy\n①文件的复制\n\ncp file1 dir/newfile2  &emsp;&emsp;&emsp;&emsp;//file1被复制一份到dir目录下，并改名字为newfile2cp file1 dir  &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;//file1被复制一份到dir目录下，并改名字为”原名”cp dir1/filea dir2/newfile  &emsp;&ensp; //filea被复制一份到dir目录下，并改名字为newfile\n\n ②目录的复制（需要设置-r[recursive递归]参数，无视目录的层次）\n\ncp -r dir1 dir2  &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;//dir1被复制到dir2目录下，并改名字为”原名”cp -r dir1/dir2 dir3/newdir  &emsp;&emsp;&emsp;//dir2被复制到dir3目录下，并改名字为newdircp -r dir1/dir2 dir3/dir4  &emsp;&emsp;&emsp;&emsp; //dir2被复制到dir4目录下，并改名字为”原名”cp -r dir1/dir2 dir3/dir4/newdir &ensp;//dir2被复制到dir4目录下，并改名字为newdircp -r dir1 ../../newdir  &emsp;&emsp;&emsp;&emsp;&emsp;&ensp;//dir1被复制到上两级目录下，并改名字为newdir\n\n③删除（文件和目录）remove\n\nrm 文件rm -r 目录  &emsp;&emsp;&emsp;&emsp;&emsp;//-r[recursive递归]递归方式删除目录rm -rf 文件/目录  &emsp;&emsp; //-r force 递归强制方式删除文件，force强制，不需要额外导入提示\n\n9.文件操作1）查看文件内容\n\ncat filename  &emsp;&emsp;&emsp;//打印文件内容到输出终端more filename  &emsp;&emsp;//通过敲回车方式逐行查看文件的各个行内容，默认从第一行开始查看，&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; //不支持回看，q退出查看less &emsp;&emsp;&emsp; &emsp;&emsp;&emsp;&emsp;//通过”上下左右”键查看文件的各个部分内容，支持回看，q退出查看head -n filename &ensp; //查看文件的前n行内容tail -n filename &emsp;&ensp; //查看文件的最末尾n行内容wc filename &emsp;&emsp;&emsp; //查看文件的行数\n\n2）创建文件\n\ntouch dir1/filenametouch filename\n\n3）给文件追加内容\n\necho 内容 &gt; 文件名称 &emsp;&emsp;&emsp;&emsp;//把”内容”以[覆盖写]方式追加给”文件”echo 内容 &gt;&gt; 文件名称 &emsp;&emsp;&emsp; //把”内容”以[追加]方式写给”文件”\n\n（如果文件不存在会创建文件）\n10.用户操作配置文件：/etc/passwd1）创建用户 user add\n\n#useradd\n#useradd liming &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;//创建liming用户，同时会创建一个同名的组出来\n#useradd -g 组别编号 username &emsp;&emsp;&ensp;//把用户的组别设置好，避免创建同名的组出来\n#useradd -g 组编号 -u 用户编号 -d 家目录 username\n\n2）修改用户 user modify\n\n#usermod -g 组编号 -u 用户编号 -d 家目录 -l 新名字 username（修改家目录时需要手动创建之）\n\n3）删除用户 user delete\n\n#userdel username\n#userdel -r username //删除用户同时删除其家目录\n\n4）给用户设置密码，使其登录系统\n\npasswd 用户名\n\n11.组别操作配置文件：/etc/group1）创建组 group add\n\n#groupadd music\n#groupadd movie\n#groupadd php\n\n2）修改组 group modify\n\n#groupmod -g gid -n 新名字 groupname\n\n3）删除组 group delete\n\n#groupdel groupname //组下边如果有用户存在，就禁止删除\n\n12.查看指令可设置的参数\nman 指令\n\n13.给文件设置权限1）字母相对方式设置权限// 针对一个组别设置权限，其他组别权限没有变化，称为“相对方式”权限设置chmod指令chmod u+rwx filename //给filename文件的主人增加“读、写、执行”权限chmod g-rx filename //给filename文件的同组用户 删除“读、执行”权限\nchmod u+/-rwx,g+/-rwx,o+/-rwx filename说明：①每个单元“+” “-”只能使用一个②可以同时给一个组或多个组设置权限，组别之间使用“，”分割③每个单元的权限可以是“rwx”中的一个或多个\n\nchmod u+w,g-rx,o+rw filename //给filename文件主人增加写权限，同组删除读、执行权限，其他组增加读、写权限chmod u+w,u-x filename //给filename文件主人“增加写权限”同时“删除执行权限”\n\nchmod +/-rwx filename //无视具体组别，统一给全部的组设置权限\n\nchmod +rw filename //给filename全部用户增加“读、写”权限\n\n2）数字绝对方式设置权限r读：4 &emsp;&emsp; w写：2 &emsp;&emsp; x执行：10：没有权限1：执行2：写3：写、执行4：读5：读、执行6：读、写7：读、写、执行\nchmod ABC filename //ABC分别代表主人、同组、其他组用户的数字权限\n\nchmod 753 filename //主人读、写、执行；同组读、执行；其他组写、执行\n\n问：字母相对 和 数字绝对 方式权限设置取舍？答：修改的权限相对“比较少”的时候使用“字母”方式，相反，权限变动“非常多”的时候就使用“数字”方式\n14.在文件中查找内容grep 被搜索内容 文件\n\ngrep hello passwd //在passwd文件中搜索hello内容，会把hello所在行的内容都打印到终端显示\n\n15.计算文件占据磁盘空间大小\ndu -h 文件（目录）\n\n16.文件查找find 查找目录 选项 选项值 选项 选项值 …1）-name选项 根据名字进行查找\n\nfind / -name passwd &emsp;&emsp;&emsp;&emsp;//“递归遍历”/根目录及其内部深层目录，寻找名称等于“passwd”的文件find / -name “pas“[模糊查找] //在系统全部目录，模糊查找一个名字是“pas”开始的文件find / -name “er*” &emsp;&emsp;&emsp;&emsp;&emsp; //文件名字有出现“er”字样即可，不要位置\n\n2）限制查找的目录层次 -maxdepth -mindepth-maxdepth 限制查找的最深目录-mindepth 限制查找的最浅目录\n\nfind / -maxdepth 4 -name passwdfind / -maxdepth 4 -mindepth 3 -name passwd\n\n3）根据大小为条件进行文件查找-size +/-数字+号表示大小大于某个范围-号表示大小小于某个范围大小单位：-size 5 &emsp;&emsp; //单位是“512字节” 5512字节-size 10c &emsp; //单位是“字节” 10字节-size 3k &emsp;&ensp; //单位是“千字节” 31024字节-size 6M &emsp; //单位是“1024*千字节” 6M兆字节\n\nfind ./ -size 14c &emsp;&emsp;//在当前目录查找大小等于14千字节的文件find / -size +50M  &emsp;//在系统全部目录里边查找大小大于50M的文件\n\n","dateCreated":"2019-03-14T19:05:08+08:00","dateModified":"2019-02-19T22:08:05+08:00","datePublished":"2019-03-14T19:05:08+08:00","description":"","headline":"linux常用指令","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/03/14/linux常用指令/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/03/14/linux常用指令/","keywords":"linux"}</script>
     <meta name="description" content="1.查看目录下有什么文件/目录 ls &amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp; //list 列出目录的文件信息ls -l或ll &amp;emsp;&amp;emsp;&amp;ensp; //list -list 以”详细信息”查看目录文件ls -a &amp;ensp;&amp;emsp;&amp;emsp; &amp;emsp; //list -all 查看目录”全部”（包括隐藏文件）文件ls -al &amp;ensp;&amp;emsp">
 <meta name="keywords" content="linux">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="linux常用指令">
-<meta property="og:url" content="http://yoursite.com/2019/02/19/linux常用指令/index.html">
+<meta property="og:url" content="http://yoursite.com/2019/03/14/linux常用指令/index.html">
 <meta property="og:site_name" content="Brotherc">
 <meta property="og:description" content="1.查看目录下有什么文件/目录 ls &amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp; //list 列出目录的文件信息ls -l或ll &amp;emsp;&amp;emsp;&amp;ensp; //list -list 以”详细信息”查看目录文件ls -a &amp;ensp;&amp;emsp;&amp;emsp; &amp;emsp; //list -all 查看目录”全部”（包括隐藏文件）文件ls -al &amp;ensp;&amp;emsp">
 <meta property="og:locale" content="zh-cn">
@@ -173,9 +173,9 @@
     
     
         <div class="post-meta">
-    <time datetime="2019-02-19T22:08:27+08:00">
+    <time datetime="2019-03-14T19:05:08+08:00">
 	
-		    2月 19, 2019
+		    3月 14, 2019
     	
     </time>
     
@@ -342,7 +342,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/telegraf_Jolokia2_Input_Plugins/" data-tooltip="telegraf plugin inputs" aria-label="上一篇: telegraf plugin inputs">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/momentJs常用操作/" data-tooltip="moment.js常用操作" aria-label="上一篇: moment.js常用操作">
                 
                     <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -351,7 +351,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/02/14/通过策略模式和工厂模式减少代码中的if else/" data-tooltip="通过策略模式和工厂模式减少代码中的if else" aria-label="下一篇: 通过策略模式和工厂模式减少代码中的if else">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/kapactior/" data-tooltip="kapacitor issues" aria-label="下一篇: kapacitor issues">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right" aria-hidden="true"></i>
@@ -369,7 +369,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/02/19/linux常用指令/" title="分享到 Facebook">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/14/linux常用指令/" title="分享到 Facebook">
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
@@ -377,7 +377,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/02/19/linux常用指令/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/14/linux常用指令/" title="分享到 Twitter">
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -385,7 +385,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/02/19/linux常用指令/" title="分享到 Google+">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/14/linux常用指令/" title="分享到 Google+">
                     <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
             </li>
@@ -428,7 +428,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/telegraf_Jolokia2_Input_Plugins/" data-tooltip="telegraf plugin inputs" aria-label="上一篇: telegraf plugin inputs">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/momentJs常用操作/" data-tooltip="moment.js常用操作" aria-label="上一篇: moment.js常用操作">
                 
                     <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -437,7 +437,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/02/14/通过策略模式和工厂模式减少代码中的if else/" data-tooltip="通过策略模式和工厂模式减少代码中的if else" aria-label="下一篇: 通过策略模式和工厂模式减少代码中的if else">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/kapactior/" data-tooltip="kapacitor issues" aria-label="下一篇: kapacitor issues">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right" aria-hidden="true"></i>
@@ -455,7 +455,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/02/19/linux常用指令/" title="分享到 Facebook">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/14/linux常用指令/" title="分享到 Facebook">
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
@@ -463,7 +463,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/02/19/linux常用指令/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/14/linux常用指令/" title="分享到 Twitter">
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -471,7 +471,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/02/19/linux常用指令/" title="分享到 Google+">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/14/linux常用指令/" title="分享到 Google+">
                     <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
             </li>
@@ -499,7 +499,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/02/19/linux常用指令/">
+                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/14/linux常用指令/">
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>分享到 Facebook</span>
                     </a>
                 </li>
@@ -507,7 +507,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/02/19/linux常用指令/">
+                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/14/linux常用指令/">
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
                     </a>
                 </li>
@@ -515,7 +515,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/02/19/linux常用指令/">
+                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/14/linux常用指令/">
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>分享到 Google+</span>
                     </a>
                 </li>

@@ -11,7 +11,7 @@
     
     
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"angular遍历maphtml:12345&lt;ul&gt;    &lt;li *ngFor=&quot;let recipient of map | keyvalue&quot;&gt;        &#123;&#123;recipient.key&#125;&#125; --&gt; &#123;&#123;recipient.value&#125;&#125;    &lt;/li&gt;&lt;/ul&gt;\ncpmponent:12345myMap : Map&lt;string, boolean&gt;;for(let key of myMap.keys()) &#123;   console.log(key);   console.log(myMap.get(key));&#125;\n1234Object.keys(myMap).map( key =&gt; &#123;    console.log(&apos;key: &apos; + key);    console.log(&apos;value: &apos; + result[key]);&#125;);\n1234for (const [key, val] of map) &#123;  console.log(key);  console.log(val);&#125;\n参考：https://stackoverflow.com/questions/48187362/how-to-iterate-using-ngfor-loop-map-containing-key-as-string-and-values-as-map-i/48187637\n保留两位小数1Math.floor(15.7784514000 * 100) / 100 // 输出结果为 15.77\n创建Map并赋值1const map = new Map([[2, &apos;foo&apos;], [1, &apos;bar&apos;]]);\nangular中html界面的if else 表示1234567&lt;div *ngIf=&quot;someCondition; else falsyTemplate&quot;&gt;  &lt;h1&gt;Condition Passed!&lt;/h1&gt;&lt;/div&gt;&lt;ng-template #falsyTemplate&gt;  &lt;h1&gt;Condition Failed!&lt;/h1&gt;&lt;/ng-template&gt;\nangular中http请求的option、params使用1234let option = &#123;&#125;;const params = new HttpParams().append(&apos;key&apos;, String(&apos;val&apos;));params = params.append(&apos;status&apos;, String(status)); // 注意要从新赋值给paramsoption = &#123;params&#125;;\nangular判断Map类型123isMap(obj) &#123;  return obj instanceof Map;&#125;\n删除数组中的某个元素123const arr = [&apos;a&apos;,&apos;b&apos;,&apos;c&apos;,&apos;d&apos;];arr.splice(1,1);console.log(arr); //[&apos;a&apos;,&apos;c&apos;,&apos;d&apos;];\nangular的html根据条件显示样式html：1&lt;div [class.hide]=&quot;someCondition&quot;&gt;&lt;/div&gt;\ncss:123.hide &#123;    display: none;&#125;\n在父组件中直接调用子组件的函数父组件html：1&lt;app-child-form #childForm&gt;&lt;/app-child-form&gt;\n父组件component：123456@ViewChild(&apos;childForm&apos;)childForm: ChildFormComponent;f(): void &#123;    this.childForm.f();&#125;\n子组件component：123f(): void &#123;    console.log(&apos;child component&apos;);&#125;\nObject转成Map1const result = new Map(Object.entries(map));\n将Map的key、value转成数组12const values = Array.from(map.values());const keys = Array.from(map.keys());\n","dateCreated":"2019-03-14T13:00:50+08:00","dateModified":"2019-03-07T21:13:36+08:00","datePublished":"2019-03-14T13:00:50+08:00","description":"","headline":"angular常用操作","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/03/14/angular常用操作/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/03/14/angular常用操作/","keywords":"angular"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"angular遍历maphtml:12345&lt;ul&gt;    &lt;li *ngFor=&quot;let recipient of map | keyvalue&quot;&gt;        &#123;&#123;recipient.key&#125;&#125; --&gt; &#123;&#123;recipient.value&#125;&#125;    &lt;/li&gt;&lt;/ul&gt;\ncpmponent:12345myMap : Map&lt;string, boolean&gt;;for(let key of myMap.keys()) &#123;   console.log(key);   console.log(myMap.get(key));&#125;\n1234Object.keys(myMap).map( key =&gt; &#123;    console.log(&apos;key: &apos; + key);    console.log(&apos;value: &apos; + result[key]);&#125;);\n1234for (const [key, val] of map) &#123;  console.log(key);  console.log(val);&#125;\n参考：https://stackoverflow.com/questions/48187362/how-to-iterate-using-ngfor-loop-map-containing-key-as-string-and-values-as-map-i/48187637\n保留两位小数1Math.floor(15.7784514000 * 100) / 100 // 输出结果为 15.77\n创建Map并赋值1const map = new Map([[2, &apos;foo&apos;], [1, &apos;bar&apos;]]);\nangular中html界面的if else 表示1234567&lt;div *ngIf=&quot;someCondition; else falsyTemplate&quot;&gt;  &lt;h1&gt;Condition Passed!&lt;/h1&gt;&lt;/div&gt;&lt;ng-template #falsyTemplate&gt;  &lt;h1&gt;Condition Failed!&lt;/h1&gt;&lt;/ng-template&gt;\nangular中http请求的option、params使用1234let option = &#123;&#125;;const params = new HttpParams().append(&apos;key&apos;, String(&apos;val&apos;));params = params.append(&apos;status&apos;, String(status)); // 注意要从新赋值给paramsoption = &#123;params&#125;;\nangular判断Map类型123isMap(obj) &#123;  return obj instanceof Map;&#125;\n删除数组中的某个元素123const arr = [&apos;a&apos;,&apos;b&apos;,&apos;c&apos;,&apos;d&apos;];arr.splice(1,1);console.log(arr); //[&apos;a&apos;,&apos;c&apos;,&apos;d&apos;];\nangular的html根据条件显示样式html：1&lt;div [class.hide]=&quot;someCondition&quot;&gt;&lt;/div&gt;\ncss:123.hide &#123;    display: none;&#125;\n在父组件中直接调用子组件的函数父组件html：1&lt;app-child-form #childForm&gt;&lt;/app-child-form&gt;\n父组件component：123456@ViewChild(&apos;childForm&apos;)childForm: ChildFormComponent;f(): void &#123;    this.childForm.f();&#125;\n子组件component：123f(): void &#123;    console.log(&apos;child component&apos;);&#125;\nObject转成Map1const result = new Map(Object.entries(map));\n将Map的key、value转成数组12const values = Array.from(map.values());const keys = Array.from(map.keys());\n","dateCreated":"2019-03-14T19:05:08+08:00","dateModified":"2019-03-07T21:13:36+08:00","datePublished":"2019-03-14T19:05:08+08:00","description":"","headline":"angular常用操作","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/03/14/angular常用操作/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/03/14/angular常用操作/","keywords":"angular"}</script>
     <meta name="description" content="angular遍历maphtml:12345&amp;lt;ul&amp;gt;    &amp;lt;li *ngFor=&amp;quot;let recipient of map | keyvalue&amp;quot;&amp;gt;        &amp;#123;&amp;#123;recipient.key&amp;#125;&amp;#125; --&amp;gt; &amp;#123;&amp;#123;recipient.value&amp;#125;&amp;#125;    &amp;lt;/li">
 <meta name="keywords" content="angular">
 <meta property="og:type" content="blog">
@@ -173,7 +173,7 @@
     
     
         <div class="post-meta">
-    <time datetime="2019-03-14T13:00:50+08:00">
+    <time datetime="2019-03-14T19:05:08+08:00">
 	
 		    3月 14, 2019
     	
@@ -227,7 +227,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/momentJs常用操作/" data-tooltip="moment.js常用操作" aria-label="上一篇: moment.js常用操作">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/angular发送带参数的delete请求/" data-tooltip="angular2中如何在发送delete请求时携带参数" aria-label="上一篇: angular2中如何在发送delete请求时携带参数">
                 
                     <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -236,7 +236,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/telegraf_Jolokia2_Input_Plugins/" data-tooltip="telegraf plugin inputs" aria-label="下一篇: telegraf plugin inputs">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/通过策略模式和工厂模式减少代码中的if else/" data-tooltip="通过策略模式和工厂模式减少代码中的if else" aria-label="下一篇: 通过策略模式和工厂模式减少代码中的if else">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right" aria-hidden="true"></i>
@@ -313,7 +313,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/momentJs常用操作/" data-tooltip="moment.js常用操作" aria-label="上一篇: moment.js常用操作">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/angular发送带参数的delete请求/" data-tooltip="angular2中如何在发送delete请求时携带参数" aria-label="上一篇: angular2中如何在发送delete请求时携带参数">
                 
                     <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -322,7 +322,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/telegraf_Jolokia2_Input_Plugins/" data-tooltip="telegraf plugin inputs" aria-label="下一篇: telegraf plugin inputs">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/通过策略模式和工厂模式减少代码中的if else/" data-tooltip="通过策略模式和工厂模式减少代码中的if else" aria-label="下一篇: 通过策略模式和工厂模式减少代码中的if else">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right" aria-hidden="true"></i>

@@ -11,12 +11,12 @@
     
     
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"在linux下可以正常运行oracledb_exporter，在windows64下启动时报错12pkg-config --cflags oci8Package oci8 was not found in the pkg-config search path.\n因为linux中已经安装了oracle客户端，所以怀疑可能是windows下没有导致的。1.go-oci8\n地址：https://github.com/wendal/go-oci8\n它是 https://github.com/mattn/go-oci8 的分支，增加了windows下中文的安装说明及相关文件。\n从oracledb_exporter的代码中可以看到引用的是go-oci8_ &quot;github.com/mattn/go-oci8&quot;,所以需要安装windows的oracle连接。\n\n2.安装oci\n地址：https://www.oracle.com/technetwork/database/database-technologies/instant-client/downloads/index.html\n我的安装目录为：F:\\instantclient_18 _3\n\n3.安装oci-sdk\n地址：同上。\n我的安装目录为F:\\instantclient_18 _3\\sdk\n\n4.安装MinGW\n地址：https://sourceforge.net/projects/mingw-w64/files/\n我的安装目录为F:\\mingw-w64\n配置环境变量：在系统变量path中追加 F:\\mingw-w64\\x86_64-8.1.0-posix-seh-rt_v6-rev0\\mingw64\\bin\n\n5.下载go-oci8驱动\n地址：https://github.com/wendal/go-oci8\n运行命令 go get github.com/wendal/go-oci8 (报错先不管)\n复制GOPATH目下的\\src\\github.com\\wendal\\go-oci8\\windows\\pkg-config.exe到到mingw的安装目录mingw64\\bin下。\n复制GOPATH目下的\\src\\github.com\\wendal\\go-oci8\\windows\\oci8.pc到到mingw的安装目录mingw64\\lib\\pkg-config的下。\n修改oci8.pc\n#Package Information for pkg-configprefix=F:/instantclient_18_3exec_prefix=F:/instantclient_18_3libdir=${exec_prefix}includedir=${prefix}/sdk/include/\nName: OCIDescription: Oracle database engineVersion: 18.3Libs: -L${libdir} -lociLibs.private:Cflags: -I${includedir}\n\n\n\n6.环境变量配置\nPATH=原有PATH;F:\\instantclient_18_3;\nPKG_CONFIG_PATH=F:\\mingw-w64\\x86_64-8.1.0-posix-seh-rt_v6-rev0\\mingw64\\lib\\pkg-config\n\n启动报错1234F:\\GOENV\\src\\github.com\\wendal\\go-oci8\\oci8.go:119: cannot use (**_Ctype_struct_OCIServer)(unsafe.Pointer(&amp;conn.svc)) (type **_Ctype_struct_OCIServer) as type **_Ctype_struct_OCISvcCtx in argument to func literalF:\\GOENV\\src\\github.com\\wendal\\go-oci8\\oci8.go:136: cannot use (*_Ctype_struct_OCIServer)(c.svc) (type *_Ctype_struct_OCIServer) as type *_Ctype_struct_OCISvcCtx in argument to func literalF:\\GOENV\\src\\github.com\\wendal\\go-oci8\\oci8.go:263: cannot use (*_Ctype_struct_OCIServer)(s.c.svc) (type *_Ctype_struct_OCIServer) as type *_Ctype_struct_OCISvcCtx in argument to func literalF:\\GOENV\\src\\github.com\\wendal\\go-oci8\\oci8.go:383: cannot use (*_Ctype_struct_OCIServer)(s.c.svc) (type *_Ctype_struct_OCIServer) as type *_Ctype_struct_OCISvcCtx in argument to func literal\n替换GOPATH目下的\\src\\github.com\\wendal\\go-oci8里四处OCIServer为OCISvcCtx。参考：https://www.cnblogs.com/ghj1976/p/3437250.htmlhttps://blog.csdn.net/wq57885/article/details/82841792\n","dateCreated":"2019-02-01T17:56:58+08:00","dateModified":"2019-02-01T17:56:37+08:00","datePublished":"2019-02-01T17:56:58+08:00","description":"","headline":"pkg-config --cflags oci8, Package oci8 was not found in the pkg-config search path.","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/02/01/go-oracle/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/02/01/go-oracle/","keywords":"go"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"在linux下可以正常运行oracledb_exporter，在windows64下启动时报错12pkg-config --cflags oci8Package oci8 was not found in the pkg-config search path.\n因为linux中已经安装了oracle客户端，所以怀疑可能是windows下没有导致的。1.go-oci8\n地址：https://github.com/wendal/go-oci8\n它是 https://github.com/mattn/go-oci8 的分支，增加了windows下中文的安装说明及相关文件。\n从oracledb_exporter的代码中可以看到引用的是go-oci8_ &quot;github.com/mattn/go-oci8&quot;,所以需要安装windows的oracle连接。\n\n2.安装oci\n地址：https://www.oracle.com/technetwork/database/database-technologies/instant-client/downloads/index.html\n我的安装目录为：F:\\instantclient_18 _3\n\n3.安装oci-sdk\n地址：同上。\n我的安装目录为F:\\instantclient_18 _3\\sdk\n\n4.安装MinGW\n地址：https://sourceforge.net/projects/mingw-w64/files/\n我的安装目录为F:\\mingw-w64\n配置环境变量：在系统变量path中追加 F:\\mingw-w64\\x86_64-8.1.0-posix-seh-rt_v6-rev0\\mingw64\\bin\n\n5.下载go-oci8驱动\n地址：https://github.com/wendal/go-oci8\n运行命令 go get github.com/wendal/go-oci8 (报错先不管)\n复制GOPATH目下的\\src\\github.com\\wendal\\go-oci8\\windows\\pkg-config.exe到到mingw的安装目录mingw64\\bin下。\n复制GOPATH目下的\\src\\github.com\\wendal\\go-oci8\\windows\\oci8.pc到到mingw的安装目录mingw64\\lib\\pkg-config的下。\n修改oci8.pc\n#Package Information for pkg-configprefix=F:/instantclient_18_3exec_prefix=F:/instantclient_18_3libdir=${exec_prefix}includedir=${prefix}/sdk/include/\nName: OCIDescription: Oracle database engineVersion: 18.3Libs: -L${libdir} -lociLibs.private:Cflags: -I${includedir}\n\n\n\n6.环境变量配置\nPATH=原有PATH;F:\\instantclient_18_3;\nPKG_CONFIG_PATH=F:\\mingw-w64\\x86_64-8.1.0-posix-seh-rt_v6-rev0\\mingw64\\lib\\pkg-config\n\n启动报错1234F:\\GOENV\\src\\github.com\\wendal\\go-oci8\\oci8.go:119: cannot use (**_Ctype_struct_OCIServer)(unsafe.Pointer(&amp;conn.svc)) (type **_Ctype_struct_OCIServer) as type **_Ctype_struct_OCISvcCtx in argument to func literalF:\\GOENV\\src\\github.com\\wendal\\go-oci8\\oci8.go:136: cannot use (*_Ctype_struct_OCIServer)(c.svc) (type *_Ctype_struct_OCIServer) as type *_Ctype_struct_OCISvcCtx in argument to func literalF:\\GOENV\\src\\github.com\\wendal\\go-oci8\\oci8.go:263: cannot use (*_Ctype_struct_OCIServer)(s.c.svc) (type *_Ctype_struct_OCIServer) as type *_Ctype_struct_OCISvcCtx in argument to func literalF:\\GOENV\\src\\github.com\\wendal\\go-oci8\\oci8.go:383: cannot use (*_Ctype_struct_OCIServer)(s.c.svc) (type *_Ctype_struct_OCIServer) as type *_Ctype_struct_OCISvcCtx in argument to func literal\n替换GOPATH目下的\\src\\github.com\\wendal\\go-oci8里四处OCIServer为OCISvcCtx。参考：https://www.cnblogs.com/ghj1976/p/3437250.htmlhttps://blog.csdn.net/wq57885/article/details/82841792\n","dateCreated":"2019-03-14T19:05:08+08:00","dateModified":"2019-02-01T17:56:37+08:00","datePublished":"2019-03-14T19:05:08+08:00","description":"","headline":"pkg-config --cflags oci8, Package oci8 was not found in the pkg-config search path.","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/03/14/go-oracle/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/03/14/go-oracle/","keywords":"go"}</script>
     <meta name="description" content="在linux下可以正常运行oracledb_exporter，在windows64下启动时报错12pkg-config --cflags oci8Package oci8 was not found in the pkg-config search path. 因为linux中已经安装了oracle客户端，所以怀疑可能是windows下没有导致的。1.go-oci8 地址：https://gith">
 <meta name="keywords" content="go">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="pkg-config --cflags oci8, Package oci8 was not found in the pkg-config search path.">
-<meta property="og:url" content="http://yoursite.com/2019/02/01/go-oracle/index.html">
+<meta property="og:url" content="http://yoursite.com/2019/03/14/go-oracle/index.html">
 <meta property="og:site_name" content="Brotherc">
 <meta property="og:description" content="在linux下可以正常运行oracledb_exporter，在windows64下启动时报错12pkg-config --cflags oci8Package oci8 was not found in the pkg-config search path. 因为linux中已经安装了oracle客户端，所以怀疑可能是windows下没有导致的。1.go-oci8 地址：https://gith">
 <meta property="og:locale" content="zh-cn">
@@ -173,9 +173,9 @@
     
     
         <div class="post-meta">
-    <time datetime="2019-02-01T17:56:58+08:00">
+    <time datetime="2019-03-14T19:05:08+08:00">
 	
-		    2月 01, 2019
+		    3月 14, 2019
     	
     </time>
     
@@ -244,7 +244,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/02/12/加密类型及其相关算法/" data-tooltip="加密类型及其相关算法" aria-label="上一篇: 加密类型及其相关算法">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/Java常用操作/" data-tooltip="Java常用操作" aria-label="上一篇: Java常用操作">
                 
                     <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -252,7 +252,8 @@
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--disabled">
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/golang判断当前主机是物理机还是虚拟机/" data-tooltip="golang判断当前主机是物理机还是虚拟机" aria-label="下一篇: golang判断当前主机是物理机还是虚拟机">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right" aria-hidden="true"></i>
@@ -270,7 +271,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/02/01/go-oracle/" title="分享到 Facebook">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/14/go-oracle/" title="分享到 Facebook">
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
@@ -278,7 +279,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/02/01/go-oracle/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/14/go-oracle/" title="分享到 Twitter">
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -286,7 +287,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/02/01/go-oracle/" title="分享到 Google+">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/14/go-oracle/" title="分享到 Google+">
                     <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
             </li>
@@ -329,7 +330,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/02/12/加密类型及其相关算法/" data-tooltip="加密类型及其相关算法" aria-label="上一篇: 加密类型及其相关算法">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/Java常用操作/" data-tooltip="Java常用操作" aria-label="上一篇: Java常用操作">
                 
                     <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -337,7 +338,8 @@
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--disabled">
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/golang判断当前主机是物理机还是虚拟机/" data-tooltip="golang判断当前主机是物理机还是虚拟机" aria-label="下一篇: golang判断当前主机是物理机还是虚拟机">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right" aria-hidden="true"></i>
@@ -355,7 +357,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/02/01/go-oracle/" title="分享到 Facebook">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/14/go-oracle/" title="分享到 Facebook">
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
@@ -363,7 +365,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/02/01/go-oracle/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/14/go-oracle/" title="分享到 Twitter">
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -371,7 +373,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/02/01/go-oracle/" title="分享到 Google+">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/14/go-oracle/" title="分享到 Google+">
                     <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
             </li>
@@ -399,7 +401,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/02/01/go-oracle/">
+                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/14/go-oracle/">
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>分享到 Facebook</span>
                     </a>
                 </li>
@@ -407,7 +409,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/02/01/go-oracle/">
+                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/14/go-oracle/">
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
                     </a>
                 </li>
@@ -415,7 +417,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/02/01/go-oracle/">
+                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/14/go-oracle/">
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>分享到 Google+</span>
                     </a>
                 </li>

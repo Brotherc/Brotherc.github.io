@@ -6,24 +6,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Brotherc">
-    <title>moment.js常用操作 - Brotherc</title>
+    <title>golang判断当前主机是物理机还是虚拟机 - Brotherc</title>
     <meta name="author" content="Brotherc">
     
     
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"将String转成moment再格式化const date = ‘2019-03-07T21:16:00Z’;moment(date, ‘YYYY-MM-DDTHH:mm:ssZ’).format(‘HH:mm’)\n","dateCreated":"2019-03-14T19:05:08+08:00","dateModified":"2019-03-07T21:17:44+08:00","datePublished":"2019-03-14T19:05:08+08:00","description":"","headline":"moment.js常用操作","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/03/14/momentJs常用操作/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/03/14/momentJs常用操作/","keywords":"moment.js"}</script>
-    <meta name="description" content="将String转成moment再格式化const date = ‘2019-03-07T21:16:00Z’;moment(date, ‘YYYY-MM-DDTHH:mm:ssZ’).format(‘HH:mm’)">
-<meta name="keywords" content="moment.js">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"windows下命令行获取：1wmic path Win32_ComputerSystem get Model\nlinux下命令行获取：1dmidecode | egrep -i &apos;system-product-name|product|domU&apos;\n123456789101112131415161718192021222324func isVirtualMachine() (bool, error) &#123;\tmodel := &quot;&quot;\tvar cmd *exec.Cmd\tif runtime.GOOS == &quot;windows&quot; &#123;\t\tcmd = exec.Command(&quot;cmd&quot;, &quot;/C&quot;, &quot;wmic path Win32_ComputerSystem get Model&quot;)\t&#125; else &#123; // linux\t\tcmd = exec.Command(&quot;/bin/bash&quot;, &quot;-c&quot;, &quot;dmidecode | egrep -i &apos;system-product-name|product|domU&apos;&quot;)\t&#125;\tstdout, err := cmd.Output()\tif err != nil &#123;\t\treturn false, err\t&#125;\tmodel = string(stdout)\tif strings.Contains(model, &quot;VirtualBox&quot;) || strings.Contains(model, &quot;Virtual Machine&quot;) || strings.Contains(model, &quot;VMware Virtual Platform&quot;) ||\t\tstrings.Contains(model, &quot;KVM&quot;) || strings.Contains(model, &quot;Bochs&quot;) || strings.Contains(model, &quot;HVM domU&quot;) &#123;\t\treturn true, nil\t&#125;\treturn false, nil&#125;\n参考：https://unix.stackexchange.com/questions/89714/easy-way-to-determine-virtualization-technologyhttps://blog.csdn.net/yangzhenping/article/details/49996765?utm_source=blogxgwz1https://blog.csdn.net/greless/article/details/71107767https://stackoverflow.com/questions/34229486/how-to-execute-a-linux-built-in-command-in-golanghttps://stackoverflow.com/questions/6182369/exec-a-shell-command-in-gohttps://stackoverflow.com/questions/13008255/how-to-execute-a-simple-windows-command-in-golang\n","dateCreated":"2019-03-14T19:05:08+08:00","dateModified":"2019-03-14T18:31:59+08:00","datePublished":"2019-03-14T19:05:08+08:00","description":"","headline":"golang判断当前主机是物理机还是虚拟机","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/03/14/golang判断当前主机是物理机还是虚拟机/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/03/14/golang判断当前主机是物理机还是虚拟机/","keywords":"go"}</script>
+    <meta name="description" content="windows下命令行获取：1wmic path Win32_ComputerSystem get Model linux下命令行获取：1dmidecode | egrep -i &amp;apos;system-product-name|product|domU&amp;apos; 123456789101112131415161718192021222324func isVirtualMachine() (b">
+<meta name="keywords" content="go">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="moment.js常用操作">
-<meta property="og:url" content="http://yoursite.com/2019/03/14/momentJs常用操作/index.html">
+<meta property="og:title" content="golang判断当前主机是物理机还是虚拟机">
+<meta property="og:url" content="http://yoursite.com/2019/03/14/golang判断当前主机是物理机还是虚拟机/index.html">
 <meta property="og:site_name" content="Brotherc">
-<meta property="og:description" content="将String转成moment再格式化const date = ‘2019-03-07T21:16:00Z’;moment(date, ‘YYYY-MM-DDTHH:mm:ssZ’).format(‘HH:mm’)">
+<meta property="og:description" content="windows下命令行获取：1wmic path Win32_ComputerSystem get Model linux下命令行获取：1dmidecode | egrep -i &amp;apos;system-product-name|product|domU&amp;apos; 123456789101112131415161718192021222324func isVirtualMachine() (b">
 <meta property="og:locale" content="zh-cn">
-<meta property="og:updated_time" content="2019-03-07T13:17:44.737Z">
+<meta property="og:updated_time" content="2019-03-14T10:31:59.655Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="moment.js常用操作">
-<meta name="twitter:description" content="将String转成moment再格式化const date = ‘2019-03-07T21:16:00Z’;moment(date, ‘YYYY-MM-DDTHH:mm:ssZ’).format(‘HH:mm’)">
+<meta name="twitter:title" content="golang判断当前主机是物理机还是虚拟机">
+<meta name="twitter:description" content="windows下命令行获取：1wmic path Win32_ComputerSystem get Model linux下命令行获取：1dmidecode | egrep -i &amp;apos;system-product-name|product|domU&amp;apos; 123456789101112131415161718192021222324func isVirtualMachine() (b">
     
     
         
@@ -168,7 +168,7 @@
         <div class="post-header main-content-wrap text-left">
     
         <h1 class="post-title">
-            moment.js常用操作
+            golang判断当前主机是物理机还是虚拟机
         </h1>
     
     
@@ -187,7 +187,10 @@
     
     <div class="post-content markdown">
         <div class="main-content-wrap">
-            <h3 id="将String转成moment再格式化"><a href="#将String转成moment再格式化" class="headerlink" title="将String转成moment再格式化"></a>将String转成moment再格式化</h3><p>const date = ‘2019-03-07T21:16:00Z’;<br>moment(date, ‘YYYY-MM-DDTHH:mm:ssZ’).format(‘HH:mm’)</p>
+            <p>windows下命令行获取：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wmic path Win32_ComputerSystem get Model</span><br></pre></td></tr></table></figure></p>
+<p>linux下命令行获取：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dmidecode | egrep -i &apos;system-product-name|product|domU&apos;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">func isVirtualMachine() (bool, error) &#123;</span><br><span class="line">	model := &quot;&quot;</span><br><span class="line">	var cmd *exec.Cmd</span><br><span class="line"></span><br><span class="line">	if runtime.GOOS == &quot;windows&quot; &#123;</span><br><span class="line">		cmd = exec.Command(&quot;cmd&quot;, &quot;/C&quot;, &quot;wmic path Win32_ComputerSystem get Model&quot;)</span><br><span class="line">	&#125; else &#123; // linux</span><br><span class="line">		cmd = exec.Command(&quot;/bin/bash&quot;, &quot;-c&quot;, &quot;dmidecode | egrep -i &apos;system-product-name|product|domU&apos;&quot;)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	stdout, err := cmd.Output()</span><br><span class="line"></span><br><span class="line">	if err != nil &#123;</span><br><span class="line">		return false, err</span><br><span class="line">	&#125;</span><br><span class="line">	model = string(stdout)</span><br><span class="line"></span><br><span class="line">	if strings.Contains(model, &quot;VirtualBox&quot;) || strings.Contains(model, &quot;Virtual Machine&quot;) || strings.Contains(model, &quot;VMware Virtual Platform&quot;) ||</span><br><span class="line">		strings.Contains(model, &quot;KVM&quot;) || strings.Contains(model, &quot;Bochs&quot;) || strings.Contains(model, &quot;HVM domU&quot;) &#123;</span><br><span class="line">		return true, nil</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	return false, nil</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>参考：<br><a href="https://unix.stackexchange.com/questions/89714/easy-way-to-determine-virtualization-technology" target="_blank" rel="noopener">https://unix.stackexchange.com/questions/89714/easy-way-to-determine-virtualization-technology</a><br><a href="https://blog.csdn.net/yangzhenping/article/details/49996765?utm_source=blogxgwz1" target="_blank" rel="noopener">https://blog.csdn.net/yangzhenping/article/details/49996765?utm_source=blogxgwz1</a><br><a href="https://blog.csdn.net/greless/article/details/71107767" target="_blank" rel="noopener">https://blog.csdn.net/greless/article/details/71107767</a><br><a href="https://stackoverflow.com/questions/34229486/how-to-execute-a-linux-built-in-command-in-golang" target="_blank" rel="noopener">https://stackoverflow.com/questions/34229486/how-to-execute-a-linux-built-in-command-in-golang</a><br><a href="https://stackoverflow.com/questions/6182369/exec-a-shell-command-in-go" target="_blank" rel="noopener">https://stackoverflow.com/questions/6182369/exec-a-shell-command-in-go</a><br><a href="https://stackoverflow.com/questions/13008255/how-to-execute-a-simple-windows-command-in-golang" target="_blank" rel="noopener">https://stackoverflow.com/questions/13008255/how-to-execute-a-simple-windows-command-in-golang</a></p>
 
             
 
@@ -198,7 +201,7 @@
             <div class="post-footer-tags">
                 <span class="text-color-light text-small">标签</span><br>
                 
-    <a class="tag tag--primary tag--small t-link" href="/tags/moment-js/">moment.js</a>
+    <a class="tag tag--primary tag--small t-link" href="/tags/go/">go</a>
 
             </div>
         
@@ -208,7 +211,8 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--disabled">
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/go-oracle/" data-tooltip="pkg-config --cflags oci8, Package oci8 was not found in the pkg-config search path." aria-label="上一篇: pkg-config --cflags oci8, Package oci8 was not found in the pkg-config search path.">
                 
                     <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -217,7 +221,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/linux常用指令/" data-tooltip="linux常用指令" aria-label="下一篇: linux常用指令">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/centos7/" data-tooltip="centos7知识点" aria-label="下一篇: centos7知识点">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right" aria-hidden="true"></i>
@@ -235,7 +239,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/14/momentJs常用操作/" title="分享到 Facebook">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/14/golang判断当前主机是物理机还是虚拟机/" title="分享到 Facebook">
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
@@ -243,7 +247,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/14/momentJs常用操作/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/14/golang判断当前主机是物理机还是虚拟机/" title="分享到 Twitter">
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -251,7 +255,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/14/momentJs常用操作/" title="分享到 Google+">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/14/golang判断当前主机是物理机还是虚拟机/" title="分享到 Google+">
                     <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
             </li>
@@ -293,7 +297,8 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--disabled">
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/go-oracle/" data-tooltip="pkg-config --cflags oci8, Package oci8 was not found in the pkg-config search path." aria-label="上一篇: pkg-config --cflags oci8, Package oci8 was not found in the pkg-config search path.">
                 
                     <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -302,7 +307,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/linux常用指令/" data-tooltip="linux常用指令" aria-label="下一篇: linux常用指令">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/centos7/" data-tooltip="centos7知识点" aria-label="下一篇: centos7知识点">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right" aria-hidden="true"></i>
@@ -320,7 +325,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/14/momentJs常用操作/" title="分享到 Facebook">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/14/golang判断当前主机是物理机还是虚拟机/" title="分享到 Facebook">
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
@@ -328,7 +333,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/14/momentJs常用操作/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/14/golang判断当前主机是物理机还是虚拟机/" title="分享到 Twitter">
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -336,7 +341,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/14/momentJs常用操作/" title="分享到 Google+">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/14/golang判断当前主机是物理机还是虚拟机/" title="分享到 Google+">
                     <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
             </li>
@@ -364,7 +369,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/14/momentJs常用操作/">
+                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/14/golang判断当前主机是物理机还是虚拟机/">
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>分享到 Facebook</span>
                     </a>
                 </li>
@@ -372,7 +377,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/14/momentJs常用操作/">
+                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/14/golang判断当前主机是物理机还是虚拟机/">
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
                     </a>
                 </li>
@@ -380,7 +385,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/14/momentJs常用操作/">
+                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/14/golang判断当前主机是物理机还是虚拟机/">
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>分享到 Google+</span>
                     </a>
                 </li>
