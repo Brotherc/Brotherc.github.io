@@ -1,0 +1,461 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Brotherc">
+    <title>telegraf plugin inputs - Brotherc</title>
+    <meta name="author" content="Brotherc">
+    
+    
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"Jolokia2 Input PluginsJolokia Proxy:\n在某些情况下，不可能在目标平台上部署Jolokia代理。这可能是出于政治原因，或者是仪表化服务器上已经建立的JSR-160导出。在这些环境中，Jolokia可以作为JMX代理进行操作。在此设置中，代理部署在专用代理Java EE服务器(或其他受支持的代理平台)上。代理连接Jolokia JSON请求和对目标服务器的远程JSR-160调用的响应。\nJolokia代理是通用的，与目标服务器无关，因为它通过传入请求(与HTTP代理相同)获取目标的信息。由于需要扩展信息，所以只能使用Jolokia POST请求进行代理，因为目前还没有方法将目标信息封装在GET Url中。请求的基本Jolokia URL是代理服务器的URL，而目标参数包含在请求中。在下一个示例中，一个代理Jolokia请求通过一个代理tomcat-proxy查询服务器jboss的活动线程数，该代理在Jolokia上下文中部署了一个代理。代理URL是这样的。\n1http://jolokia-proxy:8080/jolokia\n\n请求的POST参数如下：\n12345678910&#123;  &quot;type&quot;:&quot;READ&quot;  &quot;mbean&quot;:&quot;java.lang:type=Threading&quot;,  &quot;attribute&quot;:&quot;ThreadCount&quot;,  &quot;target&quot;: &#123;              &quot;url&quot;:&quot;service:jmx:rmi:///jndi/rmi://jboss-as:8686/jmxrmi&quot;,              &quot;password&quot;:&quot;admin&quot;,              &quot;user&quot;:&quot;s!cr!t&quot;            &#125;,&#125;\n\n\nWAR Agent:\nWAR代理jolokia.war在Java EE服务器中部署为常规Web归档（WAR）。\n此外，这是代理模式的代理，它部署在一个简单、专用的应用服务器中，比如Tomcat或Jetty。\n\n安装与启动步骤1. 在Tomcat服务器上安装Jolokia代理1.从以下网址下载最新版本的Jolokia.war文件：https://jolokia.org/download.html2.将文件重命名jolokia-war-X.X.X.war为jolokia.war。3.将jolokia.war文件复制到${TOMCAT_HOME}/webapps。4.添加jolokia为角色tomcat-users.xml（Jolokia 1.6或更高版本强制使用）12&lt;role rolename=&quot;jolokia&quot;/&gt;&lt;user username=&quot;jolokia&quot; password=&quot;jolokia&quot; roles=&quot;jolokia&quot;/&gt;\n5.启动Tomcat服务器。6.停止Tomcat服务器并修改jolokia的web.xml，添加以下内容（自版本1.5.0起，默认情况下不启用代理模式）12345678&lt;init-param&gt;  &lt;description&gt;    Classnames (comma separated) of RequestDispatcher used in addition    to the LocalRequestDispatcher  &lt;/description&gt;  &lt;param-name&gt;dispatcherClasses&lt;/param-name&gt;  &lt;param-value&gt;org.jolokia.jsr160.Jsr160RequestDispatcher&lt;/param-value&gt;&lt;/init-param&gt;\n7.通过访问此URL验证Jolokia代理安装：http://tomcatip:8080/jolokia/version\n步骤2.配置Telegraf Jolokia2输入插件1234567891011121314151617181920212223242526272829[[inputs.jolokia2_proxy]]#   # default_tag_prefix      = &quot;&quot;#   # default_field_prefix    = &quot;&quot;#   # default_field_separator = &quot;.&quot;##   ## Proxy agent  url = &quot;http://tomcatip:8080/jolokia&quot;  username = &quot;jolokia&quot; #如果是jolokia-war-unsecured-1.6.0.war则不需要username  password = &quot;jolokia&quot; #如果是jolokia-war-unsecured-1.6.0.war则不需要password  response_timeout = &quot;30s&quot;##   ## Optional TLS config#   # tls_ca   = &quot;/var/private/ca.pem&quot;#   # tls_cert = &quot;/var/private/client.pem&quot;#   # tls_key  = &quot;/var/private/client-key.pem&quot;#   # insecure_skip_verify = false##   ## Add proxy targets to query#   # default_target_username = &quot;&quot;#   # default_target_password = &quot;&quot;  [[inputs.jolokia2_proxy.target]]    url = &quot;service:jmx:rmi:///jndi/rmi://ip:port/jmxrmi&quot;#     # username = &quot;&quot;#     # password = &quot;&quot;  [[inputs.jolokia2_agent.metric]]    name  = &quot;jvm_runtime&quot;    mbean = &quot;java.lang:type=Runtime&quot;    paths = [&quot;Uptime&quot;]\n参考：https://github.com/influxdata/telegraf/tree/master/plugins/inputs/jolokia2https://jolokia.org/features/proxy.htmlhttps://jolokia.org/agent.htmlhttps://jolokia.org/tutorial.htmlhttps://jolokia.org/agent/war.htmlhttp://repo1.maven.org/maven2/org/jolokia/jolokia-war-unsecured/1.6.0/https://jolokia.org/reference/html/proxy.htmlhttps://jolokia.org/reference/html/proxy.html\n","dateCreated":"2019-03-14T11:55:47+08:00","dateModified":"2019-03-13T15:29:13+08:00","datePublished":"2019-03-14T11:55:47+08:00","description":"","headline":"telegraf plugin inputs","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/03/14/telegraf_Jolokia2_Input_Plugins/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/03/14/telegraf_Jolokia2_Input_Plugins/","keywords":"telegraf"}</script>
+    <meta name="description" content="Jolokia2 Input PluginsJolokia Proxy: 在某些情况下，不可能在目标平台上部署Jolokia代理。这可能是出于政治原因，或者是仪表化服务器上已经建立的JSR-160导出。在这些环境中，Jolokia可以作为JMX代理进行操作。在此设置中，代理部署在专用代理Java EE服务器(或其他受支持的代理平台)上。代理连接Jolokia JSON请求和对目标服务器的远程JSR">
+<meta name="keywords" content="telegraf">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="telegraf plugin inputs">
+<meta property="og:url" content="http://yoursite.com/2019/03/14/telegraf_Jolokia2_Input_Plugins/index.html">
+<meta property="og:site_name" content="Brotherc">
+<meta property="og:description" content="Jolokia2 Input PluginsJolokia Proxy: 在某些情况下，不可能在目标平台上部署Jolokia代理。这可能是出于政治原因，或者是仪表化服务器上已经建立的JSR-160导出。在这些环境中，Jolokia可以作为JMX代理进行操作。在此设置中，代理部署在专用代理Java EE服务器(或其他受支持的代理平台)上。代理连接Jolokia JSON请求和对目标服务器的远程JSR">
+<meta property="og:locale" content="zh-cn">
+<meta property="og:updated_time" content="2019-03-13T07:29:13.980Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="telegraf plugin inputs">
+<meta name="twitter:description" content="Jolokia2 Input PluginsJolokia Proxy: 在某些情况下，不可能在目标平台上部署Jolokia代理。这可能是出于政治原因，或者是仪表化服务器上已经建立的JSR-160导出。在这些环境中，Jolokia可以作为JMX代理进行操作。在此设置中，代理部署在专用代理Java EE服务器(或其他受支持的代理平台)上。代理连接Jolokia JSON请求和对目标服务器的远程JSR">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://yoursite.com/assets/images/head.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-c4ozcsklz4kht2pebhp44xorvyverh23toayhn7i6ubrpyedak24hv1v0hyd.min.css">
+    <!--STYLES END-->
+    
+
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/ ">Brotherc</a>
+    </div>
+    
+        
+            <a class="header-right-picture " href="#about">
+        
+        
+            <img class="header-picture" src="/assets/images/head.jpg" alt="作者的图片">
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/#about">
+                    <img class="sidebar-profile-picture" src="/assets/images/head.jpg" alt="作者的图片">
+                </a>
+                <h4 class="sidebar-profile-name">Brotherc</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>java development</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/ " title="首页">
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">首页</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-categories" title="分类">
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">分类</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-tags" title="标签">
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">标签</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link open-algolia-search" href="/all-archives" title="归档">
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">归档</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="#about" title="关于">
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">关于</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://github.com/Brotherc" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="4"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            telegraf plugin inputs
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-03-14T11:55:47+08:00">
+	
+		    3月 14, 2019
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <h3 id="Jolokia2-Input-Plugins"><a href="#Jolokia2-Input-Plugins" class="headerlink" title="Jolokia2 Input Plugins"></a>Jolokia2 Input Plugins</h3><h4 id="Jolokia-Proxy"><a href="#Jolokia-Proxy" class="headerlink" title="Jolokia Proxy:"></a>Jolokia Proxy:</h4><ul>
+<li>在某些情况下，不可能在目标平台上部署Jolokia代理。这可能是出于政治原因，<br>或者是仪表化服务器上已经建立的JSR-160导出。在这些环境中，Jolokia可以作为JMX代理进行操作。<br>在此设置中，代理部署在专用代理Java EE服务器(或其他受支持的代理平台)上。<br>代理连接Jolokia JSON请求和对目标服务器的远程JSR-160调用的响应。</li>
+<li><p>Jolokia代理是通用的，与目标服务器无关，因为它通过传入请求(与HTTP代理相同)获取目标的信息。<br>由于需要扩展信息，所以只能使用Jolokia POST请求进行代理，因为目前还没有方法将目标信息封装<br>在GET Url中。请求的基本Jolokia URL是代理服务器的URL，而目标参数包含在请求中。<br>在下一个示例中，一个代理Jolokia请求通过一个代理tomcat-proxy查询服务器jboss的活动线程数，<br>该代理在Jolokia上下文中部署了一个代理。代理URL是这样的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://jolokia-proxy:8080/jolokia</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>请求的POST参数如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;type&quot;:&quot;READ&quot;</span><br><span class="line">  &quot;mbean&quot;:&quot;java.lang:type=Threading&quot;,</span><br><span class="line">  &quot;attribute&quot;:&quot;ThreadCount&quot;,</span><br><span class="line">  &quot;target&quot;: &#123;</span><br><span class="line">              &quot;url&quot;:&quot;service:jmx:rmi:///jndi/rmi://jboss-as:8686/jmxrmi&quot;,</span><br><span class="line">              &quot;password&quot;:&quot;admin&quot;,</span><br><span class="line">              &quot;user&quot;:&quot;s!cr!t&quot;</span><br><span class="line">            &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="WAR-Agent"><a href="#WAR-Agent" class="headerlink" title="WAR Agent:"></a>WAR Agent:</h4><ul>
+<li>WAR代理jolokia.war在Java EE服务器中部署为常规Web归档（WAR）。</li>
+<li>此外，这是代理模式的代理，它部署在一个简单、专用的应用服务器中，比如Tomcat或Jetty。</li>
+</ul>
+<h4 id="安装与启动"><a href="#安装与启动" class="headerlink" title="安装与启动"></a>安装与启动</h4><h5 id="步骤1-在Tomcat服务器上安装Jolokia代理"><a href="#步骤1-在Tomcat服务器上安装Jolokia代理" class="headerlink" title="步骤1. 在Tomcat服务器上安装Jolokia代理"></a>步骤1. 在Tomcat服务器上安装Jolokia代理</h5><p>1.从以下网址下载最新版本的Jolokia.war文件：<a href="https://jolokia.org/download.html" target="_blank" rel="noopener">https://jolokia.org/download.html</a><br>2.将文件重命名jolokia-war-X.X.X.war为jolokia.war。<br>3.将jolokia.war文件复制到${TOMCAT_HOME}/webapps。<br>4.添加jolokia为角色tomcat-users.xml（Jolokia 1.6或更高版本强制使用）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;role rolename=&quot;jolokia&quot;/&gt;</span><br><span class="line">&lt;user username=&quot;jolokia&quot; password=&quot;jolokia&quot; roles=&quot;jolokia&quot;/&gt;</span><br></pre></td></tr></table></figure></p>
+<p>5.启动Tomcat服务器。<br>6.停止Tomcat服务器并修改jolokia的web.xml，添加以下内容（自版本1.5.0起，默认情况下不启用代理模式）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;init-param&gt;</span><br><span class="line">  &lt;description&gt;</span><br><span class="line">    Classnames (comma separated) of RequestDispatcher used in addition</span><br><span class="line">    to the LocalRequestDispatcher</span><br><span class="line">  &lt;/description&gt;</span><br><span class="line">  &lt;param-name&gt;dispatcherClasses&lt;/param-name&gt;</span><br><span class="line">  &lt;param-value&gt;org.jolokia.jsr160.Jsr160RequestDispatcher&lt;/param-value&gt;</span><br><span class="line">&lt;/init-param&gt;</span><br></pre></td></tr></table></figure></p>
+<p>7.通过访问此URL验证Jolokia代理安装：<a href="http://tomcatip:8080/jolokia/version" target="_blank" rel="noopener">http://tomcatip:8080/jolokia/version</a></p>
+<h5 id="步骤2-配置Telegraf-Jolokia2输入插件"><a href="#步骤2-配置Telegraf-Jolokia2输入插件" class="headerlink" title="步骤2.配置Telegraf Jolokia2输入插件"></a>步骤2.配置Telegraf Jolokia2输入插件</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">[[inputs.jolokia2_proxy]]</span><br><span class="line">#   # default_tag_prefix      = &quot;&quot;</span><br><span class="line">#   # default_field_prefix    = &quot;&quot;</span><br><span class="line">#   # default_field_separator = &quot;.&quot;</span><br><span class="line">#</span><br><span class="line">#   ## Proxy agent</span><br><span class="line">  url = &quot;http://tomcatip:8080/jolokia&quot;</span><br><span class="line">  username = &quot;jolokia&quot; #如果是jolokia-war-unsecured-1.6.0.war则不需要username</span><br><span class="line">  password = &quot;jolokia&quot; #如果是jolokia-war-unsecured-1.6.0.war则不需要password</span><br><span class="line">  response_timeout = &quot;30s&quot;</span><br><span class="line">#</span><br><span class="line">#   ## Optional TLS config</span><br><span class="line">#   # tls_ca   = &quot;/var/private/ca.pem&quot;</span><br><span class="line">#   # tls_cert = &quot;/var/private/client.pem&quot;</span><br><span class="line">#   # tls_key  = &quot;/var/private/client-key.pem&quot;</span><br><span class="line">#   # insecure_skip_verify = false</span><br><span class="line">#</span><br><span class="line">#   ## Add proxy targets to query</span><br><span class="line">#   # default_target_username = &quot;&quot;</span><br><span class="line">#   # default_target_password = &quot;&quot;</span><br><span class="line">  [[inputs.jolokia2_proxy.target]]</span><br><span class="line">    url = &quot;service:jmx:rmi:///jndi/rmi://ip:port/jmxrmi&quot;</span><br><span class="line">#     # username = &quot;&quot;</span><br><span class="line">#     # password = &quot;&quot;</span><br><span class="line"></span><br><span class="line">  [[inputs.jolokia2_agent.metric]]</span><br><span class="line">    name  = &quot;jvm_runtime&quot;</span><br><span class="line">    mbean = &quot;java.lang:type=Runtime&quot;</span><br><span class="line">    paths = [&quot;Uptime&quot;]</span><br></pre></td></tr></table></figure>
+<p>参考：<br><a href="https://github.com/influxdata/telegraf/tree/master/plugins/inputs/jolokia2" target="_blank" rel="noopener">https://github.com/influxdata/telegraf/tree/master/plugins/inputs/jolokia2</a><br><a href="https://jolokia.org/features/proxy.html" target="_blank" rel="noopener">https://jolokia.org/features/proxy.html</a><br><a href="https://jolokia.org/agent.html" target="_blank" rel="noopener">https://jolokia.org/agent.html</a><br><a href="https://jolokia.org/tutorial.html" target="_blank" rel="noopener">https://jolokia.org/tutorial.html</a><br><a href="https://jolokia.org/agent/war.html" target="_blank" rel="noopener">https://jolokia.org/agent/war.html</a><br><a href="http://repo1.maven.org/maven2/org/jolokia/jolokia-war-unsecured/1.6.0/" target="_blank" rel="noopener">http://repo1.maven.org/maven2/org/jolokia/jolokia-war-unsecured/1.6.0/</a><br><a href="https://jolokia.org/reference/html/proxy.html" target="_blank" rel="noopener">https://jolokia.org/reference/html/proxy.html</a><br><a href="https://jolokia.org/reference/html/proxy.html" target="_blank" rel="noopener">https://jolokia.org/reference/html/proxy.html</a></p>
+
+            
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">标签</span><br>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/telegraf/">telegraf</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/02/19/linux常用指令/" data-tooltip="linux常用指令" aria-label="下一篇: linux常用指令">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/14/telegraf_Jolokia2_Input_Plugins/" title="分享到 Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/14/telegraf_Jolokia2_Input_Plugins/" title="分享到 Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/14/telegraf_Jolokia2_Input_Plugins/" title="分享到 Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 Brotherc. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/02/19/linux常用指令/" data-tooltip="linux常用指令" aria-label="下一篇: linux常用指令">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/14/telegraf_Jolokia2_Input_Plugins/" title="分享到 Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/14/telegraf_Jolokia2_Input_Plugins/" title="分享到 Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/14/telegraf_Jolokia2_Input_Plugins/" title="分享到 Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/14/telegraf_Jolokia2_Input_Plugins/">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>分享到 Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/14/telegraf_Jolokia2_Input_Plugins/">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/14/telegraf_Jolokia2_Input_Plugins/">
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>分享到 Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/head.jpg" alt="作者的图片">
+        
+            <h4 id="about-card-name">Brotherc</h4>
+        
+            <div id="about-card-bio"><p>java development</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br>
+                <p>java</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br>
+                zhuhai
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-dbd16rvloemmuxdzniplmnxxvwoz24eya9wol0b7vvmlokgqsjivmb8dnscy.min.js"></script>
+<!--SCRIPTS END-->
+
+    
+
+
+
+    </body>
+</html>
