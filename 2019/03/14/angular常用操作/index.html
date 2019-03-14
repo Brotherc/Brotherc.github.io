@@ -6,19 +6,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Brotherc">
-    <title>归档: 2019/3 - Brotherc</title>
+    <title>angular常用操作 - Brotherc</title>
     <meta name="author" content="Brotherc">
     
     
     
-    <script type="application/ld+json">{}</script>
-    <meta property="og:type" content="blog">
-<meta property="og:title" content="Brotherc">
-<meta property="og:url" content="http://yoursite.com/archives/2019/03/index.html">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"angular遍历maphtml:12345&lt;ul&gt;    &lt;li *ngFor=&quot;let recipient of map | keyvalue&quot;&gt;        &#123;&#123;recipient.key&#125;&#125; --&gt; &#123;&#123;recipient.value&#125;&#125;    &lt;/li&gt;&lt;/ul&gt;\ncpmponent:12345myMap : Map&lt;string, boolean&gt;;for(let key of myMap.keys()) &#123;   console.log(key);   console.log(myMap.get(key));&#125;\n1234Object.keys(myMap).map( key =&gt; &#123;    console.log(&apos;key: &apos; + key);    console.log(&apos;value: &apos; + result[key]);&#125;);\n1234for (const [key, val] of map) &#123;  console.log(key);  console.log(val);&#125;\n参考：https://stackoverflow.com/questions/48187362/how-to-iterate-using-ngfor-loop-map-containing-key-as-string-and-values-as-map-i/48187637\n保留两位小数1Math.floor(15.7784514000 * 100) / 100 // 输出结果为 15.77\n创建Map并赋值1const map = new Map([[2, &apos;foo&apos;], [1, &apos;bar&apos;]]);\nangular中html界面的if else 表示1234567&lt;div *ngIf=&quot;someCondition; else falsyTemplate&quot;&gt;  &lt;h1&gt;Condition Passed!&lt;/h1&gt;&lt;/div&gt;&lt;ng-template #falsyTemplate&gt;  &lt;h1&gt;Condition Failed!&lt;/h1&gt;&lt;/ng-template&gt;\nangular中http请求的option、params使用1234let option = &#123;&#125;;const params = new HttpParams().append(&apos;key&apos;, String(&apos;val&apos;));params = params.append(&apos;status&apos;, String(status)); // 注意要从新赋值给paramsoption = &#123;params&#125;;\nangular判断Map类型123isMap(obj) &#123;  return obj instanceof Map;&#125;\n删除数组中的某个元素123const arr = [&apos;a&apos;,&apos;b&apos;,&apos;c&apos;,&apos;d&apos;];arr.splice(1,1);console.log(arr); //[&apos;a&apos;,&apos;c&apos;,&apos;d&apos;];\nangular的html根据条件显示样式html：1&lt;div [class.hide]=&quot;someCondition&quot;&gt;&lt;/div&gt;\ncss:123.hide &#123;    display: none;&#125;\n在父组件中直接调用子组件的函数父组件html：1&lt;app-child-form #childForm&gt;&lt;/app-child-form&gt;\n父组件component：123456@ViewChild(&apos;childForm&apos;)childForm: ChildFormComponent;f(): void &#123;    this.childForm.f();&#125;\n子组件component：123f(): void &#123;    console.log(&apos;child component&apos;);&#125;\nObject转成Map1const result = new Map(Object.entries(map));\n将Map的key、value转成数组12const values = Array.from(map.values());const keys = Array.from(map.keys());\n","dateCreated":"2019-03-14T13:00:50+08:00","dateModified":"2019-03-07T21:13:36+08:00","datePublished":"2019-03-14T13:00:50+08:00","description":"","headline":"angular常用操作","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/03/14/angular常用操作/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/03/14/angular常用操作/","keywords":"angular"}</script>
+    <meta name="description" content="angular遍历maphtml:12345&amp;lt;ul&amp;gt;    &amp;lt;li *ngFor=&amp;quot;let recipient of map | keyvalue&amp;quot;&amp;gt;        &amp;#123;&amp;#123;recipient.key&amp;#125;&amp;#125; --&amp;gt; &amp;#123;&amp;#123;recipient.value&amp;#125;&amp;#125;    &amp;lt;/li">
+<meta name="keywords" content="angular">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="angular常用操作">
+<meta property="og:url" content="http://yoursite.com/2019/03/14/angular常用操作/index.html">
 <meta property="og:site_name" content="Brotherc">
+<meta property="og:description" content="angular遍历maphtml:12345&amp;lt;ul&amp;gt;    &amp;lt;li *ngFor=&amp;quot;let recipient of map | keyvalue&amp;quot;&amp;gt;        &amp;#123;&amp;#123;recipient.key&amp;#125;&amp;#125; --&amp;gt; &amp;#123;&amp;#123;recipient.value&amp;#125;&amp;#125;    &amp;lt;/li">
 <meta property="og:locale" content="zh-cn">
+<meta property="og:updated_time" content="2019-03-07T13:13:36.369Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Brotherc">
+<meta name="twitter:title" content="angular常用操作">
+<meta name="twitter:description" content="angular遍历maphtml:12345&amp;lt;ul&amp;gt;    &amp;lt;li *ngFor=&amp;quot;let recipient of map | keyvalue&amp;quot;&amp;gt;        &amp;#123;&amp;#123;recipient.key&amp;#125;&amp;#125; --&amp;gt; &amp;#123;&amp;#123;recipient.value&amp;#125;&amp;#125;    &amp;lt;/li">
     
     
         
@@ -48,7 +53,7 @@
         
     
 
-<header id="header" data-behavior="1">
+<header id="header" data-behavior="4">
     <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
     <div class="header-title">
         <a class="header-title-link" href="/ ">Brotherc</a>
@@ -71,7 +76,7 @@
         
     
 
-<nav id="sidebar" data-behavior="1">
+<nav id="sidebar" data-behavior="4">
     <div class="sidebar-container">
         
             <div class="sidebar-profile">
@@ -152,26 +157,22 @@
 </nav>
 
             
-            <div id="main" data-behavior="1"
+            <div id="main" data-behavior="4"
                  class="
                         hasCoverMetaIn
                         ">
                 
-    <section class="postShorten-group main-content-wrap">
+<article class="post">
     
     
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2019/03/14/angular常用操作/">
-                            angular常用操作
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            angular常用操作
+        </h1>
+    
+    
+        <div class="post-meta">
     <time datetime="2019-03-14T13:00:50+08:00">
 	
 		    3月 14, 2019
@@ -180,10 +181,13 @@
     
 </div>
 
-            </div>
-            
-                <div class="postShorten-content">
-                    <h3 id="angular遍历map"><a href="#angular遍历map" class="headerlink" title="angular遍历map"></a>angular遍历map</h3><p>html:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;ul&gt;</span><br><span class="line">    &lt;li *ngFor=&quot;let recipient of map | keyvalue&quot;&gt;</span><br><span class="line">        &#123;&#123;recipient.key&#125;&#125; --&gt; &#123;&#123;recipient.value&#125;&#125;</span><br><span class="line">    &lt;/li&gt;</span><br><span class="line">&lt;/ul&gt;</span><br></pre></td></tr></table></figure></p>
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <h3 id="angular遍历map"><a href="#angular遍历map" class="headerlink" title="angular遍历map"></a>angular遍历map</h3><p>html:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;ul&gt;</span><br><span class="line">    &lt;li *ngFor=&quot;let recipient of map | keyvalue&quot;&gt;</span><br><span class="line">        &#123;&#123;recipient.key&#125;&#125; --&gt; &#123;&#123;recipient.value&#125;&#125;</span><br><span class="line">    &lt;/li&gt;</span><br><span class="line">&lt;/ul&gt;</span><br></pre></td></tr></table></figure></p>
 <p>cpmponent:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">myMap : Map&lt;string, boolean&gt;;</span><br><span class="line">for(let key of myMap.keys()) &#123;</span><br><span class="line">   console.log(key);</span><br><span class="line">   console.log(myMap.get(key));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Object.keys(myMap).map( key =&gt; &#123;</span><br><span class="line">    console.log(&apos;key: &apos; + key);</span><br><span class="line">    console.log(&apos;value: &apos; + result[key]);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">for (const [key, val] of map) &#123;</span><br><span class="line">  console.log(key);</span><br><span class="line">  console.log(val);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -203,92 +207,93 @@
 <h3 id="Object转成Map"><a href="#Object转成Map" class="headerlink" title="Object转成Map"></a>Object转成Map</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const result = new Map(Object.entries(map));</span><br></pre></td></tr></table></figure>
 <h3 id="将Map的key、value转成数组"><a href="#将Map的key、value转成数组" class="headerlink" title="将Map的key、value转成数组"></a>将Map的key、value转成数组</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">const values = Array.from(map.values());</span><br><span class="line">const keys = Array.from(map.keys());</span><br></pre></td></tr></table></figure>
 
-                    
-                        
+            
 
-                    
-                    
-                        <p>
-                            <a href="/2019/03/14/angular常用操作/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
         </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
         
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2019/03/14/telegraf_Jolokia2_Input_Plugins/">
-                            telegraf plugin inputs
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-03-14T11:55:47+08:00">
-	
-		    3月 14, 2019
-    	
-    </time>
-    
-</div>
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">标签</span><br>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/angular/">angular</a>
 
             </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/telegraf_Jolokia2_Input_Plugins/" data-tooltip="telegraf plugin inputs" aria-label="下一篇: telegraf plugin inputs">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
             
-                <div class="postShorten-content">
-                    <h3 id="Jolokia2-Input-Plugins"><a href="#Jolokia2-Input-Plugins" class="headerlink" title="Jolokia2 Input Plugins"></a>Jolokia2 Input Plugins</h3><h4 id="Jolokia-Proxy"><a href="#Jolokia-Proxy" class="headerlink" title="Jolokia Proxy:"></a>Jolokia Proxy:</h4><ul>
-<li>在某些情况下，不可能在目标平台上部署Jolokia代理。这可能是出于政治原因，<br>或者是仪表化服务器上已经建立的JSR-160导出。在这些环境中，Jolokia可以作为JMX代理进行操作。<br>在此设置中，代理部署在专用代理Java EE服务器(或其他受支持的代理平台)上。<br>代理连接Jolokia JSON请求和对目标服务器的远程JSR-160调用的响应。</li>
-<li><p>Jolokia代理是通用的，与目标服务器无关，因为它通过传入请求(与HTTP代理相同)获取目标的信息。<br>由于需要扩展信息，所以只能使用Jolokia POST请求进行代理，因为目前还没有方法将目标信息封装<br>在GET Url中。请求的基本Jolokia URL是代理服务器的URL，而目标参数包含在请求中。<br>在下一个示例中，一个代理Jolokia请求通过一个代理tomcat-proxy查询服务器jboss的活动线程数，<br>该代理在Jolokia上下文中部署了一个代理。代理URL是这样的。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://jolokia-proxy:8080/jolokia</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>请求的POST参数如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;type&quot;:&quot;READ&quot;</span><br><span class="line">  &quot;mbean&quot;:&quot;java.lang:type=Threading&quot;,</span><br><span class="line">  &quot;attribute&quot;:&quot;ThreadCount&quot;,</span><br><span class="line">  &quot;target&quot;: &#123;</span><br><span class="line">              &quot;url&quot;:&quot;service:jmx:rmi:///jndi/rmi://jboss-as:8686/jmxrmi&quot;,</span><br><span class="line">              &quot;password&quot;:&quot;admin&quot;,</span><br><span class="line">              &quot;user&quot;:&quot;s!cr!t&quot;</span><br><span class="line">            &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<h4 id="WAR-Agent"><a href="#WAR-Agent" class="headerlink" title="WAR Agent:"></a>WAR Agent:</h4><ul>
-<li>WAR代理jolokia.war在Java EE服务器中部署为常规Web归档（WAR）。</li>
-<li>此外，这是代理模式的代理，它部署在一个简单、专用的应用服务器中，比如Tomcat或Jetty。</li>
-</ul>
-<h4 id="安装与启动"><a href="#安装与启动" class="headerlink" title="安装与启动"></a>安装与启动</h4><h5 id="步骤1-在Tomcat服务器上安装Jolokia代理"><a href="#步骤1-在Tomcat服务器上安装Jolokia代理" class="headerlink" title="步骤1. 在Tomcat服务器上安装Jolokia代理"></a>步骤1. 在Tomcat服务器上安装Jolokia代理</h5><p>1.从以下网址下载最新版本的Jolokia.war文件：<a href="https://jolokia.org/download.html" target="_blank" rel="noopener">https://jolokia.org/download.html</a><br>2.将文件重命名jolokia-war-X.X.X.war为jolokia.war。<br>3.将jolokia.war文件复制到${TOMCAT_HOME}/webapps。<br>4.添加jolokia为角色tomcat-users.xml（Jolokia 1.6或更高版本强制使用）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;role rolename=&quot;jolokia&quot;/&gt;</span><br><span class="line">&lt;user username=&quot;jolokia&quot; password=&quot;jolokia&quot; roles=&quot;jolokia&quot;/&gt;</span><br></pre></td></tr></table></figure></p>
-<p>5.启动Tomcat服务器。<br>6.停止Tomcat服务器并修改jolokia的web.xml，添加以下内容（自版本1.5.0起，默认情况下不启用代理模式）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;init-param&gt;</span><br><span class="line">  &lt;description&gt;</span><br><span class="line">    Classnames (comma separated) of RequestDispatcher used in addition</span><br><span class="line">    to the LocalRequestDispatcher</span><br><span class="line">  &lt;/description&gt;</span><br><span class="line">  &lt;param-name&gt;dispatcherClasses&lt;/param-name&gt;</span><br><span class="line">  &lt;param-value&gt;org.jolokia.jsr160.Jsr160RequestDispatcher&lt;/param-value&gt;</span><br><span class="line">&lt;/init-param&gt;</span><br></pre></td></tr></table></figure></p>
-<p>7.通过访问此URL验证Jolokia代理安装：<a href="http://tomcatip:8080/jolokia/version" target="_blank" rel="noopener">http://tomcatip:8080/jolokia/version</a></p>
-<h5 id="步骤2-配置Telegraf-Jolokia2输入插件"><a href="#步骤2-配置Telegraf-Jolokia2输入插件" class="headerlink" title="步骤2.配置Telegraf Jolokia2输入插件"></a>步骤2.配置Telegraf Jolokia2输入插件</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">[[inputs.jolokia2_proxy]]</span><br><span class="line">#   # default_tag_prefix      = &quot;&quot;</span><br><span class="line">#   # default_field_prefix    = &quot;&quot;</span><br><span class="line">#   # default_field_separator = &quot;.&quot;</span><br><span class="line">#</span><br><span class="line">#   ## Proxy agent</span><br><span class="line">  url = &quot;http://tomcatip:8080/jolokia&quot;</span><br><span class="line">  username = &quot;jolokia&quot; #如果是jolokia-war-unsecured-1.6.0.war则不需要username</span><br><span class="line">  password = &quot;jolokia&quot; #如果是jolokia-war-unsecured-1.6.0.war则不需要password</span><br><span class="line">  response_timeout = &quot;30s&quot;</span><br><span class="line">#</span><br><span class="line">#   ## Optional TLS config</span><br><span class="line">#   # tls_ca   = &quot;/var/private/ca.pem&quot;</span><br><span class="line">#   # tls_cert = &quot;/var/private/client.pem&quot;</span><br><span class="line">#   # tls_key  = &quot;/var/private/client-key.pem&quot;</span><br><span class="line">#   # insecure_skip_verify = false</span><br><span class="line">#</span><br><span class="line">#   ## Add proxy targets to query</span><br><span class="line">#   # default_target_username = &quot;&quot;</span><br><span class="line">#   # default_target_password = &quot;&quot;</span><br><span class="line">  [[inputs.jolokia2_proxy.target]]</span><br><span class="line">    url = &quot;service:jmx:rmi:///jndi/rmi://ip:port/jmxrmi&quot;</span><br><span class="line">#     # username = &quot;&quot;</span><br><span class="line">#     # password = &quot;&quot;</span><br><span class="line"></span><br><span class="line">  [[inputs.jolokia2_agent.metric]]</span><br><span class="line">    name  = &quot;jvm_runtime&quot;</span><br><span class="line">    mbean = &quot;java.lang:type=Runtime&quot;</span><br><span class="line">    paths = [&quot;Uptime&quot;]</span><br></pre></td></tr></table></figure>
-<p>参考：<br><a href="https://github.com/influxdata/telegraf/tree/master/plugins/inputs/jolokia2" target="_blank" rel="noopener">https://github.com/influxdata/telegraf/tree/master/plugins/inputs/jolokia2</a><br><a href="https://jolokia.org/features/proxy.html" target="_blank" rel="noopener">https://jolokia.org/features/proxy.html</a><br><a href="https://jolokia.org/agent.html" target="_blank" rel="noopener">https://jolokia.org/agent.html</a><br><a href="https://jolokia.org/tutorial.html" target="_blank" rel="noopener">https://jolokia.org/tutorial.html</a><br><a href="https://jolokia.org/agent/war.html" target="_blank" rel="noopener">https://jolokia.org/agent/war.html</a><br><a href="http://repo1.maven.org/maven2/org/jolokia/jolokia-war-unsecured/1.6.0/" target="_blank" rel="noopener">http://repo1.maven.org/maven2/org/jolokia/jolokia-war-unsecured/1.6.0/</a><br><a href="https://jolokia.org/reference/html/proxy.html" target="_blank" rel="noopener">https://jolokia.org/reference/html/proxy.html</a><br><a href="https://jolokia.org/reference/html/proxy.html" target="_blank" rel="noopener">https://jolokia.org/reference/html/proxy.html</a></p>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2019/03/14/telegraf_Jolokia2_Input_Plugins/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
             
-        </div>
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/14/angular常用操作/" title="分享到 Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
         
-    </article>
-    
-    <div class="pagination-bar">
-    <ul class="pagination">
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/14/angular常用操作/" title="分享到 Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/14/angular常用操作/" title="分享到 Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
         
         
-        <li class="pagination-number">第 1 页 共 1 页</li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
     </ul>
 </div>
 
-</section>
+
+        
+        
+            
+        
+    </div>
+</article>
 
 
 
@@ -299,6 +304,109 @@
 </footer>
 
             </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/telegraf_Jolokia2_Input_Plugins/" data-tooltip="telegraf plugin inputs" aria-label="下一篇: telegraf plugin inputs">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/14/angular常用操作/" title="分享到 Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/14/angular常用操作/" title="分享到 Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/14/angular常用操作/" title="分享到 Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/14/angular常用操作/">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>分享到 Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/14/angular常用操作/">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/14/angular常用操作/">
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>分享到 Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
             
         </div>
         
@@ -345,6 +453,8 @@
         <!--SCRIPTS-->
 <script src="/assets/js/script-dbd16rvloemmuxdzniplmnxxvwoz24eya9wol0b7vvmlokgqsjivmb8dnscy.min.js"></script>
 <!--SCRIPTS END-->
+
+    
 
 
 
