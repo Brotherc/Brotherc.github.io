@@ -6,19 +6,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Brotherc">
-    <title>标签: influxdb - Brotherc</title>
+    <title>influxdb query - Brotherc</title>
     <meta name="author" content="Brotherc">
     
     
     
-    <script type="application/ld+json">{}</script>
-    <meta property="og:type" content="blog">
-<meta property="og:title" content="Brotherc">
-<meta property="og:url" content="http://yoursite.com/tags/influxdb/index.html">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"注意点\n查询结果如果要显示tag，则无需指定查询tag，只需要在GROUP BY 中带上tag。\n如果GROUP BY 除了time 还有其它tag，则最好不要加fill(previous)，否则数据可能会错乱。\nSELECT * FROM (SELECT …) 会将值为空的数据过滤掉。\nGROUP BY time() 之后要确定用FIRST() 或 LAST()。\n如果查询的字段带有空格，则需要使用”字段名”查询。\n\ndemo数据以下数据来自telegraf 的[[inputs.prometheus]] 插件，每隔10秒从oracle_exporter中采集数据并写回influxdb，database为telegraf，measurement为oracledb_physical_iops，counter为field，其它为tag，部分tag省略，counter值已被修改。1234567891011121314#           time             counter            database        dbinstance            host           id                type1       2019/3/28 6:21:20       1                 orcl              ip1            localhost        orcl            read_iops2       2019/3/28 6:21:20       2                 orcl              ip1            localhost        orcl            write_iops3       2019/3/28 6:21:20       1                 orcl2             ip2            localhost        orcl2           read_iops4       2019/3/28 6:21:20       2                 orcl2             ip2            localhost        orcl2           write_iops5       2019/3/28 6:21:30       1                 orcl              ip1            localhost        orcl            read_iops6       2019/3/28 6:21:30       2                 orcl              ip1            localhost        orcl            write_iops7       2019/3/28 6:21:30       1                 orcl2             ip2            localhost        orcl2           read_iops8       2019/3/28 6:21:30       2                 orcl2             ip2            localhost        orcl2           write_iops[...]13     2019/3/28 6:21:50        1                 orcl              ip1            localhost        orcl            read_iops14     2019/3/28 6:21:50        2                 orcl              ip1            localhost        orcl            write_iops15     2019/3/28 6:21:50        1                 orcl2             ip2            localhost        orcl2           read_iops16     2019/3/28 6:21:50        2                 orcl2             ip2            localhost        orcl2           write_iops\nmavenpom.xml：123456&lt;!-- https://mvnrepository.com/artifact/org.influxdb/influxdb-java --&gt;&lt;dependency&gt;    &lt;groupId&gt;org.influxdb&lt;/groupId&gt;    &lt;artifactId&gt;influxdb-java&lt;/artifactId&gt;    &lt;version&gt;2.14&lt;/version&gt;&lt;/dependency&gt;\nspringbootapplication.yml：123spring:  influx:    url: http://localhost:8086\njava:config：12345678910111213141516171819@Componentpublic class InfluxDbHolder &#123;    private final InfluxDBResultMapper mapper;    private final InfluxDB db;    @Autowired    public InfluxDbHolder(InfluxDB db) &#123;        this.db = db;        this.mapper = new InfluxDBResultMapper();    &#125;    public InfluxDBResultMapper getMapper() &#123;        return mapper;    &#125;    public InfluxDB getDb() &#123;        return db;    &#125;&#125;\nentity：1234567891011121314@Data@Measurement(name = &quot;oracledb_physical_iops&quot;)public class DbIOps &#123;    @Column(name = &quot;time&quot;)    @JsonDeserialize(using = InstantJacksonDeserialize.class)    @JsonSerialize(using = InstantJacksonSerializer.class)    private Instant time;    @Column(name = &quot;type&quot;, tag = true)    private String type;    @Column(name = &quot;counter&quot;)    private Integer counter;&#125;\n123456789101112131415161718@Datapublic class InfluxdbCriteria &#123;    private Integer during;    private Integer groupTime;    private Integer offset;    public void validate() &#123;        if (during == null) &#123;            during = 1;        &#125;        if (groupTime == null) &#123;            groupTime = 10;        &#125;        if (offset == null) &#123;            offset = 0;        &#125;    &#125;&#125;\nservice：1234567891011121314151617181920public Map&lt;Instant, List&lt;DbIOps&gt;&gt; getDatabaseIOps(String dbId, InfluxdbCriteria databaseCriteria) &#123;    databaseCriteria.validate();    Integer during = databaseCriteria.getDuring();    Integer groupTime = databaseCriteria.getGroupTime();    Integer offset = databaseCriteria.getOffset();    String sql = &quot;SELECT first(counter) as counter &quot; +                    &quot;FROM oracledb_physical_iops &quot; +                        &quot;WHERE id=&apos;&quot;+ dbId + &quot;&apos; AND time &gt; now() - &quot; + during + &quot;h &quot; +                            &quot;group by type, time(&quot;+ groupTime + &quot;m, &quot; + offset + &quot;s)&quot;;    Query query = new Query(sql, &quot;telegraf&quot;);    QueryResult result = holder.getDb().query(query);    List&lt;DbIOps&gt; dbIOpsList = holder.getMapper().toPOJO(result, DbIOps.class);    Map&lt;Instant, List&lt;DbIOps&gt;&gt; map = dbIOpsList.stream().collect(Collectors.groupingBy(DbIOps::getTime));    //对时间排序    Map&lt;Instant, List&lt;DbIOps&gt;&gt; sortMap = new TreeMap&lt;&gt;((Instant instant1, Instant instant2) -&gt; instant1.compareTo(instant2));    sortMap.putAll(map);    return sortMap;&#125;\ncontroller：1234@GetMapping(&quot;/databaseIOps/&#123;dbId&#125;&quot;)public ResponseEntity getDatabaseIOps(@PathVariable String dbId, InfluxdbCriteria databaseCriteria) &#123;    return ResponseEntity.ok(databaseService.getDatabaseIOps(dbId, databaseCriteria));&#125;\nangularservice：123456789101112131415161718/** * 查询数据库IOpsmetrics */getDatabaseIOps(dbId: string, during: number): Observable&lt;any&gt; &#123;    // during: 最近during小时    const params = DateUtils.getInfluxdbParams(during);    return this.http.get&lt;any&gt;(`databaseIOps/$&#123;dbId&#125;`, &#123;        params: &#123;            during: String(during),            groupTime: String(params.groupTime),            offset: String(params.offset)        &#125;    &#125;).pipe(        retry(1),        catchError(this.handleError.bind(this))    );&#125;\nutils：1234567891011121314151617export class DateUtils &#123;    public static getInfluxdbParams(during: number): any &#123;        let groupTime = 10;        let offset = 0;        if (during === 1) &#123;            groupTime = 5;            offset = (moment().minutes() % 5) * 60 - 30;        &#125; else if (during === 3) &#123;            groupTime = 15;            offset = (moment().minutes() % 15) * 60 - 30;        &#125; else if (during === 12) &#123;            groupTime = 60;            offset = (moment().minutes() % 60) * 60 - 30;        &#125;        return &#123;groupTime: groupTime, offset: offset&#125;;    &#125;&#125;\n","dateCreated":"2019-03-28T15:26:05+08:00","dateModified":"2019-03-28T15:23:22+08:00","datePublished":"2019-03-28T15:26:05+08:00","description":"","headline":"influxdb query","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/03/28/influxdb_query/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/03/28/influxdb_query/","keywords":"influxdb"}</script>
+    <meta name="description" content="注意点 查询结果如果要显示tag，则无需指定查询tag，只需要在GROUP BY 中带上tag。 如果GROUP BY 除了time 还有其它tag，则最好不要加fill(previous)，否则数据可能会错乱。 SELECT * FROM (SELECT …) 会将值为空的数据过滤掉。 GROUP BY time() 之后要确定用FIRST() 或 LAST()。 如果查询的字段带有空格，则需要">
+<meta name="keywords" content="influxdb">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="influxdb query">
+<meta property="og:url" content="http://yoursite.com/2019/03/28/influxdb_query/index.html">
 <meta property="og:site_name" content="Brotherc">
+<meta property="og:description" content="注意点 查询结果如果要显示tag，则无需指定查询tag，只需要在GROUP BY 中带上tag。 如果GROUP BY 除了time 还有其它tag，则最好不要加fill(previous)，否则数据可能会错乱。 SELECT * FROM (SELECT …) 会将值为空的数据过滤掉。 GROUP BY time() 之后要确定用FIRST() 或 LAST()。 如果查询的字段带有空格，则需要">
 <meta property="og:locale" content="zh-cn">
+<meta property="og:updated_time" content="2019-03-28T07:23:22.510Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Brotherc">
+<meta name="twitter:title" content="influxdb query">
+<meta name="twitter:description" content="注意点 查询结果如果要显示tag，则无需指定查询tag，只需要在GROUP BY 中带上tag。 如果GROUP BY 除了time 还有其它tag，则最好不要加fill(previous)，否则数据可能会错乱。 SELECT * FROM (SELECT …) 会将值为空的数据过滤掉。 GROUP BY time() 之后要确定用FIRST() 或 LAST()。 如果查询的字段带有空格，则需要">
     
     
         
@@ -48,7 +53,7 @@
         
     
 
-<header id="header" data-behavior="1">
+<header id="header" data-behavior="4">
     <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
     <div class="header-title">
         <a class="header-title-link" href="/ ">Brotherc</a>
@@ -71,7 +76,7 @@
         
     
 
-<nav id="sidebar" data-behavior="1">
+<nav id="sidebar" data-behavior="4">
     <div class="sidebar-container">
         
             <div class="sidebar-profile">
@@ -152,26 +157,22 @@
 </nav>
 
             
-            <div id="main" data-behavior="1"
+            <div id="main" data-behavior="4"
                  class="
                         hasCoverMetaIn
                         ">
                 
-    <section class="postShorten-group main-content-wrap">
+<article class="post">
     
     
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2019/03/28/influxdb_query/">
-                            influxdb query
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            influxdb query
+        </h1>
+    
+    
+        <div class="post-meta">
     <time datetime="2019-03-28T15:26:05+08:00">
 	
 		    3月 28, 2019
@@ -180,10 +181,13 @@
     
 </div>
 
-            </div>
-            
-                <div class="postShorten-content">
-                    <h3 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h3><ul>
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <h3 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h3><ul>
 <li>查询结果如果要显示tag，则无需指定查询tag，只需要在GROUP BY 中带上tag。</li>
 <li>如果GROUP BY 除了time 还有其它tag，则最好不要加fill(previous)，否则数据可能会错乱。</li>
 <li>SELECT * FROM (SELECT …) 会将值为空的数据过滤掉。</li>
@@ -201,78 +205,94 @@
 <h4 id="angular"><a href="#angular" class="headerlink" title="angular"></a>angular</h4><p>service：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 查询数据库IOpsmetrics</span><br><span class="line"> */</span><br><span class="line">getDatabaseIOps(dbId: string, during: number): Observable&lt;any&gt; &#123;</span><br><span class="line">    // during: 最近during小时</span><br><span class="line">    const params = DateUtils.getInfluxdbParams(during);</span><br><span class="line"></span><br><span class="line">    return this.http.get&lt;any&gt;(`databaseIOps/$&#123;dbId&#125;`, &#123;</span><br><span class="line">        params: &#123;</span><br><span class="line">            during: String(during),</span><br><span class="line">            groupTime: String(params.groupTime),</span><br><span class="line">            offset: String(params.offset)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;).pipe(</span><br><span class="line">        retry(1),</span><br><span class="line">        catchError(this.handleError.bind(this))</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>utils：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">export class DateUtils &#123;</span><br><span class="line">    public static getInfluxdbParams(during: number): any &#123;</span><br><span class="line">        let groupTime = 10;</span><br><span class="line">        let offset = 0;</span><br><span class="line">        if (during === 1) &#123;</span><br><span class="line">            groupTime = 5;</span><br><span class="line">            offset = (moment().minutes() % 5) * 60 - 30;</span><br><span class="line">        &#125; else if (during === 3) &#123;</span><br><span class="line">            groupTime = 15;</span><br><span class="line">            offset = (moment().minutes() % 15) * 60 - 30;</span><br><span class="line">        &#125; else if (during === 12) &#123;</span><br><span class="line">            groupTime = 60;</span><br><span class="line">            offset = (moment().minutes() % 60) * 60 - 30;</span><br><span class="line">        &#125;</span><br><span class="line">        return &#123;groupTime: groupTime, offset: offset&#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 
-                    
-                        
+            
 
-                    
-                    
-                        <p>
-                            <a href="/2019/03/28/influxdb_query/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
         </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
         
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2019/03/28/influxdb/">
-                            influxdb issues
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-03-28T12:03:05+08:00">
-	
-		    3月 28, 2019
-    	
-    </time>
-    
-</div>
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">标签</span><br>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/influxdb/">influxdb</a>
 
             </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/28/oracle账号/" data-tooltip="oracle账号" aria-label="下一篇: oracle账号">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
             
-                <div class="postShorten-content">
-                    <h3 id="org-influxdb-InfluxDBIOException-java-net-SocketTimeoutException-timeout"><a href="#org-influxdb-InfluxDBIOException-java-net-SocketTimeoutException-timeout" class="headerlink" title="org.influxdb.InfluxDBIOException: java.net.SocketTimeoutException: timeout"></a>org.influxdb.InfluxDBIOException: java.net.SocketTimeoutException: timeout</h3><p>使用influxdb的java客户端连接influxdb：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">InfluxDB influxDB = InfluxDBFactory.connect(&quot;http://localhost:8086&quot;);</span><br></pre></td></tr></table></figure></p>
-<p>报错：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Exception in thread &quot;main&quot; org.influxdb.InfluxDBIOException: java.net.SocketTimeoutException: timeout</span><br><span class="line">	at org.influxdb.impl.InfluxDBImpl.execute(InfluxDBImpl.java:800)</span><br><span class="line">	at org.influxdb.impl.InfluxDBImpl.write(InfluxDBImpl.java:455)</span><br></pre></td></tr></table></figure></p>
-<p>更改OKHttpClient的默认超时：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">OkHttpClient.Builder client = new OkHttpClient.Builder()</span><br><span class="line">        .connectTimeout(1, TimeUnit.MINUTES)</span><br><span class="line">        .readTimeout(1, TimeUnit.MINUTES)</span><br><span class="line">        .writeTimeout(2, TimeUnit.MINUTES)</span><br><span class="line">        .retryOnConnectionFailure(true);</span><br><span class="line">InfluxDB influxDB = InfluxDBFactory.connect(&quot;http://localhost:8086&quot;, client);</span><br></pre></td></tr></table></figure></p>
-<p>参考：<br><a href="https://github.com/influxdata/influxdb-java" target="_blank" rel="noopener">https://github.com/influxdata/influxdb-java</a><br><a href="https://stackoverflow.com/questions/50922473/influxdbioexception-java-net-sockettimeoutexception-timeout" target="_blank" rel="noopener">https://stackoverflow.com/questions/50922473/influxdbioexception-java-net-sockettimeoutexception-timeout</a></p>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2019/03/28/influxdb/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
             
-        </div>
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/28/influxdb_query/" title="分享到 Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
         
-    </article>
-    
-    <div class="pagination-bar">
-    <ul class="pagination">
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/28/influxdb_query/" title="分享到 Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/28/influxdb_query/" title="分享到 Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
         
         
-        <li class="pagination-number">第 1 页 共 1 页</li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
     </ul>
 </div>
 
-</section>
+
+        
+        
+            
+        
+    </div>
+</article>
+
 
 
                 <footer id="footer" class="main-content-wrap">
@@ -282,6 +302,109 @@
 </footer>
 
             </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/28/oracle账号/" data-tooltip="oracle账号" aria-label="下一篇: oracle账号">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/28/influxdb_query/" title="分享到 Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/28/influxdb_query/" title="分享到 Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/28/influxdb_query/" title="分享到 Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/28/influxdb_query/">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>分享到 Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/28/influxdb_query/">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/28/influxdb_query/">
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>分享到 Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
             
         </div>
         
@@ -328,6 +451,8 @@
         <!--SCRIPTS-->
 <script src="/assets/js/script-dbd16rvloemmuxdzniplmnxxvwoz24eya9wol0b7vvmlokgqsjivmb8dnscy.min.js"></script>
 <!--SCRIPTS END-->
+
+    
 
 
 
