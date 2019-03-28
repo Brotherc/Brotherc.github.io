@@ -241,13 +241,31 @@
 <li><p>本机直接通过sock方式访问（IPC）</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlplus / as sysdba</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>通过TCP建立连接到Oracle服务器&amp;Oracle网络配置  </p>
+<li><p>通过TCP建立连接到Oracle服务器&amp;Oracle网络配置</p>
 <p>方式一：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// ora10g --&gt;必须在 $ORACLE_HOME/network/admin/tnsnames.ora配置出如何访问到远程数据库服务器</span><br><span class="line">tnsping ora10g</span><br><span class="line">sqlplus sys/oracle@ora10g as sysdba</span><br></pre></td></tr></table></figure>
 <p>方式二：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 不需要任何配置，但oracle服务器必须在listener.ora定义被远程访问的方式</span><br><span class="line">sqlplus sys/oracle@ip:1521/ora10g as sysdba</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
+<h3 id="执行sql流程"><a href="#执行sql流程" class="headerlink" title="执行sql流程"></a>执行sql流程</h3><ul>
+<li>用户进程 执行一个查询语句，比如select * from emp where empno=7839;</li>
+<li>用户进程已经跟服务进程建立链接把该用户进程的信息存储到PGA的UGA中。</li>
+<li>语句经过PGA处理后传递给实例</li>
+<li>实例中的共享池负责处理这条语句</li>
+<li>库缓存区去判断语句如何分析–软分析或硬分析</li>
+<li>根据cbo得到的执行计划准备去执行语句，查询语句中的对象存放在哪个表空间的指定的行放在哪个块里<br>面，数据字典缓存区得到这些信息</li>
+<li>开始执行</li>
+<li>判断在数据缓存区data buffer cache中是否缓存需要的块</li>
+<li><p>如果是，在内存读数据得到需行的结果返回给用户，用户看到执行的结果，undo缓存块会对该块做镜像，然后<br>读该镜像中的数据得到行的结果，用户看到执行的结果</p>
+</li>
+<li><p>oracle做这么多就是为了尽可能用内存去操作</p>
+</li>
+<li>语句执行性能的高低，从shared pool中的library cache和data dict cache的命中率进行判断</li>
+<li>database buffer cache 命中率 关系到逻辑读（内存取数据）或物理读（磁盘取数据）</li>
+<li>redo log buffer 记录块的变化</li>
+</ul>
+<p>DBWR进程会将已提交的数据写到物理磁盘data file<br>内存中的redo log 日志会定时通过LGWR写到磁盘Redo Log file(主要用于恢复)<br>CKPT保证数据同步，一旦触发，DBWR就开始写数据，接着LGWR也开始写数据（比如手动commit）</p>
 
                     
                         
