@@ -6,19 +6,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Brotherc">
-    <title>标签: angular - Brotherc</title>
+    <title>angular基础-表单处理 - Brotherc</title>
     <meta name="author" content="Brotherc">
     
     
     
-    <script type="application/ld+json">{}</script>
-    <meta property="og:type" content="blog">
-<meta property="og:title" content="Brotherc">
-<meta property="og:url" content="http://yoursite.com/tags/angular/index.html">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"模板式表单表单的数据模型是通过组件模板中的相关指令来定义的，因为使用这种方式定义表单的数据模型时，我们会受限于HTML的语法，所以，模板驱动方式只适合用于一些简单的场景。\n需要在app.module.ts中引入：123imports: [  FormsModule]\nNgForm / ngNoForm:简单使用：12345&lt;div ngForm&gt;&lt;/div&gt;&lt;form ngNoForm&gt;&lt;/form&gt;\n取值：123456&lt;form #myForm=&quot;ngForm&quot;&gt;&lt;/form&gt;&lt;div&gt;  &#123;&#123;myForm.value | json&#125;&#125;&lt;/div&gt;\n提交：123&lt;form #myForm=&quot;ngForm&quot; (onSubmit)=&quot;onSubmit(myForm.value)&quot;&gt;  &lt;button type=&quot;submit&quot;&gt;注册&lt;/button&gt;&lt;/form&gt;\nNgModel:简单使用：1234&lt;form #myForm=&quot;ngForm&quot; (onSubmit)=&quot;onSubmit(myForm.value)&quot;&gt;  &lt;div&gt;用户名：&lt;input ngModel name=&quot;username&quot; type=&quot;text&quot;&gt;&lt;/div&gt;  &lt;button type=&quot;submit&quot;&gt;注册&lt;/button&gt;&lt;/form&gt;\n取值：12345678&lt;form #myForm=&quot;ngForm&quot; (onSubmit)=&quot;onSubmit(myForm.value)&quot;&gt;  &lt;div&gt;用户名：&lt;input #username=&quot;ngModel&quot; ngModel name=&quot;username&quot; type=&quot;text&quot;&gt;&lt;/div&gt;  &lt;button type=&quot;submit&quot;&gt;注册&lt;/button&gt;&lt;/form&gt;&lt;div&gt;  &#123;&#123;username.value&#125;&#125;&lt;/div&gt;\nNgModelGroup：简单使用：1234567&lt;div ngModelGroup=&quot;userInfo&quot;&gt;  &lt;div&gt;用户名：&lt;input #username=&quot;ngModel&quot; ngModel name=&quot;username&quot; type=&quot;text&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;  &#123;&#123;username.value&#125;&#125; &lt;!-- &#123;&quot;userInfo&quot;: &#123;&quot;username&quot;: &quot;&quot;&#125;&#125; --&gt;&lt;/div&gt;\n样例：html：123456789&lt;form #myForm=&quot;ngForm&quot; (onSubmit)=&quot;onSubmit(myForm.value)&quot;&gt;  &lt;div&gt;用户名：&lt;input ngModel name=&quot;username&quot; type=&quot;text&quot;&gt;&lt;/div&gt;  &lt;div&gt;手机号：&lt;input ngModel name=&quot;mobile&quot; type=&quot;number&quot;&gt;&lt;/div&gt;  &lt;div ngModelGroup=&quot;passwordsGroup&quot;&gt;    &lt;div&gt;密码：&lt;input ngModel name=&quot;password&quot; type=&quot;password&quot;&gt;&lt;/div&gt;    &lt;div&gt;确认密码：&lt;input ngModel name=&quot;pconfirm&quot; type=&quot;password&quot;&gt;&lt;/div&gt;  &lt;/div&gt;  &lt;button type=&quot;submit&quot;&gt;注册&lt;/button&gt;&lt;/form&gt;\ncomponent:123onSubmit(value: any) &#123;  console.log(value);&#125;\n响应式表单使用响应式表单时，那你通过编写TypeScript代码而不是Html代码来创建一个底层的数据模型，在这个模型定义好以后，你使用一些特定的指令，将模板上的html元素与底层的数据模型连接在一起。\n需要在app.module.ts中引入：123imports: [  ReactiveFormsModule]\nFormGroup：html12345&lt;form [formGroup]=&quot;formModel&quot; (submit)=&quot;onSubmit()&quot;&gt;  &lt;div&gt;    &lt;button type=&quot;submit&quot;&gt;保存&lt;/button&gt;  &lt;/div&gt;&lt;/form&gt;\ncomponent12345formModel: FormGroup = new FormGroup (&#123;&#125;);onSubmit() &#123;  console.log(this.formModel.value);&#125;\nFormControl：html12345678910&lt;form [formGroup]=&quot;formModel&quot; (submit)=&quot;onSubmit()&quot;&gt;  &lt;input formControlName=&quot;username&quot;&gt;  &lt;div formGroupName=&quot;dateRange&quot;&gt;    起始日期：&lt;input type=&quot;date&quot; formControlName=&quot;from&quot;&gt;    截止日期：&lt;input type=&quot;date&quot; formControlName=&quot;to&quot;&gt;  &lt;/div&gt;  &lt;div&gt;    &lt;button type=&quot;submit&quot;&gt;保存&lt;/button&gt;  &lt;/div&gt;&lt;/form&gt;\ncomponent1234567formModel: FormGroup = new FormGroup (&#123;  username: new FormControl(&apos;aaa&apos;),  dateRange: new FormGroup(&#123;    from: new FormControl(),    to: new FormControl()  &#125;)&#125;);\nFormArray：html1234567891011121314151617&lt;form [formGroup]=&quot;formModel&quot; (submit)=&quot;onSubmit()&quot;&gt;  &lt;div formGroupName=&quot;dateRange&quot;&gt;    起始日期：&lt;input type=&quot;date&quot; formControlName=&quot;from&quot;&gt;    截止日期：&lt;input type=&quot;date&quot; formControlName=&quot;to&quot;&gt;  &lt;/div&gt;  &lt;div&gt;    &lt;ul formArrayName=&quot;emails&quot;&gt;      &lt;li *ngFor=&quot;let e of this.formModel.get(&apos;emails&apos;).controls; let i = index;&quot;&gt;        &lt;input type=&quot;text&quot; [formControlName]=&quot;i&quot;&gt;      &lt;/li&gt;    &lt;/ul&gt;    &lt;button type=&quot;button&quot; (click)=&quot;addEmail()&quot;&gt;增加Email&lt;/button&gt;  &lt;/div&gt;  &lt;div&gt;    &lt;button type=&quot;submit&quot;&gt;保存&lt;/button&gt;  &lt;/div&gt;&lt;/form&gt;\ncomponent123456789101112131415formModel: FormGroup = new FormGroup (&#123;  dateRange: new FormGroup(&#123;    from: new FormControl(),    to: new FormControl()  &#125;),  emails: new FormArray(&#123;    new FormControl(&quot;a@a.com&quot;),    new FormControl(&quot;b@b.com&quot;)  &#125;)&#125;);addEmail() &#123;  let emails = this.formModel.get(&apos;emails&apos;) as FormArray;  emails.push(new FormControl());&#125;\n样例html123456789&lt;form [FormGroup]=&quot;formModel&quot; (onSubmit)=&quot;onSubmit()&quot;&gt;  &lt;div&gt;用户名：&lt;input type=&quot;text&quot; formControlName=&quot;username&quot;&gt;&lt;/div&gt;  &lt;div&gt;手机号：&lt;input type=&quot;number&quot; formControlName=&quot;mobile&quot;&gt;&lt;/div&gt;  &lt;div formGroupName=&quot;passwordsGroup&quot;&gt;    &lt;div&gt;密码：&lt;input type=&quot;password&quot; formControlName=&quot;password&quot;&gt;&lt;/div&gt;    &lt;div&gt;确认密码：&lt;input type=&quot;password&quot; formControlName=&quot;pconfirm&quot;&gt;&lt;/div&gt;  &lt;/div&gt;  &lt;button type=&quot;submit&quot;&gt;注册&lt;/button&gt;&lt;/form&gt;\ncomponent123456789101112formModel: FormGroup;constructor() &#123;  this.formModel = new FormGroup (&#123;    username: new FormControl(),    mobile: new FormControl(),    passwordsGroup: new FormGroup(&#123;      password: new FormControl(),      pconfirm: new FormControl()    &#125;)  &#125;);&#125;\nFromBuilder通过FromBuilder简化代码123456789101112formModel: FormGroup;constructor(fb: FormBuilder) &#123;  this.formModel = fb.group (&#123;    username: [&apos;&apos;],    mobile: [&apos;&apos;],    passwordsGroup: fb.group(&#123;      password: [&apos;&apos;],      pconfirm: [&apos;&apos;]    &#125;)  &#125;);&#125;\n表单验证html123456789101112131415161718192021222324&lt;form [FormGroup]=&quot;formModel&quot; (onSubmit)=&quot;onSubmit()&quot;&gt;  &lt;div&gt;用户名：&lt;input type=&quot;text&quot; formControlName=&quot;username&quot;&gt;&lt;/div&gt;  &lt;div [hidden]=&quot;!formModel.hasError(&apos;required&apos;, &apos;username&apos;)&quot;&gt;    用户名是必填项  &lt;/div&gt;  &lt;div [hidden]=&quot;!formModel.hasError(&apos;minLength&apos;, &apos;username&apos;)&quot;&gt;    用户名最小长度是6  &lt;/div&gt;  &lt;div&gt;手机号：&lt;input type=&quot;number&quot; formControlName=&quot;mobile&quot;&gt;&lt;/div&gt;  &lt;div [hidden]=&quot;!formModel.hasError(&apos;mobile&apos;, &apos;mobile&apos;)&quot;&gt;    请输入正确的手机号  &lt;/div&gt;  &lt;div formGroupName=&quot;passwordsGroup&quot;&gt;    &lt;div&gt;密码：&lt;input type=&quot;password&quot; formControlName=&quot;password&quot;&gt;&lt;/div&gt;    &lt;div [hidden]=&quot;!formModel.hasError(&apos;minLength&apos;, [&apos;passwordsGroup&apos;, [&apos;password&apos;]])&quot;&gt;      密码最小长度是6    &lt;/div&gt;    &lt;div&gt;确认密码：&lt;input type=&quot;password&quot; formControlName=&quot;pconfirm&quot;&gt;&lt;/div&gt;    &lt;div [hidden]=&quot;!formModel.hasError(&apos;equal&apos;, &apos;passwordsGroup&apos;)&quot;&gt;      &#123;&#123;formModel.getError(&apos;equal&apos;, &apos;passwordsGroup&apos;)?.descxxx&#125;&#125;    &lt;/div&gt;  &lt;/div&gt;  &lt;button type=&quot;submit&quot;&gt;注册&lt;/button&gt;&lt;/form&gt;\ncomponent12345678910111213141516171819202122232425262728293031323334353637383940414243444546// 可以将以下angular校验器抽取到一个ts文件中mobileValidator(control: FormControl): any &#123;  const myreq = /^(((13[0-9]&#123;1&#125;)|(15[0-9]&#123;1&#125;)|(18[0-9]&#123;1&#125;))+\\d&#123;8&#125;)$/;  const valid = myreq.test(control.calue);  console.log(&apos;mobile的校验结果是：&apos; + valid);  return valid ? null : &#123;mobile: true&#125;;&#125;mobileAsyncValidator(control: FormControl): any &#123;  const myreq = /^(((13[0-9]&#123;1&#125;)|(15[0-9]&#123;1&#125;)|(18[0-9]&#123;1&#125;))+\\d&#123;8&#125;)$/;  const valid = myreq.test(control.calue);  console.log(&apos;mobile的校验结果是：&apos; + valid);  // 模拟异步  return Observable.of(valid ? null : &#123;mobile: true&#125;).delay(5000);&#125;equalValidator(group: FormGroup): any &#123;  const password: FormControl = group.get(&apos;password&apos;) as FormControl;  const pconfirm: FormControl = group.get(&apos;pconfirm&apos;) as FormControl;  const valid: boolean = (password.value === pconfirm.value);  console.log(&apos;密码的校验结果是：&apos; + valid);  return valid ? null : &#123;equal: &#123;descxxx: &apos;密码和确认密码不匹配&apos;&#125;&#125;;&#125;formModel: FormGroup;constructor(fb: FormBuilder) &#123;  this.formModel = fb.group (&#123;    username: [&apos;&apos;, [Vaildators.required, Validators.minLength(6)]],    mobile: [&apos;&apos;, this.mobileValidator],    passwordsGroup: fb.group(&#123;      password: [&apos;&apos;],      pconfirm: [&apos;&apos;]    &#125;, &#123;validator: this.equalValidator&#125;)  &#125;);&#125;onSubmit() &#123;  // const isValid: boolean = this.formModel.get(&apos;username&apos;).valid;  // console.log(&apos;username的校验结果：&apos; + isValid);  // const errors: any = this.formModel.get(&quot;username&quot;).errors;  // console.log(&apos;username的错误信息是：&apos; + JSON.stringify(errors));  if (this.formModel.valid) &#123;    console.log(this.formModel.value);  &#125;&#125;\n状态字段touched和untouched123456789&lt;form [FormGroup]=&quot;formModel&quot; (onSubmit)=&quot;onSubmit()&quot;&gt;  &lt;div&gt;用户名：&lt;input type=&quot;text&quot; formControlName=&quot;username&quot;&gt;&lt;/div&gt;  &lt;div [hidden]=&quot;formModel.get(&apos;mobile&apos;).valid || formModel.get(&apos;mobile&apos;).untouched&quot;&gt;    &lt;div [hidden]=&quot;!formModel.hasError(&apos;required&apos;, &apos;username&apos;)&quot;&gt;      用户名是必填项    &lt;/div&gt;  &lt;/div&gt;  ...&lt;/form&gt;\npristine和dirty123456789&lt;form [FormGroup]=&quot;formModel&quot; (onSubmit)=&quot;onSubmit()&quot;&gt;  &lt;div&gt;用户名：&lt;input type=&quot;text&quot; formControlName=&quot;username&quot;&gt;&lt;/div&gt;  &lt;div [hidden]=&quot;formModel.get(&apos;mobile&apos;).valid || formModel.get(&apos;mobile&apos;).pristine&quot;&gt;    &lt;div [hidden]=&quot;!formModel.hasError(&apos;required&apos;, &apos;username&apos;)&quot;&gt;      用户名是必填项    &lt;/div&gt;  &lt;/div&gt;  ...&lt;/form&gt;\npending123456&lt;form [FormGroup]=&quot;formModel&quot; (onSubmit)=&quot;onSubmit()&quot;&gt;  &lt;div [hidden]=&quot;!formModel.get(&apos;mobile&apos;).pending&quot;&gt;    正在校验手机合法性  &lt;/div&gt;  ...&lt;/form&gt;\n","dateCreated":"2019-03-31T12:34:41+08:00","dateModified":"2019-03-31T12:34:03+08:00","datePublished":"2019-03-31T12:34:41+08:00","description":"","headline":"angular基础-表单处理","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/03/31/angular基础-表单处理/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/03/31/angular基础-表单处理/","keywords":"angular"}</script>
+    <meta name="description" content="模板式表单表单的数据模型是通过组件模板中的相关指令来定义的，因为使用这种方式定义表单的数据模型时，我们会受限于HTML的语法，所以，模板驱动方式只适合用于一些简单的场景。 需要在app.module.ts中引入：123imports: [  FormsModule] NgForm / ngNoForm:简单使用：12345&amp;lt;div ngForm&amp;gt;&amp;lt;/div&amp;gt;&amp;lt;form">
+<meta name="keywords" content="angular">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="angular基础-表单处理">
+<meta property="og:url" content="http://yoursite.com/2019/03/31/angular基础-表单处理/index.html">
 <meta property="og:site_name" content="Brotherc">
+<meta property="og:description" content="模板式表单表单的数据模型是通过组件模板中的相关指令来定义的，因为使用这种方式定义表单的数据模型时，我们会受限于HTML的语法，所以，模板驱动方式只适合用于一些简单的场景。 需要在app.module.ts中引入：123imports: [  FormsModule] NgForm / ngNoForm:简单使用：12345&amp;lt;div ngForm&amp;gt;&amp;lt;/div&amp;gt;&amp;lt;form">
 <meta property="og:locale" content="zh-cn">
+<meta property="og:updated_time" content="2019-03-31T04:34:03.538Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Brotherc">
+<meta name="twitter:title" content="angular基础-表单处理">
+<meta name="twitter:description" content="模板式表单表单的数据模型是通过组件模板中的相关指令来定义的，因为使用这种方式定义表单的数据模型时，我们会受限于HTML的语法，所以，模板驱动方式只适合用于一些简单的场景。 需要在app.module.ts中引入：123imports: [  FormsModule] NgForm / ngNoForm:简单使用：12345&amp;lt;div ngForm&amp;gt;&amp;lt;/div&amp;gt;&amp;lt;form">
     
     
         
@@ -48,7 +53,7 @@
         
     
 
-<header id="header" data-behavior="1">
+<header id="header" data-behavior="4">
     <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
     <div class="header-title">
         <a class="header-title-link" href="/ ">Brotherc</a>
@@ -71,7 +76,7 @@
         
     
 
-<nav id="sidebar" data-behavior="1">
+<nav id="sidebar" data-behavior="4">
     <div class="sidebar-container">
         
             <div class="sidebar-profile">
@@ -152,26 +157,22 @@
 </nav>
 
             
-            <div id="main" data-behavior="1"
+            <div id="main" data-behavior="4"
                  class="
                         hasCoverMetaIn
                         ">
                 
-    <section class="postShorten-group main-content-wrap">
+<article class="post">
     
     
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2019/03/31/angular基础-表单处理/">
-                            angular基础-表单处理
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            angular基础-表单处理
+        </h1>
+    
+    
+        <div class="post-meta">
     <time datetime="2019-03-31T12:34:41+08:00">
 	
 		    3月 31, 2019
@@ -180,10 +181,13 @@
     
 </div>
 
-            </div>
-            
-                <div class="postShorten-content">
-                    <h3 id="模板式表单"><a href="#模板式表单" class="headerlink" title="模板式表单"></a>模板式表单</h3><p>表单的数据模型是通过组件模板中的相关指令来定义的，因为使用这种方式定义表单的数据模型时，<br>我们会受限于HTML的语法，所以，模板驱动方式只适合用于一些简单的场景。</p>
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <h3 id="模板式表单"><a href="#模板式表单" class="headerlink" title="模板式表单"></a>模板式表单</h3><p>表单的数据模型是通过组件模板中的相关指令来定义的，因为使用这种方式定义表单的数据模型时，<br>我们会受限于HTML的语法，所以，模板驱动方式只适合用于一些简单的场景。</p>
 <p>需要在app.module.ts中引入：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">imports: [</span><br><span class="line">  FormsModule</span><br><span class="line">]</span><br></pre></td></tr></table></figure></p>
 <h5 id="NgForm-ngNoForm"><a href="#NgForm-ngNoForm" class="headerlink" title="NgForm / ngNoForm:"></a>NgForm / ngNoForm:</h5><p>简单使用：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;div ngForm&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line"></span><br><span class="line">&lt;form ngNoForm&gt;</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure></p>
 <p>取值：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;form #myForm=&quot;ngForm&quot;&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line"></span><br><span class="line">&lt;div&gt;</span><br><span class="line">  &#123;&#123;myForm.value | json&#125;&#125;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure></p>
@@ -210,148 +214,94 @@
 <p>pristine和dirty<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;form [FormGroup]=&quot;formModel&quot; (onSubmit)=&quot;onSubmit()&quot;&gt;</span><br><span class="line">  &lt;div&gt;用户名：&lt;input type=&quot;text&quot; formControlName=&quot;username&quot;&gt;&lt;/div&gt;</span><br><span class="line">  &lt;div [hidden]=&quot;formModel.get(&apos;mobile&apos;).valid || formModel.get(&apos;mobile&apos;).pristine&quot;&gt;</span><br><span class="line">    &lt;div [hidden]=&quot;!formModel.hasError(&apos;required&apos;, &apos;username&apos;)&quot;&gt;</span><br><span class="line">      用户名是必填项</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">  ...</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure></p>
 <p>pending<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;form [FormGroup]=&quot;formModel&quot; (onSubmit)=&quot;onSubmit()&quot;&gt;</span><br><span class="line">  &lt;div [hidden]=&quot;!formModel.get(&apos;mobile&apos;).pending&quot;&gt;</span><br><span class="line">    正在校验手机合法性</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">  ...</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure></p>
 
-                    
-                        
+            
 
-                    
-                    
-                        <p>
-                            <a href="/2019/03/31/angular基础-表单处理/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
         </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
         
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2019/03/14/angular发送带参数的delete请求/">
-                            angular2中如何在发送delete请求时携带参数
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-03-14T19:05:08+08:00">
-	
-		    3月 14, 2019
-    	
-    </time>
-    
-</div>
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">标签</span><br>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/angular/">angular</a>
 
             </div>
-            
-                <div class="postShorten-content">
-                    <p>前端angular:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 根据ids删除资源分组</span><br><span class="line"> */</span><br><span class="line">deleteResourceGroupByIds(ids: string[]) &#123;</span><br><span class="line">    return this.http.request(&apos;DELETE&apos;, this.API + &apos;/resourceGroup&apos;, &#123;</span><br><span class="line">        body: ids</span><br><span class="line">    &#125;).pipe(</span><br><span class="line">        retry(1),</span><br><span class="line">        catchError(this.handleError.bind(this))</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>后台springboot:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@DeleteMapping(&quot;/resourceGroup&quot;)</span><br><span class="line">public void deleteResourceGroupByIds(@RequestBody String[] ids) &#123;</span><br><span class="line">    resourceGroupService.deleteResourceGroupByIds(ids);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>参考：<br><a href="https://stackoverflow.com/questions/38819336/body-of-http-delete-request-in-angular2" target="_blank" rel="noopener">https://stackoverflow.com/questions/38819336/body-of-http-delete-request-in-angular2</a></p>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2019/03/14/angular发送带参数的delete请求/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2019/03/14/angular常用操作/">
-                            angular常用操作
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-03-14T19:05:08+08:00">
-	
-		    3月 14, 2019
-    	
-    </time>
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-content">
-                    <h3 id="angular遍历map"><a href="#angular遍历map" class="headerlink" title="angular遍历map"></a>angular遍历map</h3><p>html:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;ul&gt;</span><br><span class="line">    &lt;li *ngFor=&quot;let recipient of map | keyvalue&quot;&gt;</span><br><span class="line">        &#123;&#123;recipient.key&#125;&#125; --&gt; &#123;&#123;recipient.value&#125;&#125;</span><br><span class="line">    &lt;/li&gt;</span><br><span class="line">&lt;/ul&gt;</span><br></pre></td></tr></table></figure></p>
-<p>cpmponent:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">myMap : Map&lt;string, boolean&gt;;</span><br><span class="line">for(let key of myMap.keys()) &#123;</span><br><span class="line">   console.log(key);</span><br><span class="line">   console.log(myMap.get(key));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Object.keys(myMap).map( key =&gt; &#123;</span><br><span class="line">    console.log(&apos;key: &apos; + key);</span><br><span class="line">    console.log(&apos;value: &apos; + result[key]);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">for (const [key, val] of map) &#123;</span><br><span class="line">  console.log(key);</span><br><span class="line">  console.log(val);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>参考：<br><a href="https://stackoverflow.com/questions/48187362/how-to-iterate-using-ngfor-loop-map-containing-key-as-string-and-values-as-map-i/48187637）
-[https://stackoverflow.com/questions/37699320/iterating-over-typescript-map](https://stackoverflow.com/questions/37699320/iterating-over-typescript-map" target="_blank" rel="noopener">https://stackoverflow.com/questions/48187362/how-to-iterate-using-ngfor-loop-map-containing-key-as-string-and-values-as-map-i/48187637</a></p>
-<h3 id="保留两位小数"><a href="#保留两位小数" class="headerlink" title="保留两位小数"></a>保留两位小数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Math.floor(15.7784514000 * 100) / 100 // 输出结果为 15.77</span><br></pre></td></tr></table></figure>
-<h3 id="创建Map并赋值"><a href="#创建Map并赋值" class="headerlink" title="创建Map并赋值"></a>创建Map并赋值</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const map = new Map([[2, &apos;foo&apos;], [1, &apos;bar&apos;]]);</span><br></pre></td></tr></table></figure>
-<h3 id="angular中html界面的if-else-表示"><a href="#angular中html界面的if-else-表示" class="headerlink" title="angular中html界面的if else 表示"></a>angular中html界面的if else 表示</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;div *ngIf=&quot;someCondition; else falsyTemplate&quot;&gt;</span><br><span class="line">  &lt;h1&gt;Condition Passed!&lt;/h1&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line"></span><br><span class="line">&lt;ng-template #falsyTemplate&gt;</span><br><span class="line">  &lt;h1&gt;Condition Failed!&lt;/h1&gt;</span><br><span class="line">&lt;/ng-template&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="angular中http请求的option、params使用"><a href="#angular中http请求的option、params使用" class="headerlink" title="angular中http请求的option、params使用"></a>angular中http请求的option、params使用</h3><p>方式一：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">let option = &#123;&#125;;</span><br><span class="line">const params = new HttpParams().append(&apos;key&apos;, String(&apos;val&apos;));</span><br><span class="line">params = params.append(&apos;status&apos;, String(status)); // 注意要从新赋值给params</span><br><span class="line">option = &#123;params&#125;;</span><br></pre></td></tr></table></figure></p>
-<p>方式二：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// 动态添加参数</span><br><span class="line">const option = &#123;&#125;;</span><br><span class="line">const params = &#123;&#125;;</span><br><span class="line"></span><br><span class="line">if (v != null) &#123;</span><br><span class="line">  params[&apos;k&apos;] = v;</span><br><span class="line">  option[&apos;params&apos;] = params;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="angular判断Map类型"><a href="#angular判断Map类型" class="headerlink" title="angular判断Map类型"></a>angular判断Map类型</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">isMap(obj) &#123;</span><br><span class="line">  return obj instanceof Map;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="删除数组中的某个元素"><a href="#删除数组中的某个元素" class="headerlink" title="删除数组中的某个元素"></a>删除数组中的某个元素</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">const arr = [&apos;a&apos;,&apos;b&apos;,&apos;c&apos;,&apos;d&apos;];</span><br><span class="line">arr.splice(1,1);</span><br><span class="line">console.log(arr); //[&apos;a&apos;,&apos;c&apos;,&apos;d&apos;];</span><br></pre></td></tr></table></figure>
-<h3 id="angular的html根据条件显示样式"><a href="#angular的html根据条件显示样式" class="headerlink" title="angular的html根据条件显示样式"></a>angular的html根据条件显示样式</h3><p>html：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;div [class.hide]=&quot;someCondition&quot;&gt;&lt;/div&gt;</span><br></pre></td></tr></table></figure></p>
-<p>css:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">.hide &#123;</span><br><span class="line">    display: none;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="在父组件中直接调用子组件的函数"><a href="#在父组件中直接调用子组件的函数" class="headerlink" title="在父组件中直接调用子组件的函数"></a>在父组件中直接调用子组件的函数</h3><p>父组件html：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;app-child-form #childForm&gt;&lt;/app-child-form&gt;</span><br></pre></td></tr></table></figure></p>
-<p>父组件component：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@ViewChild(&apos;childForm&apos;)</span><br><span class="line">childForm: ChildFormComponent;</span><br><span class="line"></span><br><span class="line">f(): void &#123;</span><br><span class="line">    this.childForm.f();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>子组件component：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">f(): void &#123;</span><br><span class="line">    console.log(&apos;child component&apos;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="Object转成Map"><a href="#Object转成Map" class="headerlink" title="Object转成Map"></a>Object转成Map</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const result = new Map(Object.entries(map));</span><br></pre></td></tr></table></figure>
-<h3 id="将Map的key、value转成数组"><a href="#将Map的key、value转成数组" class="headerlink" title="将Map的key、value转成数组"></a>将Map的key、value转成数组</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">const values = Array.from(map.values());</span><br><span class="line">const keys = Array.from(map.keys());</span><br></pre></td></tr></table></figure>
-<h3 id="日期格式转换"><a href="#日期格式转换" class="headerlink" title="日期格式转换"></a>日期格式转换</h3><p>java:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LocalDateTime time</span><br></pre></td></tr></table></figure></p>
-<p>angular component：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">time: Date</span><br></pre></td></tr></table></figure></p>
-<p>html:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;time| date:&apos;yyyy-MM-dd HH:mm:ss&apos;&#125;&#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="在组件中使用自定义的管道"><a href="#在组件中使用自定义的管道" class="headerlink" title="在组件中使用自定义的管道"></a>在组件中使用自定义的管道</h3><p>pipe:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@Pipe(&#123;</span><br><span class="line">    name: &apos;xxx&apos;</span><br><span class="line">&#125;)</span><br><span class="line">export class XxxPipe implements PipeTransform &#123;</span><br><span class="line">    transform(value: AlarmRule, args?: any): any &#123;</span><br><span class="line">      // ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>Component：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">@Component(&#123;</span><br><span class="line">  selector: &apos;xxx&apos;,</span><br><span class="line">  templateUrl: &apos;xxx.html&apos;,</span><br><span class="line">  styleUrls: [&apos;xxx.css&apos;],</span><br><span class="line">  providers: [ XxxPipe ]</span><br><span class="line">&#125;)</span><br><span class="line">export class XxxComponent &#123;</span><br><span class="line">  constructor(private xxx: XxxPipe) &#123;&#125;</span><br><span class="line">  // ...</span><br><span class="line"></span><br><span class="line">  f(value) &#123;// 调用</span><br><span class="line">    this.xxx.transform(value);</span><br><span class="line">    // ...</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>参考：<br><a href="https://alligator.io/angular/using-pipes-in-component-class/" target="_blank" rel="noopener">https://alligator.io/angular/using-pipes-in-component-class/</a></p>
-<h3 id="重置表单"><a href="#重置表单" class="headerlink" title="重置表单"></a>重置表单</h3><p>html:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;form nz-form [formGroup]=&quot;form&quot;&gt;</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure></p>
-<p>Component:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">export class FormComponent implements OnInit &#123;</span><br><span class="line">    form: FormGroup;</span><br><span class="line"></span><br><span class="line">    clearForm() &#123;</span><br><span class="line">        this.form.reset();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>参考：<br><a href="https://stackoverflow.com/questions/36655922/resetting-a-form-in-angular-2-after-submit" target="_blank" rel="noopener">https://stackoverflow.com/questions/36655922/resetting-a-form-in-angular-2-after-submit</a></p>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2019/03/14/angular常用操作/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    <div class="pagination-bar">
-    <ul class="pagination">
         
         
-        <li class="pagination-number">第 1 页 共 1 页</li>
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/28/kapacitor_lambda/" data-tooltip="kapacitor lambda" aria-label="下一篇: kapacitor lambda">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/31/angular基础-表单处理/" title="分享到 Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/31/angular基础-表单处理/" title="分享到 Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/31/angular基础-表单处理/" title="分享到 Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
     </ul>
 </div>
 
-</section>
+
+        
+        
+            
+        
+    </div>
+</article>
+
 
 
                 <footer id="footer" class="main-content-wrap">
@@ -361,6 +311,109 @@
 </footer>
 
             </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/28/kapacitor_lambda/" data-tooltip="kapacitor lambda" aria-label="下一篇: kapacitor lambda">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/31/angular基础-表单处理/" title="分享到 Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/31/angular基础-表单处理/" title="分享到 Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/31/angular基础-表单处理/" title="分享到 Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/31/angular基础-表单处理/">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>分享到 Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/31/angular基础-表单处理/">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/31/angular基础-表单处理/">
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>分享到 Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
             
         </div>
         
@@ -407,6 +460,8 @@
         <!--SCRIPTS-->
 <script src="/assets/js/script-dbd16rvloemmuxdzniplmnxxvwoz24eya9wol0b7vvmlokgqsjivmb8dnscy.min.js"></script>
 <!--SCRIPTS END-->
+
+    
 
 
 
