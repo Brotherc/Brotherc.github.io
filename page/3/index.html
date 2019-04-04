@@ -165,6 +165,114 @@
             <div class="postShorten-header">
                 <h1 class="postShorten-title">
                     
+                        <a class="link-unstyled" href="/2019/03/14/telegraf_Jolokia2_Input_Plugins/">
+                            telegraf plugin inputs
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2019-03-14T19:05:07+08:00">
+	
+		    3月 14, 2019
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <h3 id="Jolokia2-Input-Plugins"><a href="#Jolokia2-Input-Plugins" class="headerlink" title="Jolokia2 Input Plugins"></a>Jolokia2 Input Plugins</h3><h4 id="Jolokia-Proxy"><a href="#Jolokia-Proxy" class="headerlink" title="Jolokia Proxy:"></a>Jolokia Proxy:</h4><ul>
+<li>jolokia2 采集分为两种模式，一种是jvm代理，由java应用启动时修改参数引入jolokia2包<br>-javaagent:/usr/local/jolokia-jvm-1.5.0-agent.jar=port=8778,host=0.0.0.0<br>第二种是Proxy模式，由于第一种应用的限制，proxy模式不需要在应用端修改</li>
+<li>在某些情况下，不可能在目标平台上部署Jolokia代理。这可能是出于政治原因，<br>或者是仪表化服务器上已经建立的JSR-160导出。在这些环境中，Jolokia可以作为JMX代理进行操作。<br>在此设置中，代理部署在专用代理Java EE服务器(或其他受支持的代理平台)上。<br>代理连接Jolokia JSON请求和对目标服务器的远程JSR-160调用的响应。</li>
+<li><p>Jolokia代理是通用的，与目标服务器无关，因为它通过传入请求(与HTTP代理相同)获取目标的信息。<br>由于需要扩展信息，所以只能使用Jolokia POST请求进行代理，因为目前还没有方法将目标信息封装<br>在GET Url中。请求的基本Jolokia URL是代理服务器的URL，而目标参数包含在请求中。<br>在下一个示例中，一个代理Jolokia请求通过一个代理tomcat-proxy查询服务器jboss的活动线程数，<br>该代理在Jolokia上下文中部署了一个代理。代理URL是这样的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://jolokia-proxy:8080/jolokia</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>请求的POST参数如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;type&quot;:&quot;READ&quot;</span><br><span class="line">  &quot;mbean&quot;:&quot;java.lang:type=Threading&quot;,</span><br><span class="line">  &quot;attribute&quot;:&quot;ThreadCount&quot;,</span><br><span class="line">  &quot;target&quot;: &#123;</span><br><span class="line">              &quot;url&quot;:&quot;service:jmx:rmi:///jndi/rmi://jboss-as:8686/jmxrmi&quot;,</span><br><span class="line">              &quot;password&quot;:&quot;admin&quot;,</span><br><span class="line">              &quot;user&quot;:&quot;s!cr!t&quot;</span><br><span class="line">            &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="WAR-Agent"><a href="#WAR-Agent" class="headerlink" title="WAR Agent:"></a>WAR Agent:</h4><ul>
+<li>WAR代理jolokia.war在Java EE服务器中部署为常规Web归档（WAR）。</li>
+<li>此外，这是代理模式的代理，它部署在一个简单、专用的应用服务器中，比如Tomcat或Jetty。</li>
+</ul>
+<h4 id="安装与启动"><a href="#安装与启动" class="headerlink" title="安装与启动"></a>安装与启动</h4><h5 id="步骤1-在Tomcat服务器上安装Jolokia代理"><a href="#步骤1-在Tomcat服务器上安装Jolokia代理" class="headerlink" title="步骤1. 在Tomcat服务器上安装Jolokia代理"></a>步骤1. 在Tomcat服务器上安装Jolokia代理</h5><p>1.从以下网址下载最新版本的Jolokia.war文件：<a href="https://jolokia.org/download.html" target="_blank" rel="noopener">https://jolokia.org/download.html</a><br>2.将文件重命名jolokia-war-X.X.X.war为jolokia.war。<br>3.将jolokia.war文件复制到${TOMCAT_HOME}/webapps。<br>4.添加jolokia为角色tomcat-users.xml（Jolokia 1.6或更高版本强制使用）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;role rolename=&quot;jolokia&quot;/&gt;</span><br><span class="line">&lt;user username=&quot;jolokia&quot; password=&quot;jolokia&quot; roles=&quot;jolokia&quot;/&gt;</span><br></pre></td></tr></table></figure></p>
+<p>5.启动Tomcat服务器。<br>6.停止Tomcat服务器并修改jolokia的web.xml，添加以下内容（自版本1.5.0起，默认情况下不启用代理模式）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;init-param&gt;</span><br><span class="line">  &lt;description&gt;</span><br><span class="line">    Classnames (comma separated) of RequestDispatcher used in addition</span><br><span class="line">    to the LocalRequestDispatcher</span><br><span class="line">  &lt;/description&gt;</span><br><span class="line">  &lt;param-name&gt;dispatcherClasses&lt;/param-name&gt;</span><br><span class="line">  &lt;param-value&gt;org.jolokia.jsr160.Jsr160RequestDispatcher&lt;/param-value&gt;</span><br><span class="line">&lt;/init-param&gt;</span><br></pre></td></tr></table></figure></p>
+<p>7.通过访问此URL验证Jolokia代理安装：<a href="http://tomcatip:8080/jolokia/version" target="_blank" rel="noopener">http://tomcatip:8080/jolokia/version</a></p>
+<h5 id="步骤2-配置Telegraf-Jolokia2输入插件"><a href="#步骤2-配置Telegraf-Jolokia2输入插件" class="headerlink" title="步骤2.配置Telegraf Jolokia2输入插件"></a>步骤2.配置Telegraf Jolokia2输入插件</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">[[inputs.jolokia2_proxy]]</span><br><span class="line">#   # default_tag_prefix      = &quot;&quot;</span><br><span class="line">#   # default_field_prefix    = &quot;&quot;</span><br><span class="line">#   # default_field_separator = &quot;.&quot;</span><br><span class="line">#</span><br><span class="line">#   ## Proxy agent</span><br><span class="line">  url = &quot;http://tomcatip:8080/jolokia&quot;</span><br><span class="line">  username = &quot;jolokia&quot; #如果是jolokia-war-unsecured-1.6.0.war则不需要username</span><br><span class="line">  password = &quot;jolokia&quot; #如果是jolokia-war-unsecured-1.6.0.war则不需要password</span><br><span class="line">  response_timeout = &quot;30s&quot;</span><br><span class="line">#</span><br><span class="line">#   ## Optional TLS config</span><br><span class="line">#   # tls_ca   = &quot;/var/private/ca.pem&quot;</span><br><span class="line">#   # tls_cert = &quot;/var/private/client.pem&quot;</span><br><span class="line">#   # tls_key  = &quot;/var/private/client-key.pem&quot;</span><br><span class="line">#   # insecure_skip_verify = false</span><br><span class="line">#</span><br><span class="line">#   ## Add proxy targets to query</span><br><span class="line">#   # default_target_username = &quot;&quot;</span><br><span class="line">#   # default_target_password = &quot;&quot;</span><br><span class="line">  [[inputs.jolokia2_proxy.target]]</span><br><span class="line">    url = &quot;service:jmx:rmi:///jndi/rmi://ip:port/jmxrmi&quot;</span><br><span class="line">#     # username = &quot;&quot;</span><br><span class="line">#     # password = &quot;&quot;</span><br><span class="line"></span><br><span class="line">  [[inputs.jolokia2_agent.metric]]</span><br><span class="line">    name  = &quot;jvm_runtime&quot;</span><br><span class="line">    mbean = &quot;java.lang:type=Runtime&quot;</span><br><span class="line">    paths = [&quot;Uptime&quot;]</span><br></pre></td></tr></table></figure>
+<h5 id="步骤3-配置多个targets"><a href="#步骤3-配置多个targets" class="headerlink" title="步骤3.配置多个targets"></a>步骤3.配置多个targets</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">  [[inputs.jolokia2_proxy.target]]</span><br><span class="line">    url = &quot;service:jmx:rmi:///jndi/rmi://ip:port/jmxrmi&quot;</span><br><span class="line">#     # username = &quot;&quot;</span><br><span class="line">#     # password = &quot;&quot;</span><br><span class="line">  [[inputs.jolokia2_proxy.target]]</span><br><span class="line">    url = &quot;service:jmx:rmi:///jndi/rmi://ip:port/jmxrmi&quot;</span><br><span class="line">#     # username = &quot;&quot;</span><br><span class="line">#     # password = &quot;&quot;</span><br></pre></td></tr></table></figure>
+<p>参考：<br><a href="https://github.com/influxdata/telegraf/tree/master/plugins/inputs/jolokia2" target="_blank" rel="noopener">https://github.com/influxdata/telegraf/tree/master/plugins/inputs/jolokia2</a><br><a href="https://jolokia.org/features/proxy.html" target="_blank" rel="noopener">https://jolokia.org/features/proxy.html</a><br><a href="https://jolokia.org/agent.html" target="_blank" rel="noopener">https://jolokia.org/agent.html</a><br><a href="https://jolokia.org/tutorial.html" target="_blank" rel="noopener">https://jolokia.org/tutorial.html</a><br><a href="https://jolokia.org/agent/war.html" target="_blank" rel="noopener">https://jolokia.org/agent/war.html</a><br><a href="http://repo1.maven.org/maven2/org/jolokia/jolokia-war-unsecured/1.6.0/" target="_blank" rel="noopener">http://repo1.maven.org/maven2/org/jolokia/jolokia-war-unsecured/1.6.0/</a><br><a href="https://jolokia.org/reference/html/proxy.html" target="_blank" rel="noopener">https://jolokia.org/reference/html/proxy.html</a><br><a href="https://jolokia.org/reference/html/proxy.html" target="_blank" rel="noopener">https://jolokia.org/reference/html/proxy.html</a><br><a href="https://www.bountysource.com/issues/41049672-redesign-the-jolokia-input-plugin-as-jolokia2" target="_blank" rel="noopener">https://www.bountysource.com/issues/41049672-redesign-the-jolokia-input-plugin-as-jolokia2</a><br><a href="http://zhoujinl.github.io/2018/05/16/compared/" target="_blank" rel="noopener">http://zhoujinl.github.io/2018/05/16/compared/</a></p>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2019/03/14/telegraf_Jolokia2_Input_Plugins/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a class="link-unstyled" href="/2019/03/14/Oracle报错ORA-28001/">
+                            Oracle报错，ORA-28001:口令已经失效
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2019-03-14T19:05:07+08:00">
+	
+		    3月 14, 2019
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <p>WINDOWS下使用DOS命令行连接oracle数据库<br>sqlplus userName/userPassword@netServiceName</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Oracle报错，ORA-28001: 口令已经失效</span><br></pre></td></tr></table></figure>
+<p>cmd命令行输入：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">sqlplus / as sysdba</span><br><span class="line">SQL*Plus: Release 11.2.0.1.0 Production on 星期二 10月 17 15:42:58 2017</span><br><span class="line">Copyright (c) 1982, 2010, Oracle.  All rights reserved.</span><br><span class="line">连接到:</span><br><span class="line">Oracle Database 11g Enterprise Edition Release 11.2.0.1.0 - Production</span><br><span class="line">With the Partitioning, OLAP, Data Mining and Real Application Testing options</span><br><span class="line">SQL&gt; ALTER PROFILE DEFAULT LIMIT PASSWORD_LIFE_TIME UNLIMITED;</span><br><span class="line">配置文件已更改</span><br><span class="line">SQL&gt; alter user 用户名 dentified by 密码 account unlock;</span><br><span class="line">用户已更改。</span><br></pre></td></tr></table></figure></p>
+<p>再次测试登录即可</p>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2019/03/14/Oracle报错ORA-28001/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
                         <a class="link-unstyled" href="/2019/03/14/OCP-Oracle体系结构/">
                             OCP-Oracle体系结构
                         </a>
