@@ -1,0 +1,452 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Brotherc">
+    <title>telegraf prometheus plugin inputs - Brotherc</title>
+    <meta name="author" content="Brotherc">
+    
+    
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"Prometheus Input plugins（需要结合修改过的oracledb_exporter）安装与启动1.启动oracledb_exporter，并访问oracledb_exporter启动时指定的ip:port，确认数据无误。加载不同配置启动oracledb_exporter：oracle.conf12345678connections: - connection: userName/userPassword@ip:1521/databaseName   database: databaseName   instance: ip   id: customId   metrics: process,top_sql,session,wait_time,activity,physical_io,cache   topsql:     rownum: 10\noracledb_exporter -configfile=oracle.conf -web.listen-address ip:port\noracle_table.conf12345678connections: - connection: userName/userPassword@ip:1521/databaseName   database: databaseName   instance: ip   id: customId   metrics: top_table,tablespace   toptable:     rownum: 10\noracledb_exporter -configfile=oracle_table.conf -web.listen-address ip:port\n2.配置Telegraf Prometheus输入插件（对于抓取不同metric的输agent，需要不同的telegraf配置）抓取以oracle.conf启动的oracle_exporter的telegraf.conf12345678910111213141516171819202122232425262728293031323334353637383940414243[global_tags][agent]  interval = &quot;60s&quot;                              #修改成实际的抓取间隔  round_interval = true  metric_batch_size = 1000  metric_buffer_limit = 10000  collection_jitter = &quot;0s&quot;  flush_interval = &quot;10s&quot;  flush_jitter = &quot;0s&quot;  precision = &quot;&quot;  debug = false  quiet = false  logfile = &quot;&quot;  hostname = &quot;hostname&quot;                              #修改成抓取的数据库所在主机名  omit_hostname = false################################################################################                            OUTPUT PLUGINS                                   ################################################################################[[outputs.influxdb]]  urls = [&quot;http://ip:8086&quot;]           #修改成实际的influxdb地址  database = &quot;oracledb_monitor&quot;  skip_database_creation = true  username = &quot;admin&quot;                            #有权限验证则修改用户名，否则删除该行配置  password = &quot;admin&quot;                            #有权限验证则修改密码，否则删除该行配置  namepass=[&quot;oracledb_*&quot;]################################################################################                            PROCESSOR PLUGINS                                ################################################################################[[processors.converter]]  [processors.converter.tags]    string = [&quot;info_version&quot;, &quot;sql_text&quot;, &quot;sql_username&quot;]    boolean = [&quot;info_is_rac&quot;]    float = [&quot;info_uptime&quot;, &quot;info_dbtime&quot;, &quot;sql_exec&quot;]################################################################################                            INPUT PLUGINS                                    ################################################################################[[inputs.prometheus]]  urls = [&quot;http://ip:9162/metrics&quot;]  #修改成实际的exporter地址  response_timeout = &quot;150s&quot;\n抓取以oracle_table.conf启动的oracle_exporter的telegraf.conf1234567891011121314151617181920212223242526272829303132333435363738394041[global_tags][agent]  interval = &quot;24h&quot;                    #修改成实际的抓取间隔  round_interval = true  metric_batch_size = 1000  metric_buffer_limit = 10000  collection_jitter = &quot;0s&quot;  flush_interval = &quot;10s&quot;  flush_jitter = &quot;0s&quot;  precision = &quot;&quot;  debug = false  quiet = false  logfile = &quot;&quot;  hostname = &quot;hostname&quot;                    #修改成抓取的数据库所在主机名  omit_hostname = false################################################################################                            OUTPUT PLUGINS                                   ################################################################################[[outputs.influxdb]]  urls = [&quot;http://ip:8086&quot;]  #修改成实际的influxdb地址  database = &quot;oracledb_monitor&quot;  skip_database_creation = true  username = &quot;admin&quot;                   #有权限验证则修改用户名，否则删除该行配置  password = &quot;admin&quot;                   #有权限验证则修改密码，否则删除该行配置  namepass=[&quot;oracledb_*&quot;]################################################################################                            PROCESSOR PLUGINS                                ################################################################################[[processors.converter]]  [processors.converter.tags]    integer = [&quot;index_bytes&quot;, &quot;lob_bytes&quot;, &quot;num_rows&quot;]################################################################################                            INPUT PLUGINS                                    ################################################################################[[inputs.prometheus]]  urls = [&quot;http://ip:9162/metrics&quot;]  #修改成实际的exporter地址  response_timeout = &quot;150s&quot;\n3.启动telegraf收集不同exporter启动时加载不同的配置文件12telegraf --config telegraf.conf --input-filter prometheus --processor-filter converter --output-filter influxdbtelegraf --config telegraf_table.conf --input-filter prometheus --processor-filter converter --output-filter influxdb\n","dateCreated":"2019-05-24T17:20:24+08:00","dateModified":"2019-05-24T16:51:11+08:00","datePublished":"2019-05-24T17:20:24+08:00","description":"","headline":"telegraf prometheus plugin inputs","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/05/24/telegraf_prometheus/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/05/24/telegraf_prometheus/","keywords":"telegraf"}</script>
+    <meta name="description" content="Prometheus Input plugins（需要结合修改过的oracledb_exporter）安装与启动1.启动oracledb_exporter，并访问oracledb_exporter启动时指定的ip:port，确认数据无误。加载不同配置启动oracledb_exporter：oracle.conf12345678connections: - connection: userName/">
+<meta name="keywords" content="telegraf">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="telegraf prometheus plugin inputs">
+<meta property="og:url" content="http://yoursite.com/2019/05/24/telegraf_prometheus/index.html">
+<meta property="og:site_name" content="Brotherc">
+<meta property="og:description" content="Prometheus Input plugins（需要结合修改过的oracledb_exporter）安装与启动1.启动oracledb_exporter，并访问oracledb_exporter启动时指定的ip:port，确认数据无误。加载不同配置启动oracledb_exporter：oracle.conf12345678connections: - connection: userName/">
+<meta property="og:locale" content="zh-cn">
+<meta property="og:updated_time" content="2019-05-24T08:51:11.426Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="telegraf prometheus plugin inputs">
+<meta name="twitter:description" content="Prometheus Input plugins（需要结合修改过的oracledb_exporter）安装与启动1.启动oracledb_exporter，并访问oracledb_exporter启动时指定的ip:port，确认数据无误。加载不同配置启动oracledb_exporter：oracle.conf12345678connections: - connection: userName/">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://yoursite.com/assets/images/head.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-c4ozcsklz4kht2pebhp44xorvyverh23toayhn7i6ubrpyedak24hv1v0hyd.min.css">
+    <!--STYLES END-->
+    
+
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/ ">Brotherc</a>
+    </div>
+    
+        
+            <a class="header-right-picture " href="#about">
+        
+        
+            <img class="header-picture" src="/assets/images/head.jpg" alt="作者的图片">
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/#about">
+                    <img class="sidebar-profile-picture" src="/assets/images/head.jpg" alt="作者的图片">
+                </a>
+                <h4 class="sidebar-profile-name">Brotherc</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>java development</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/ " title="首页">
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">首页</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-categories" title="分类">
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">分类</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-tags" title="标签">
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">标签</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link open-algolia-search" href="/all-archives" title="归档">
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">归档</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="#about" title="关于">
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">关于</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://github.com/Brotherc" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="4"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            telegraf prometheus plugin inputs
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-05-24T17:20:24+08:00">
+	
+		    5月 24, 2019
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <h3 id="Prometheus-Input-plugins（需要结合修改过的oracledb-exporter）"><a href="#Prometheus-Input-plugins（需要结合修改过的oracledb-exporter）" class="headerlink" title="Prometheus Input plugins（需要结合修改过的oracledb_exporter）"></a>Prometheus Input plugins（需要结合修改过的oracledb_exporter）</h3><h4 id="安装与启动"><a href="#安装与启动" class="headerlink" title="安装与启动"></a>安装与启动</h4><p>1.启动oracledb_exporter，并访问oracledb_exporter启动时指定的ip:port，确认数据无误。<br>加载不同配置启动oracledb_exporter：<br>oracle.conf<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">connections:</span><br><span class="line"> - connection: userName/userPassword@ip:1521/databaseName</span><br><span class="line">   database: databaseName</span><br><span class="line">   instance: ip</span><br><span class="line">   id: customId</span><br><span class="line">   metrics: process,top_sql,session,wait_time,activity,physical_io,cache</span><br><span class="line">   topsql:</span><br><span class="line">     rownum: 10</span><br></pre></td></tr></table></figure></p>
+<p>oracledb_exporter -configfile=oracle.conf -web.listen-address ip:port</p>
+<p>oracle_table.conf<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">connections:</span><br><span class="line"> - connection: userName/userPassword@ip:1521/databaseName</span><br><span class="line">   database: databaseName</span><br><span class="line">   instance: ip</span><br><span class="line">   id: customId</span><br><span class="line">   metrics: top_table,tablespace</span><br><span class="line">   toptable:</span><br><span class="line">     rownum: 10</span><br></pre></td></tr></table></figure></p>
+<p>oracledb_exporter -configfile=oracle_table.conf -web.listen-address ip:port</p>
+<p>2.配置Telegraf Prometheus输入插件（对于抓取不同metric的输agent，需要不同的telegraf配置）<br>抓取以oracle.conf启动的oracle_exporter的telegraf.conf<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">[global_tags]</span><br><span class="line"></span><br><span class="line">[agent]</span><br><span class="line">  interval = &quot;60s&quot;                              #修改成实际的抓取间隔</span><br><span class="line">  round_interval = true</span><br><span class="line">  metric_batch_size = 1000</span><br><span class="line">  metric_buffer_limit = 10000</span><br><span class="line">  collection_jitter = &quot;0s&quot;</span><br><span class="line">  flush_interval = &quot;10s&quot;</span><br><span class="line">  flush_jitter = &quot;0s&quot;</span><br><span class="line">  precision = &quot;&quot;</span><br><span class="line">  debug = false</span><br><span class="line">  quiet = false</span><br><span class="line">  logfile = &quot;&quot;</span><br><span class="line">  hostname = &quot;hostname&quot;                              #修改成抓取的数据库所在主机名</span><br><span class="line">  omit_hostname = false</span><br><span class="line"></span><br><span class="line">###############################################################################</span><br><span class="line">#                            OUTPUT PLUGINS                                   #</span><br><span class="line">###############################################################################</span><br><span class="line">[[outputs.influxdb]]</span><br><span class="line">  urls = [&quot;http://ip:8086&quot;]           #修改成实际的influxdb地址</span><br><span class="line">  database = &quot;oracledb_monitor&quot;</span><br><span class="line">  skip_database_creation = true</span><br><span class="line">  username = &quot;admin&quot;                            #有权限验证则修改用户名，否则删除该行配置</span><br><span class="line">  password = &quot;admin&quot;                            #有权限验证则修改密码，否则删除该行配置</span><br><span class="line">  namepass=[&quot;oracledb_*&quot;]</span><br><span class="line"></span><br><span class="line">###############################################################################</span><br><span class="line">#                            PROCESSOR PLUGINS                                #</span><br><span class="line">###############################################################################</span><br><span class="line">[[processors.converter]]</span><br><span class="line">  [processors.converter.tags]</span><br><span class="line">    string = [&quot;info_version&quot;, &quot;sql_text&quot;, &quot;sql_username&quot;]</span><br><span class="line">    boolean = [&quot;info_is_rac&quot;]</span><br><span class="line">    float = [&quot;info_uptime&quot;, &quot;info_dbtime&quot;, &quot;sql_exec&quot;]</span><br><span class="line"></span><br><span class="line">###############################################################################</span><br><span class="line">#                            INPUT PLUGINS                                    #</span><br><span class="line">###############################################################################</span><br><span class="line">[[inputs.prometheus]]</span><br><span class="line">  urls = [&quot;http://ip:9162/metrics&quot;]  #修改成实际的exporter地址</span><br><span class="line">  response_timeout = &quot;150s&quot;</span><br></pre></td></tr></table></figure></p>
+<p>抓取以oracle_table.conf启动的oracle_exporter的telegraf.conf<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">[global_tags]</span><br><span class="line"></span><br><span class="line">[agent]</span><br><span class="line">  interval = &quot;24h&quot;                    #修改成实际的抓取间隔</span><br><span class="line">  round_interval = true</span><br><span class="line">  metric_batch_size = 1000</span><br><span class="line">  metric_buffer_limit = 10000</span><br><span class="line">  collection_jitter = &quot;0s&quot;</span><br><span class="line">  flush_interval = &quot;10s&quot;</span><br><span class="line">  flush_jitter = &quot;0s&quot;</span><br><span class="line">  precision = &quot;&quot;</span><br><span class="line">  debug = false</span><br><span class="line">  quiet = false</span><br><span class="line">  logfile = &quot;&quot;</span><br><span class="line">  hostname = &quot;hostname&quot;                    #修改成抓取的数据库所在主机名</span><br><span class="line">  omit_hostname = false</span><br><span class="line"></span><br><span class="line">###############################################################################</span><br><span class="line">#                            OUTPUT PLUGINS                                   #</span><br><span class="line">###############################################################################</span><br><span class="line">[[outputs.influxdb]]</span><br><span class="line">  urls = [&quot;http://ip:8086&quot;]  #修改成实际的influxdb地址</span><br><span class="line">  database = &quot;oracledb_monitor&quot;</span><br><span class="line">  skip_database_creation = true</span><br><span class="line">  username = &quot;admin&quot;                   #有权限验证则修改用户名，否则删除该行配置</span><br><span class="line">  password = &quot;admin&quot;                   #有权限验证则修改密码，否则删除该行配置</span><br><span class="line">  namepass=[&quot;oracledb_*&quot;]</span><br><span class="line"></span><br><span class="line">###############################################################################</span><br><span class="line">#                            PROCESSOR PLUGINS                                #</span><br><span class="line">###############################################################################</span><br><span class="line">[[processors.converter]]</span><br><span class="line">  [processors.converter.tags]</span><br><span class="line">    integer = [&quot;index_bytes&quot;, &quot;lob_bytes&quot;, &quot;num_rows&quot;]</span><br><span class="line"></span><br><span class="line">###############################################################################</span><br><span class="line">#                            INPUT PLUGINS                                    #</span><br><span class="line">###############################################################################</span><br><span class="line">[[inputs.prometheus]]</span><br><span class="line">  urls = [&quot;http://ip:9162/metrics&quot;]  #修改成实际的exporter地址</span><br><span class="line">  response_timeout = &quot;150s&quot;</span><br></pre></td></tr></table></figure></p>
+<p>3.启动telegraf<br>收集不同exporter启动时加载不同的配置文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">telegraf --config telegraf.conf --input-filter prometheus --processor-filter converter --output-filter influxdb</span><br><span class="line">telegraf --config telegraf_table.conf --input-filter prometheus --processor-filter converter --output-filter influxdb</span><br></pre></td></tr></table></figure></p>
+
+            
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">标签</span><br>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/telegraf/">telegraf</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/05/24/telegraf_volume/" data-tooltip="telegraf file plugin inputs" aria-label="上一篇: telegraf file plugin inputs">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/05/24/spring常用操作/" data-tooltip="spring常用操作" aria-label="下一篇: spring常用操作">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/05/24/telegraf_prometheus/" title="分享到 Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/05/24/telegraf_prometheus/" title="分享到 Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/05/24/telegraf_prometheus/" title="分享到 Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 Brotherc. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/05/24/telegraf_volume/" data-tooltip="telegraf file plugin inputs" aria-label="上一篇: telegraf file plugin inputs">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/05/24/spring常用操作/" data-tooltip="spring常用操作" aria-label="下一篇: spring常用操作">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/05/24/telegraf_prometheus/" title="分享到 Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/05/24/telegraf_prometheus/" title="分享到 Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/05/24/telegraf_prometheus/" title="分享到 Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/05/24/telegraf_prometheus/">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>分享到 Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/05/24/telegraf_prometheus/">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/05/24/telegraf_prometheus/">
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>分享到 Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/head.jpg" alt="作者的图片">
+        
+            <h4 id="about-card-name">Brotherc</h4>
+        
+            <div id="about-card-bio"><p>java development</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br>
+                <p>java</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br>
+                zhuhai
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-dbd16rvloemmuxdzniplmnxxvwoz24eya9wol0b7vvmlokgqsjivmb8dnscy.min.js"></script>
+<!--SCRIPTS END-->
+
+    
+
+
+
+    </body>
+</html>

@@ -6,24 +6,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Brotherc">
-    <title>Oracle报错，ORA-28001:口令已经失效 - Brotherc</title>
+    <title>telegraf file plugin inputs - Brotherc</title>
     <meta name="author" content="Brotherc">
     
     
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"WINDOWS下使用DOS命令行连接oracle数据库sqlplus userName/userPassword@netServiceName\n1Oracle报错，ORA-28001: 口令已经失效\ncmd命令行输入：12345678910sqlplus / as sysdbaSQL*Plus: Release 11.2.0.1.0 Production on 星期二 10月 17 15:42:58 2017Copyright (c) 1982, 2010, Oracle.  All rights reserved.连接到:Oracle Database 11g Enterprise Edition Release 11.2.0.1.0 - ProductionWith the Partitioning, OLAP, Data Mining and Real Application Testing optionsSQL&gt; ALTER PROFILE DEFAULT LIMIT PASSWORD_LIFE_TIME UNLIMITED;配置文件已更改SQL&gt; alter user 用户名 dentified by 密码 account unlock;用户已更改。\n再次测试登录即可\n","dateCreated":"2019-03-14T19:05:07+08:00","dateModified":"2019-02-13T22:12:20+08:00","datePublished":"2019-03-14T19:05:07+08:00","description":"","headline":"Oracle报错，ORA-28001:口令已经失效","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/03/14/Oracle报错ORA-28001/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/03/14/Oracle报错ORA-28001/","keywords":"oracle"}</script>
-    <meta name="description" content="WINDOWS下使用DOS命令行连接oracle数据库sqlplus userName/userPassword@netServiceName 1Oracle报错，ORA-28001: 口令已经失效 cmd命令行输入：12345678910sqlplus / as sysdbaSQL*Plus: Release 11.2.0.1.0 Production on 星期二 10月 17 15:42:5">
-<meta name="keywords" content="oracle">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"需要使用新增过功能的telegraf1.telegraf.conf1234567891011121314151617181920212223242526272829303132333435363738394041[global_tags][agent]  interval = &quot;1h&quot;                #修改成实际的抓取间隔  round_interval = true  metric_batch_size = 1000  metric_buffer_limit = 10000  collection_jitter = &quot;0s&quot;  flush_interval = &quot;20s&quot;  flush_jitter = &quot;0s&quot;  precision = &quot;&quot;  debug = false  quiet = false  hostname = &quot;&quot;  omit_hostname = false################################################################################                                  OUTPUTS                                    ################################################################################[[outputs.influxdb]]  urls = [&quot;http://ip:8086&quot;]     #修改成实际的influxdb地址  database = &quot;volume_monitor&quot;  skip_database_creation = true  username = &quot;admin&quot;                        #有权限验证则修改用户名，否则删除该行配置  password = &quot;admin&quot;                        #有权限验证则修改密码，否则删除该行配置  namepass=[&quot;volume_*&quot;]################################################################################                                  INPUTS                                     ################################################################################[[inputs.filecount]]  name_prefix=&quot;volume_&quot;  directories = [&quot;E:\\\\volume01&quot;]                    #实际抓取的文件目录  name = &quot;*&quot;  recursive = true  regular_only = true  size = 0  large_file_size = 4  mtime = &quot;0s&quot;\n2.启动1telegraf --config telegraf.conf --input-filter filecount --output-filter influxdb\n","dateCreated":"2019-05-24T17:20:36+08:00","dateModified":"2019-05-24T16:56:27+08:00","datePublished":"2019-05-24T17:20:36+08:00","description":"","headline":"telegraf file plugin inputs","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/05/24/telegraf_volume/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/05/24/telegraf_volume/","keywords":"telegraf"}</script>
+    <meta name="description" content="需要使用新增过功能的telegraf1.telegraf.conf1234567891011121314151617181920212223242526272829303132333435363738394041[global_tags][agent]  interval = &amp;quot;1h&amp;quot;                #修改成实际的抓取间隔  round_interval = t">
+<meta name="keywords" content="telegraf">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="Oracle报错，ORA-28001:口令已经失效">
-<meta property="og:url" content="http://yoursite.com/2019/03/14/Oracle报错ORA-28001/index.html">
+<meta property="og:title" content="telegraf file plugin inputs">
+<meta property="og:url" content="http://yoursite.com/2019/05/24/telegraf_volume/index.html">
 <meta property="og:site_name" content="Brotherc">
-<meta property="og:description" content="WINDOWS下使用DOS命令行连接oracle数据库sqlplus userName/userPassword@netServiceName 1Oracle报错，ORA-28001: 口令已经失效 cmd命令行输入：12345678910sqlplus / as sysdbaSQL*Plus: Release 11.2.0.1.0 Production on 星期二 10月 17 15:42:5">
+<meta property="og:description" content="需要使用新增过功能的telegraf1.telegraf.conf1234567891011121314151617181920212223242526272829303132333435363738394041[global_tags][agent]  interval = &amp;quot;1h&amp;quot;                #修改成实际的抓取间隔  round_interval = t">
 <meta property="og:locale" content="zh-cn">
-<meta property="og:updated_time" content="2019-02-13T14:12:20.345Z">
+<meta property="og:updated_time" content="2019-05-24T08:56:27.428Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Oracle报错，ORA-28001:口令已经失效">
-<meta name="twitter:description" content="WINDOWS下使用DOS命令行连接oracle数据库sqlplus userName/userPassword@netServiceName 1Oracle报错，ORA-28001: 口令已经失效 cmd命令行输入：12345678910sqlplus / as sysdbaSQL*Plus: Release 11.2.0.1.0 Production on 星期二 10月 17 15:42:5">
+<meta name="twitter:title" content="telegraf file plugin inputs">
+<meta name="twitter:description" content="需要使用新增过功能的telegraf1.telegraf.conf1234567891011121314151617181920212223242526272829303132333435363738394041[global_tags][agent]  interval = &amp;quot;1h&amp;quot;                #修改成实际的抓取间隔  round_interval = t">
     
     
         
@@ -168,14 +168,14 @@
         <div class="post-header main-content-wrap text-left">
     
         <h1 class="post-title">
-            Oracle报错，ORA-28001:口令已经失效
+            telegraf file plugin inputs
         </h1>
     
     
         <div class="post-meta">
-    <time datetime="2019-03-14T19:05:07+08:00">
+    <time datetime="2019-05-24T17:20:36+08:00">
 	
-		    3月 14, 2019
+		    5月 24, 2019
     	
     </time>
     
@@ -187,10 +187,8 @@
     
     <div class="post-content markdown">
         <div class="main-content-wrap">
-            <p>WINDOWS下使用DOS命令行连接oracle数据库<br>sqlplus userName/userPassword@netServiceName</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Oracle报错，ORA-28001: 口令已经失效</span><br></pre></td></tr></table></figure>
-<p>cmd命令行输入：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">sqlplus / as sysdba</span><br><span class="line">SQL*Plus: Release 11.2.0.1.0 Production on 星期二 10月 17 15:42:58 2017</span><br><span class="line">Copyright (c) 1982, 2010, Oracle.  All rights reserved.</span><br><span class="line">连接到:</span><br><span class="line">Oracle Database 11g Enterprise Edition Release 11.2.0.1.0 - Production</span><br><span class="line">With the Partitioning, OLAP, Data Mining and Real Application Testing options</span><br><span class="line">SQL&gt; ALTER PROFILE DEFAULT LIMIT PASSWORD_LIFE_TIME UNLIMITED;</span><br><span class="line">配置文件已更改</span><br><span class="line">SQL&gt; alter user 用户名 dentified by 密码 account unlock;</span><br><span class="line">用户已更改。</span><br></pre></td></tr></table></figure></p>
-<p>再次测试登录即可</p>
+            <h5 id="需要使用新增过功能的telegraf"><a href="#需要使用新增过功能的telegraf" class="headerlink" title="需要使用新增过功能的telegraf"></a>需要使用新增过功能的telegraf</h5><p>1.telegraf.conf<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">[global_tags]</span><br><span class="line"></span><br><span class="line">[agent]</span><br><span class="line">  interval = &quot;1h&quot;                #修改成实际的抓取间隔</span><br><span class="line">  round_interval = true</span><br><span class="line">  metric_batch_size = 1000</span><br><span class="line">  metric_buffer_limit = 10000</span><br><span class="line">  collection_jitter = &quot;0s&quot;</span><br><span class="line">  flush_interval = &quot;20s&quot;</span><br><span class="line">  flush_jitter = &quot;0s&quot;</span><br><span class="line">  precision = &quot;&quot;</span><br><span class="line">  debug = false</span><br><span class="line">  quiet = false</span><br><span class="line">  hostname = &quot;&quot;</span><br><span class="line">  omit_hostname = false</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">###############################################################################</span><br><span class="line">#                                  OUTPUTS                                    #</span><br><span class="line">###############################################################################</span><br><span class="line">[[outputs.influxdb]]</span><br><span class="line">  urls = [&quot;http://ip:8086&quot;]     #修改成实际的influxdb地址</span><br><span class="line">  database = &quot;volume_monitor&quot;</span><br><span class="line">  skip_database_creation = true</span><br><span class="line">  username = &quot;admin&quot;                        #有权限验证则修改用户名，否则删除该行配置</span><br><span class="line">  password = &quot;admin&quot;                        #有权限验证则修改密码，否则删除该行配置</span><br><span class="line">  namepass=[&quot;volume_*&quot;]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">###############################################################################</span><br><span class="line">#                                  INPUTS                                     #</span><br><span class="line">###############################################################################</span><br><span class="line">[[inputs.filecount]]</span><br><span class="line">  name_prefix=&quot;volume_&quot;</span><br><span class="line">  directories = [&quot;E:\\volume01&quot;]                    #实际抓取的文件目录</span><br><span class="line">  name = &quot;*&quot;</span><br><span class="line">  recursive = true</span><br><span class="line">  regular_only = true</span><br><span class="line">  size = 0</span><br><span class="line">  large_file_size = 4</span><br><span class="line">  mtime = &quot;0s&quot;</span><br></pre></td></tr></table></figure></p>
+<p>2.启动<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">telegraf --config telegraf.conf --input-filter filecount --output-filter influxdb</span><br></pre></td></tr></table></figure></p>
 
             
 
@@ -201,7 +199,7 @@
             <div class="post-footer-tags">
                 <span class="text-color-light text-small">标签</span><br>
                 
-    <a class="tag tag--primary tag--small t-link" href="/tags/oracle/">oracle</a>
+    <a class="tag tag--primary tag--small t-link" href="/tags/telegraf/">telegraf</a>
 
             </div>
         
@@ -212,7 +210,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/telegraf_Jolokia2_Input_Plugins/" data-tooltip="telegraf Jolokia2 plugin inputs" aria-label="上一篇: telegraf Jolokia2 plugin inputs">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/05/24/解决SqlPlus前台程序出现中文乱码的问题/" data-tooltip="解决SqlPlus前台程序出现中文乱码的问题" aria-label="上一篇: 解决SqlPlus前台程序出现中文乱码的问题">
                 
                     <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -221,7 +219,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/OCP-Oracle体系结构/" data-tooltip="OCP-Oracle体系结构" aria-label="下一篇: OCP-Oracle体系结构">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/05/24/telegraf_prometheus/" data-tooltip="telegraf prometheus plugin inputs" aria-label="下一篇: telegraf prometheus plugin inputs">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right" aria-hidden="true"></i>
@@ -239,7 +237,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/14/Oracle报错ORA-28001/" title="分享到 Facebook">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/05/24/telegraf_volume/" title="分享到 Facebook">
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
@@ -247,7 +245,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/14/Oracle报错ORA-28001/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/05/24/telegraf_volume/" title="分享到 Twitter">
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -255,7 +253,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/14/Oracle报错ORA-28001/" title="分享到 Google+">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/05/24/telegraf_volume/" title="分享到 Google+">
                     <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
             </li>
@@ -298,7 +296,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/telegraf_Jolokia2_Input_Plugins/" data-tooltip="telegraf Jolokia2 plugin inputs" aria-label="上一篇: telegraf Jolokia2 plugin inputs">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/05/24/解决SqlPlus前台程序出现中文乱码的问题/" data-tooltip="解决SqlPlus前台程序出现中文乱码的问题" aria-label="上一篇: 解决SqlPlus前台程序出现中文乱码的问题">
                 
                     <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -307,7 +305,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/OCP-Oracle体系结构/" data-tooltip="OCP-Oracle体系结构" aria-label="下一篇: OCP-Oracle体系结构">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/05/24/telegraf_prometheus/" data-tooltip="telegraf prometheus plugin inputs" aria-label="下一篇: telegraf prometheus plugin inputs">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right" aria-hidden="true"></i>
@@ -325,7 +323,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/14/Oracle报错ORA-28001/" title="分享到 Facebook">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/05/24/telegraf_volume/" title="分享到 Facebook">
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
@@ -333,7 +331,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/14/Oracle报错ORA-28001/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/05/24/telegraf_volume/" title="分享到 Twitter">
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -341,7 +339,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/14/Oracle报错ORA-28001/" title="分享到 Google+">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/05/24/telegraf_volume/" title="分享到 Google+">
                     <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
             </li>
@@ -369,7 +367,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/14/Oracle报错ORA-28001/">
+                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/05/24/telegraf_volume/">
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>分享到 Facebook</span>
                     </a>
                 </li>
@@ -377,7 +375,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/14/Oracle报错ORA-28001/">
+                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/05/24/telegraf_volume/">
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
                     </a>
                 </li>
@@ -385,7 +383,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/14/Oracle报错ORA-28001/">
+                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/05/24/telegraf_volume/">
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>分享到 Google+</span>
                     </a>
                 </li>

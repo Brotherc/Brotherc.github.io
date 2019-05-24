@@ -166,6 +166,95 @@
             <div class="postShorten-header">
                 <h1 class="postShorten-title">
                     
+                        <a class="link-unstyled" href="/2019/05/24/解决SqlPlus前台程序出现中文乱码的问题/">
+                            解决SqlPlus前台程序出现中文乱码的问题
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2019-05-24T17:22:11+08:00">
+	
+		    5月 24, 2019
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <p>第一步：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">在sqlplus中执行 select userenv(&apos;language&apos;) from dual;查看当前数据库的字符集为：SIMPLIFIED CHINESE_CHINA.ZHS16GBK。</span><br><span class="line">我们只需要把客户端字符集和操作系统字符集都设置成这个就行了</span><br><span class="line">开始-运行-CMD：</span><br><span class="line">SET NLS_LANG=SIMPLIFIED CHINESE_CHINA.ZHS16GBK</span><br><span class="line">以上参数设置只是在当前会话生效</span><br></pre></td></tr></table></figure></p>
+<p>第二步：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">在环境变量中查找一个名为“NLS_LANG”的环境变量，如果找不到，则新建一个，</span><br><span class="line">把变量值赋值为：“SIMPLIFIED CHINESE_CHINA.ZHS16GBK”</span><br></pre></td></tr></table></figure></p>
+<p>参考：<br><a href="http://blog.itpub.net/26839123/viewspace-722870/" target="_blank" rel="noopener">http://blog.itpub.net/26839123/viewspace-722870/</a></p>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2019/05/24/解决SqlPlus前台程序出现中文乱码的问题/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a class="link-unstyled" href="/2019/05/24/oracle_table/">
+                            oracle-monitor-toptable
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2019-05-24T17:17:35+08:00">
+	
+		    5月 24, 2019
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <p>SELECT<br>  t1.<em>, nvl(t2.index_bytes, 0) index_bytes, nvl(t3.lob_bytes, 0) lob_bytes<br>FROM<br>  (SELECT </em> FROM(SELECT<br>    tab.owner,<br>    tab.table_name,<br>    tab.tablespace_name,<br>    nvl(tab.num_rows, to_number(NULL)) num_rows,<br>  nvl(stab.bytes, to_number(NULL)) bytes<br>  FROM<br>    dba_tables tab, dba_segments stab<br>  WHERE<br>    stab.owner = tab.owner AND stab.segment_name = tab.table_name AND<br>    tab.owner NOT LIKE ‘%SYS%’ ORDER BY stab.bytes DESC) WHERE rownum &lt;= 10) t1,<br>  (SELECT<br>    table_owner,<br>    table_name,<br>    SUM(nvl(bytes, to_number(NULL))) index_bytes<br>  FROM<br>    dba_indexes ind, dba_segments seg<br>  WHERE<br>   ind.owner=seg.owner AND ind.index_name=seg.segment_name AND table_owner NOT LIKE ‘%SYS%’<br>  GROUP BY<br>   table_owner,table_name) t2,<br>  (SELECT<br>    l.owner,<br>    l.table_name,<br>  SUM(nvl(bytes, to_number(NULL))) lob_bytes<br>  FROM<br>    dba_lobs l, dba_segments seg<br>  WHERE<br>    l.owner=seg.owner AND l.segment_name=seg.segment_name AND l.owner NOT LIKE ‘%SYS%’<br>  GROUP BY l.owner,l.table_name) t3<br>WHERE t1.table_name = t2.table_name(+) AND t1.owner = t2.table_owner(+)<br>  AND t1.table_name = t3.table_name(+) AND t1.owner = t3.owner(+)</p>
+<p>参考：<br>(<a href="https://github.com/freenetdigital/prometheus_oracle_exporter)[https://github.com/freenetdigital/prometheus_oracle_exporter]" target="_blank" rel="noopener">https://github.com/freenetdigital/prometheus_oracle_exporter)[https://github.com/freenetdigital/prometheus_oracle_exporter]</a>  </p>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2019/05/24/oracle_table/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
                         <a class="link-unstyled" href="/2019/04/16/oracle_top/">
                             oracle-monitor-topsql
                         </a>
@@ -184,15 +273,15 @@
             
                 <div class="postShorten-content">
                     <h3 id="最大增量（即最大Elapsed-Time的一次sql）"><a href="#最大增量（即最大Elapsed-Time的一次sql）" class="headerlink" title="最大增量（即最大Elapsed_Time的一次sql）"></a>最大增量（即最大Elapsed_Time的一次sql）</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">// 最近快照</span><br><span class="line">select * from (</span><br><span class="line">  SELECT</span><br><span class="line">    m.*, TO_CHAR(dbms_lob.substr(v.sql_text, 3900)) SQL_Text</span><br><span class="line">  FROM (</span><br><span class="line">    select distinct</span><br><span class="line">        snap_id,</span><br><span class="line">        sql_id,</span><br><span class="line">        EXECUTIONS_DELTA,</span><br><span class="line">        trunc(max(ELAPSED_TIME_DELTA)OVER(PARTITION BY snap_id, sql_id),0) max_elapsed,</span><br><span class="line">        trunc(max(cpu_time_delta)OVER(PARTITION BY snap_id, sql_id),0) max_cpu</span><br><span class="line">    from</span><br><span class="line">      dba_hist_sqlstat t</span><br><span class="line">    WHERE</span><br><span class="line">      t.snap_id IN (SELECT MAX(snap_id) FROM dba_hist_sqlstat)</span><br><span class="line">  ) M,dba_hist_sqltext v</span><br><span class="line">  where</span><br><span class="line">    v.sql_id(+)=m.sql_id and v.SQL_TEXT not like &apos;%v$%&apos;</span><br><span class="line">  order by max_elapsed desc</span><br><span class="line">) where rownum &lt; 10;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">// 不区分快照</span><br><span class="line">select * from (</span><br><span class="line">  select</span><br><span class="line">    sqt.*, TO_CHAR(dbms_lob.substr(st.sql_text, 3900)) sql_text</span><br><span class="line">  from</span><br><span class="line">    (select</span><br><span class="line">      sql_id,</span><br><span class="line">      max(executions_delta) max_exec,</span><br><span class="line">      max(cpu_time_delta) max_cpu,</span><br><span class="line">      max(ELAPSED_TIME_DELTA) max_elapsed</span><br><span class="line">    from dba_hist_sqlstat</span><br><span class="line">    group by sql_id) sqt, dba_hist_sqltext st</span><br><span class="line">  where</span><br><span class="line">    st.sql_id(+) = sqt.sql_id and st.SQL_TEXT not like &apos;%v$%&apos;</span><br><span class="line">  order by nvl(sqt.max_elapsed, -1) desc, sqt.sql_id</span><br><span class="line">) where rownum &lt; 10;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">-- 不区分快照，关联sql执行用户</span><br><span class="line">select * from (</span><br><span class="line">  select</span><br><span class="line">    sqt.sql_id, sqt.max_exec, sqt.max_elapsed, su.username,</span><br><span class="line">    TO_CHAR(dbms_lob.substr(st.sql_text, 3900)) sql_text</span><br><span class="line">  from</span><br><span class="line">    (select</span><br><span class="line">      sql_id,</span><br><span class="line">      min(snap_id) snap_id,</span><br><span class="line">      max(executions_delta) max_exec,</span><br><span class="line">      max(cpu_time_delta) max_cpu,</span><br><span class="line">      NVL((MAX(elapsed_time_delta) / 1000000), to_number(null)) max_elapsed</span><br><span class="line">    from dba_hist_sqlstat</span><br><span class="line">    where module = &apos;tcserver.exe&apos; -- 过滤某个程序执行的sql语句</span><br><span class="line">    group by sql_id) sqt, dba_hist_sqltext st,</span><br><span class="line">    (SELECT sql_id, parsing_schema_name username</span><br><span class="line">      FROM (</span><br><span class="line">        SELECT t.sql_id,t.parsing_schema_name,row_number() over(partition by t.sql_id order by t.snap_id asc) rn</span><br><span class="line">        FROM dba_hist_sqlstat t</span><br><span class="line">        WHERE module =&apos;tcserver.exe&apos;) -- 过滤某个程序执行的sql语句</span><br><span class="line">      WHERE rn = 1) su</span><br><span class="line">  where</span><br><span class="line">    st.sql_id(+) = sqt.sql_id and su.sql_id(+) = sqt.sql_id</span><br><span class="line">  order by nvl(sqt.max_elapsed, -1) desc, sqt.sql_id</span><br><span class="line">) where rownum &lt;= 10;</span><br></pre></td></tr></table></figure>
 <h3 id="总量（即某条sql的总时长）"><a href="#总量（即某条sql的总时长）" class="headerlink" title="总量（即某条sql的总时长）"></a>总量（即某条sql的总时长）</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">select * from (</span><br><span class="line">  select</span><br><span class="line">    sqt.sql_id,</span><br><span class="line">    sqt.exec Executions,</span><br><span class="line">    nvl((sqt.elap / 1000000), to_number(null)) Elapsed_Time_s,</span><br><span class="line">    nvl((sqt.cput / 1000000), to_number(null)) CPU_Time_s,</span><br><span class="line">    decode(sqt.exec,</span><br><span class="line">           0,</span><br><span class="line">           to_number(null),</span><br><span class="line">           (sqt.elap / sqt.exec / 1000000)) Elap_per_Exec_s,</span><br><span class="line">    TO_CHAR(dbms_lob.substr(st.sql_text, 3900)) SQL_Text</span><br><span class="line">  from</span><br><span class="line">    (select</span><br><span class="line">      sql_id,</span><br><span class="line">      max(module) module,</span><br><span class="line">      sum(elapsed_time_delta) elap,</span><br><span class="line">      sum(cpu_time_delta) cput,</span><br><span class="line">      sum(executions_delta) exec</span><br><span class="line">    from</span><br><span class="line">      dba_hist_sqlstat</span><br><span class="line">    group by</span><br><span class="line">      sql_id) sqt, dba_hist_sqltext st</span><br><span class="line">  where</span><br><span class="line">    st.sql_id(+) = sqt.sql_id and st.sql_text not like &apos;%v$%&apos;</span><br><span class="line">  order by</span><br><span class="line">    nvl(sqt.elap, -1) desc, sqt.sql_id</span><br><span class="line">) where rownum &lt; 10;</span><br></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">select</span><br><span class="line">  sql_id,</span><br><span class="line">  executions,</span><br><span class="line">  elapsed_time,</span><br><span class="line">  cpu_time,</span><br><span class="line">  (elapsed_time / executions ) Elap_per_Exec,</span><br><span class="line">  TO_CHAR(dbms_lob.substr(sql_fulltext, 3900)) SQL_Text</span><br><span class="line">from</span><br><span class="line">  (select</span><br><span class="line">    sql_id,</span><br><span class="line">    child_number,</span><br><span class="line">    sql_text,</span><br><span class="line">    elapsed_time,</span><br><span class="line">    cpu_time,</span><br><span class="line">    disk_reads,</span><br><span class="line">    sql_fulltext,</span><br><span class="line">    executions,</span><br><span class="line">    rank () over(order by elapsed_time desc) as sql_rank</span><br><span class="line">  from</span><br><span class="line">    v$sql where sql_fulltext not like &apos;%v$%&apos;)</span><br><span class="line">where</span><br><span class="line">  sql_rank &lt; 10;</span><br></pre></td></tr></table></figure>
 <h3 id="注意："><a href="#注意：" class="headerlink" title="注意："></a>注意：</h3><ul>
-<li>上面的sql会将查询v$开头的表的sql过滤</li>
 <li>使用TO_CHAR(dbms_lob.substr(BLOB_FIELD, 3900))将BLOB转成VARCHAR</li>
 <li>根据情况选择查询dba_hist_sqlstat表或v$sql表</li>
+<li>row_number() over( partition by 分组字段 order by 排序字段 desc ) oracle按某个字段分组然后从每组取出最大的一条纪录</li>
 </ul>
-<p>参考：<br><a href="http://www.cnblogs.com/david-zhang-index/archive/2012/03/16/2399846.html" target="_blank" rel="noopener">http://www.cnblogs.com/david-zhang-index/archive/2012/03/16/2399846.html</a><br><a href="http://www.dba-oracle.com/t_sql_longest_elapsed_time.htm" target="_blank" rel="noopener">http://www.dba-oracle.com/t_sql_longest_elapsed_time.htm</a><br><a href="http://blog.itpub.net/12679300/viewspace-2125679/" target="_blank" rel="noopener">http://blog.itpub.net/12679300/viewspace-2125679/</a><br><a href="https://stackoverflow.com/questions/828650/how-do-i-get-textual-contents-from-blob-in-oracle-sql" target="_blank" rel="noopener">https://stackoverflow.com/questions/828650/how-do-i-get-textual-contents-from-blob-in-oracle-sql</a><br>其他情境下的sql:<br><a href="https://blog.csdn.net/yingwang9/article/details/80853484" target="_blank" rel="noopener">https://blog.csdn.net/yingwang9/article/details/80853484</a><br><a href="https://blog.csdn.net/xwnxwn/article/details/78062433" target="_blank" rel="noopener">https://blog.csdn.net/xwnxwn/article/details/78062433</a></p>
+<p>参考：<br><a href="http://www.cnblogs.com/david-zhang-index/archive/2012/03/16/2399846.html" target="_blank" rel="noopener">http://www.cnblogs.com/david-zhang-index/archive/2012/03/16/2399846.html</a><br><a href="http://www.dba-oracle.com/t_sql_longest_elapsed_time.htm" target="_blank" rel="noopener">http://www.dba-oracle.com/t_sql_longest_elapsed_time.htm</a><br><a href="http://blog.itpub.net/12679300/viewspace-2125679/" target="_blank" rel="noopener">http://blog.itpub.net/12679300/viewspace-2125679/</a><br><a href="https://stackoverflow.com/questions/828650/how-do-i-get-textual-contents-from-blob-in-oracle-sql" target="_blank" rel="noopener">https://stackoverflow.com/questions/828650/how-do-i-get-textual-contents-from-blob-in-oracle-sql</a><br><a href="https://www.cnblogs.com/ryanchancrj/p/6437288.html" target="_blank" rel="noopener">https://www.cnblogs.com/ryanchancrj/p/6437288.html</a><br>其他情境下的sql:<br><a href="https://blog.csdn.net/yingwang9/article/details/80853484" target="_blank" rel="noopener">https://blog.csdn.net/yingwang9/article/details/80853484</a><br><a href="https://blog.csdn.net/xwnxwn/article/details/78062433" target="_blank" rel="noopener">https://blog.csdn.net/xwnxwn/article/details/78062433</a></p>
 
                     
                         

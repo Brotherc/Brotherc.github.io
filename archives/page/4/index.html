@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Brotherc">
-    <title>标签: kapacitor - Brotherc</title>
+    <title>归档 - Brotherc</title>
     <meta name="author" content="Brotherc">
     
     
@@ -14,7 +14,7 @@
     <script type="application/ld+json">{}</script>
     <meta property="og:type" content="blog">
 <meta property="og:title" content="Brotherc">
-<meta property="og:url" content="http://yoursite.com/tags/kapacitor/index.html">
+<meta property="og:url" content="http://yoursite.com/archives/page/4/index.html">
 <meta property="og:site_name" content="Brotherc">
 <meta property="og:locale" content="zh-cn">
 <meta name="twitter:card" content="summary">
@@ -166,57 +166,13 @@
             <div class="postShorten-header">
                 <h1 class="postShorten-title">
                     
-                        <a class="link-unstyled" href="/2019/03/28/kapacitor_lambda/">
-                            kapacitor lambda
+                        <a class="link-unstyled" href="/2019/03/14/OCP-Oracle体系结构/">
+                            OCP-Oracle体系结构
                         </a>
                     
                 </h1>
                 <div class="postShorten-meta">
-    <time datetime="2019-03-28T16:04:01+08:00">
-	
-		    3月 28, 2019
-    	
-    </time>
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-content">
-                    <h3 id="lambda使用"><a href="#lambda使用" class="headerlink" title="lambda使用"></a>lambda使用</h3><p>简单使用：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">|where(lambda: &quot;tag&quot; == &apos;v1&apos; AND &quot;field&quot; == &apos;v2&apos;)</span><br><span class="line">|eval(lambda: (&quot;field1&quot; - &quot;field2&quot;) / &quot;field3&quot; * 100.0)</span><br><span class="line">|eval(lambda: float(&quot;field1&quot;) / float(&quot;field2&quot;) * 100.0)</span><br></pre></td></tr></table></figure></p>
-<p>保留两位小数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">|eval(lambda: float(int(&quot;field&quot; * 100.0)) / 100.0) // 保留两位小数</span><br></pre></td></tr></table></figure></p>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2019/03/28/kapacitor_lambda/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2019/03/14/kapactior/">
-                            kapacitor issues
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-03-14T19:05:08+08:00">
+    <time datetime="2019-03-14T19:05:07+08:00">
 	
 		    3月 14, 2019
     	
@@ -227,8 +183,43 @@
             </div>
             
                 <div class="postShorten-content">
-                    <h3 id="kapacitor与influxdb在不同机器上通信时的配置"><a href="#kapacitor与influxdb在不同机器上通信时的配置" class="headerlink" title="kapacitor与influxdb在不同机器上通信时的配置"></a>kapacitor与influxdb在不同机器上通信时的配置</h3><p>kapacitor在启动时会向配置中的influxBD进行发现与创建订阅，这些订阅告诉InfluxDB将它收到的所有数据发送给Kapacitor。<br>当kapacitor与influxdb不在同一台机器上时，需要在kapactior的配置中配置influxdb可以通信的IP或主机名。<br>只要是在influxdb订阅过，influxdb之后都会像这些订阅发送数据</p>
-<p>kapactior.conf:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hostname = &quot;localhost&quot; // 默认修改为influxdb可以ping得通的ip或主机名</span><br></pre></td></tr></table></figure></p>
+                    <h3 id="工具使用"><a href="#工具使用" class="headerlink" title="工具使用"></a>工具使用</h3><ul>
+<li>sqlplus</li>
+<li>pl/sql</li>
+<li>develop</li>
+<li>sqldevelop</li>
+<li>toad</li>
+<li>……</li>
+</ul>
+<h3 id="访问数据库的方式"><a href="#访问数据库的方式" class="headerlink" title="访问数据库的方式"></a>访问数据库的方式</h3><ul>
+<li><p>本机直接通过sock方式访问（IPC）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlplus / as sysdba</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过TCP建立连接到Oracle服务器&amp;Oracle网络配置</p>
+<p>方式一：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// ora10g --&gt;必须在 $ORACLE_HOME/network/admin/tnsnames.ora配置出如何访问到远程数据库服务器</span><br><span class="line">tnsping ora10g</span><br><span class="line">sqlplus sys/oracle@ora10g as sysdba</span><br></pre></td></tr></table></figure>
+<p>方式二：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 不需要任何配置，但oracle服务器必须在listener.ora定义被远程访问的方式</span><br><span class="line">sqlplus sys/oracle@ip:1521/ora10g as sysdba</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="执行sql流程"><a href="#执行sql流程" class="headerlink" title="执行sql流程"></a>执行sql流程</h3><ul>
+<li>用户进程 执行一个查询语句，比如select * from emp where empno=7839;</li>
+<li>用户进程已经跟服务进程建立链接把该用户进程的信息存储到PGA的UGA中。</li>
+<li>语句经过PGA处理后传递给实例</li>
+<li>实例中的共享池负责处理这条语句</li>
+<li>库缓存区去判断语句如何分析–软分析或硬分析</li>
+<li>根据cbo得到的执行计划准备去执行语句，查询语句中的对象存放在哪个表空间的指定的行放在哪个块里<br>面，数据字典缓存区得到这些信息</li>
+<li>开始执行</li>
+<li>判断在数据缓存区data buffer cache中是否缓存需要的块</li>
+<li><p>如果是，在内存读数据得到需行的结果返回给用户，用户看到执行的结果，undo缓存块会对该块做镜像，然后<br>读该镜像中的数据得到行的结果，用户看到执行的结果</p>
+</li>
+<li><p>oracle做这么多就是为了尽可能用内存去操作</p>
+</li>
+<li>语句执行性能的高低，从shared pool中的library cache和data dict cache的命中率进行判断</li>
+<li>database buffer cache 命中率 关系到逻辑读（内存取数据）或物理读（磁盘取数据）</li>
+<li>redo log buffer 记录块的变化</li>
+</ul>
+<p>DBWR进程会将已提交的数据写到物理磁盘data file<br>内存中的redo log 日志会定时通过LGWR写到磁盘Redo Log file(主要用于恢复)<br>CKPT保证数据同步，一旦触发，DBWR就开始写数据，接着LGWR也开始写数据（比如手动commit）</p>
 
                     
                         
@@ -236,7 +227,7 @@
                     
                     
                         <p>
-                            <a href="/2019/03/14/kapactior/#post-footer" class="postShorten-excerpt_link link">
+                            <a href="/2019/03/14/OCP-Oracle体系结构/#post-footer" class="postShorten-excerpt_link link">
                                 评论和共享
                             </a>
                         </p>
@@ -250,12 +241,20 @@
     <div class="pagination-bar">
     <ul class="pagination">
         
+          <li class="pagination-prev">
+            <a class="btn btn--default btn--small" href="/archives/page/3/">
+              <i class="fa fa-angle-left text-base icon-mr"></i>
+              <span>上一页</span>
+            </a>
+          </li>
         
-        <li class="pagination-number">第 1 页 共 1 页</li>
+        
+        <li class="pagination-number">第 4 页 共 4 页</li>
     </ul>
 </div>
 
 </section>
+
 
 
                 <footer id="footer" class="main-content-wrap">
