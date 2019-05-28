@@ -6,24 +6,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Brotherc">
-    <title>oracle-monitor-toptable - Brotherc</title>
+    <title>angular根据路由展开菜单 - Brotherc</title>
     <meta name="author" content="Brotherc">
     
     
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"1234567891011121314151617181920212223242526272829303132333435SELECT  t1.*, nvl(t2.index_bytes, 0) index_bytes, nvl(t3.lob_bytes, 0) lob_bytesFROM  (SELECT * FROM(SELECT    tab.owner,    tab.table_name,    tab.tablespace_name,    nvl(tab.num_rows, to_number(NULL)) num_rows,  nvl(stab.bytes, to_number(NULL)) bytes  FROM    dba_tables tab, dba_segments stab  WHERE    stab.owner = tab.owner AND stab.segment_name = tab.table_name AND    tab.owner NOT LIKE &apos;%SYS%&apos; ORDER BY stab.bytes DESC) WHERE rownum &lt;= 10) t1,  (SELECT    table_owner,    table_name,    SUM(nvl(bytes, to_number(NULL))) index_bytes  FROM    dba_indexes ind, dba_segments seg  WHERE   ind.owner=seg.owner AND ind.index_name=seg.segment_name AND table_owner NOT LIKE &apos;%SYS%&apos;  GROUP BY   table_owner,table_name) t2,  (SELECT    l.owner,    l.table_name,  SUM(nvl(bytes, to_number(NULL))) lob_bytes  FROM    dba_lobs l, dba_segments seg  WHERE    l.owner=seg.owner AND l.segment_name=seg.segment_name AND l.owner NOT LIKE &apos;%SYS%&apos;  GROUP BY l.owner,l.table_name) t3WHERE t1.table_name = t2.table_name(+) AND t1.owner = t2.table_owner(+)  AND t1.table_name = t3.table_name(+) AND t1.owner = t3.owner(+)\n参考：(https://github.com/freenetdigital/prometheus_oracle_exporter)[https://github.com/freenetdigital/prometheus_oracle_exporter]\n","dateCreated":"2019-05-24T17:29:25+08:00","dateModified":"2019-05-24T17:28:24+08:00","datePublished":"2019-05-24T17:29:25+08:00","description":"","headline":"oracle-monitor-toptable","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/05/24/oracle_table/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/05/24/oracle_table/","keywords":"oracle"}</script>
-    <meta name="description" content="1234567891011121314151617181920212223242526272829303132333435SELECT  t1.*, nvl(t2.index_bytes, 0) index_bytes, nvl(t3.lob_bytes, 0) lob_bytesFROM  (SELECT * FROM(SELECT    tab.owner,    tab.table_name">
-<meta name="keywords" content="oracle">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"当路由为“/a”和“/a/b”class active都会被添加。active可以设置为展开菜单的样式html:12&lt;li [routerLink]=&quot;/a&quot; routerLinkActive=&quot;active&quot;&gt;a&lt;/li&gt;&lt;li [routerLink]=&quot;/a/b&quot; routerLinkActive=&quot;active&quot;&gt;ab&lt;/li&gt;\n当路由中携带参数时（即？key=value）html:1&lt;li [routerLink]=&quot;/a&quot; [class.active]=&quot;isActive(&quot;/a&quot;)&quot;&gt;a&lt;/li&gt;\ncomponent:123isActive(instruction: string): boolean &#123;  return this.router.isActive(this.router.createUrlTree([instruction]), false);&#125;\n参考：(https://stackoverflow.com/questions/39271654/routerlinkactive-for-routerlink-with-parameters-dynamic)[https://stackoverflow.com/questions/39271654/routerlinkactive-for-routerlink-with-parameters-dynamic](https://majing.io/posts/10000019031169)[https://majing.io/posts/10000019031169]  \n","dateCreated":"2019-05-28T16:16:54+08:00","dateModified":"2019-05-28T16:13:13+08:00","datePublished":"2019-05-28T16:16:54+08:00","description":"","headline":"angular根据路由展开菜单","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/05/28/angular根据路由展开菜单/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/05/28/angular根据路由展开菜单/","keywords":"angular"}</script>
+    <meta name="description" content="当路由为“/a”和“/a/b”class active都会被添加。active可以设置为展开菜单的样式html:12&amp;lt;li [routerLink]=&amp;quot;/a&amp;quot; routerLinkActive=&amp;quot;active&amp;quot;&amp;gt;a&amp;lt;/li&amp;gt;&amp;lt;li [routerLink]=&amp;quot;/a/b&amp;quot; routerLinkActive=&amp;q">
+<meta name="keywords" content="angular">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="oracle-monitor-toptable">
-<meta property="og:url" content="http://yoursite.com/2019/05/24/oracle_table/index.html">
+<meta property="og:title" content="angular根据路由展开菜单">
+<meta property="og:url" content="http://yoursite.com/2019/05/28/angular根据路由展开菜单/index.html">
 <meta property="og:site_name" content="Brotherc">
-<meta property="og:description" content="1234567891011121314151617181920212223242526272829303132333435SELECT  t1.*, nvl(t2.index_bytes, 0) index_bytes, nvl(t3.lob_bytes, 0) lob_bytesFROM  (SELECT * FROM(SELECT    tab.owner,    tab.table_name">
+<meta property="og:description" content="当路由为“/a”和“/a/b”class active都会被添加。active可以设置为展开菜单的样式html:12&amp;lt;li [routerLink]=&amp;quot;/a&amp;quot; routerLinkActive=&amp;quot;active&amp;quot;&amp;gt;a&amp;lt;/li&amp;gt;&amp;lt;li [routerLink]=&amp;quot;/a/b&amp;quot; routerLinkActive=&amp;q">
 <meta property="og:locale" content="zh-cn">
-<meta property="og:updated_time" content="2019-05-24T09:28:24.680Z">
+<meta property="og:updated_time" content="2019-05-28T08:13:13.235Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="oracle-monitor-toptable">
-<meta name="twitter:description" content="1234567891011121314151617181920212223242526272829303132333435SELECT  t1.*, nvl(t2.index_bytes, 0) index_bytes, nvl(t3.lob_bytes, 0) lob_bytesFROM  (SELECT * FROM(SELECT    tab.owner,    tab.table_name">
+<meta name="twitter:title" content="angular根据路由展开菜单">
+<meta name="twitter:description" content="当路由为“/a”和“/a/b”class active都会被添加。active可以设置为展开菜单的样式html:12&amp;lt;li [routerLink]=&amp;quot;/a&amp;quot; routerLinkActive=&amp;quot;active&amp;quot;&amp;gt;a&amp;lt;/li&amp;gt;&amp;lt;li [routerLink]=&amp;quot;/a/b&amp;quot; routerLinkActive=&amp;q">
     
     
         
@@ -168,14 +168,14 @@
         <div class="post-header main-content-wrap text-left">
     
         <h1 class="post-title">
-            oracle-monitor-toptable
+            angular根据路由展开菜单
         </h1>
     
     
         <div class="post-meta">
-    <time datetime="2019-05-24T17:29:25+08:00">
+    <time datetime="2019-05-28T16:16:54+08:00">
 	
-		    5月 24, 2019
+		    5月 28, 2019
     	
     </time>
     
@@ -187,8 +187,10 @@
     
     <div class="post-content markdown">
         <div class="main-content-wrap">
-            <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">SELECT</span><br><span class="line">  t1.*, nvl(t2.index_bytes, 0) index_bytes, nvl(t3.lob_bytes, 0) lob_bytes</span><br><span class="line">FROM</span><br><span class="line">  (SELECT * FROM(SELECT</span><br><span class="line">    tab.owner,</span><br><span class="line">    tab.table_name,</span><br><span class="line">    tab.tablespace_name,</span><br><span class="line">    nvl(tab.num_rows, to_number(NULL)) num_rows,</span><br><span class="line">  nvl(stab.bytes, to_number(NULL)) bytes</span><br><span class="line">  FROM</span><br><span class="line">    dba_tables tab, dba_segments stab</span><br><span class="line">  WHERE</span><br><span class="line">    stab.owner = tab.owner AND stab.segment_name = tab.table_name AND</span><br><span class="line">    tab.owner NOT LIKE &apos;%SYS%&apos; ORDER BY stab.bytes DESC) WHERE rownum &lt;= 10) t1,</span><br><span class="line">  (SELECT</span><br><span class="line">    table_owner,</span><br><span class="line">    table_name,</span><br><span class="line">    SUM(nvl(bytes, to_number(NULL))) index_bytes</span><br><span class="line">  FROM</span><br><span class="line">    dba_indexes ind, dba_segments seg</span><br><span class="line">  WHERE</span><br><span class="line">   ind.owner=seg.owner AND ind.index_name=seg.segment_name AND table_owner NOT LIKE &apos;%SYS%&apos;</span><br><span class="line">  GROUP BY</span><br><span class="line">   table_owner,table_name) t2,</span><br><span class="line">  (SELECT</span><br><span class="line">    l.owner,</span><br><span class="line">    l.table_name,</span><br><span class="line">  SUM(nvl(bytes, to_number(NULL))) lob_bytes</span><br><span class="line">  FROM</span><br><span class="line">    dba_lobs l, dba_segments seg</span><br><span class="line">  WHERE</span><br><span class="line">    l.owner=seg.owner AND l.segment_name=seg.segment_name AND l.owner NOT LIKE &apos;%SYS%&apos;</span><br><span class="line">  GROUP BY l.owner,l.table_name) t3</span><br><span class="line">WHERE t1.table_name = t2.table_name(+) AND t1.owner = t2.table_owner(+)</span><br><span class="line">  AND t1.table_name = t3.table_name(+) AND t1.owner = t3.owner(+)</span><br></pre></td></tr></table></figure>
-<p>参考：<br>(<a href="https://github.com/freenetdigital/prometheus_oracle_exporter)[https://github.com/freenetdigital/prometheus_oracle_exporter]" target="_blank" rel="noopener">https://github.com/freenetdigital/prometheus_oracle_exporter)[https://github.com/freenetdigital/prometheus_oracle_exporter]</a></p>
+            <h5 id="当路由为“-a”和“-a-b”class-active都会被添加。active可以设置为展开菜单的样式"><a href="#当路由为“-a”和“-a-b”class-active都会被添加。active可以设置为展开菜单的样式" class="headerlink" title="当路由为“/a”和“/a/b”class active都会被添加。active可以设置为展开菜单的样式"></a>当路由为“/a”和“/a/b”class active都会被添加。active可以设置为展开菜单的样式</h5><p>html:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;li [routerLink]=&quot;/a&quot; routerLinkActive=&quot;active&quot;&gt;a&lt;/li&gt;</span><br><span class="line">&lt;li [routerLink]=&quot;/a/b&quot; routerLinkActive=&quot;active&quot;&gt;ab&lt;/li&gt;</span><br></pre></td></tr></table></figure></p>
+<h5 id="当路由中携带参数时（即？key-value）"><a href="#当路由中携带参数时（即？key-value）" class="headerlink" title="当路由中携带参数时（即？key=value）"></a>当路由中携带参数时（即？key=value）</h5><p>html:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;li [routerLink]=&quot;/a&quot; [class.active]=&quot;isActive(&quot;/a&quot;)&quot;&gt;a&lt;/li&gt;</span><br></pre></td></tr></table></figure></p>
+<p>component:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">isActive(instruction: string): boolean &#123;</span><br><span class="line">  return this.router.isActive(this.router.createUrlTree([instruction]), false);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>参考：<br>(<a href="https://stackoverflow.com/questions/39271654/routerlinkactive-for-routerlink-with-parameters-dynamic)[https://stackoverflow.com/questions/39271654/routerlinkactive-for-routerlink-with-parameters-dynamic]" target="_blank" rel="noopener">https://stackoverflow.com/questions/39271654/routerlinkactive-for-routerlink-with-parameters-dynamic)[https://stackoverflow.com/questions/39271654/routerlinkactive-for-routerlink-with-parameters-dynamic]</a><br>(<a href="https://majing.io/posts/10000019031169)[https://majing.io/posts/10000019031169]" target="_blank" rel="noopener">https://majing.io/posts/10000019031169)[https://majing.io/posts/10000019031169]</a>  </p>
 
             
 
@@ -199,7 +201,7 @@
             <div class="post-footer-tags">
                 <span class="text-color-light text-small">标签</span><br>
                 
-    <a class="tag tag--primary tag--small t-link" href="/tags/oracle/">oracle</a>
+    <a class="tag tag--primary tag--small t-link" href="/tags/angular/">angular</a>
 
             </div>
         
@@ -209,8 +211,7 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/05/28/angular根据路由展开菜单/" data-tooltip="angular根据路由展开菜单" aria-label="上一篇: angular根据路由展开菜单">
+                    <a class="post-action-btn btn btn--disabled">
                 
                     <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -219,7 +220,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/05/24/解决SqlPlus前台程序出现中文乱码的问题/" data-tooltip="解决SqlPlus前台程序出现中文乱码的问题" aria-label="下一篇: 解决SqlPlus前台程序出现中文乱码的问题">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/05/24/oracle_table/" data-tooltip="oracle-monitor-toptable" aria-label="下一篇: oracle-monitor-toptable">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right" aria-hidden="true"></i>
@@ -237,7 +238,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/05/24/oracle_table/" title="分享到 Facebook">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/05/28/angular根据路由展开菜单/" title="分享到 Facebook">
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
@@ -245,7 +246,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/05/24/oracle_table/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/05/28/angular根据路由展开菜单/" title="分享到 Twitter">
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -253,7 +254,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/05/24/oracle_table/" title="分享到 Google+">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/05/28/angular根据路由展开菜单/" title="分享到 Google+">
                     <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
             </li>
@@ -295,8 +296,7 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/05/28/angular根据路由展开菜单/" data-tooltip="angular根据路由展开菜单" aria-label="上一篇: angular根据路由展开菜单">
+                    <a class="post-action-btn btn btn--disabled">
                 
                     <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -305,7 +305,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/05/24/解决SqlPlus前台程序出现中文乱码的问题/" data-tooltip="解决SqlPlus前台程序出现中文乱码的问题" aria-label="下一篇: 解决SqlPlus前台程序出现中文乱码的问题">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/05/24/oracle_table/" data-tooltip="oracle-monitor-toptable" aria-label="下一篇: oracle-monitor-toptable">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right" aria-hidden="true"></i>
@@ -323,7 +323,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/05/24/oracle_table/" title="分享到 Facebook">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/05/28/angular根据路由展开菜单/" title="分享到 Facebook">
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
@@ -331,7 +331,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/05/24/oracle_table/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/05/28/angular根据路由展开菜单/" title="分享到 Twitter">
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -339,7 +339,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/05/24/oracle_table/" title="分享到 Google+">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/05/28/angular根据路由展开菜单/" title="分享到 Google+">
                     <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
             </li>
@@ -367,7 +367,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/05/24/oracle_table/">
+                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/05/28/angular根据路由展开菜单/">
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>分享到 Facebook</span>
                     </a>
                 </li>
@@ -375,7 +375,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/05/24/oracle_table/">
+                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/05/28/angular根据路由展开菜单/">
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
                     </a>
                 </li>
@@ -383,7 +383,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/05/24/oracle_table/">
+                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/05/28/angular根据路由展开菜单/">
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>分享到 Google+</span>
                     </a>
                 </li>
