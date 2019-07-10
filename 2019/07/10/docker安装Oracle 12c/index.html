@@ -6,24 +6,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Brotherc">
-    <title>angular根据路由展开菜单 - Brotherc</title>
+    <title>docker安装Oracle 12c - Brotherc</title>
     <meta name="author" content="Brotherc">
     
     
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"当路由为“/a”和“/a/b”class active都会被添加。active可以设置为展开菜单的样式html:12&lt;li [routerLink]=&quot;/a&quot; routerLinkActive=&quot;active&quot;&gt;a&lt;/li&gt;&lt;li [routerLink]=&quot;/a/b&quot; routerLinkActive=&quot;active&quot;&gt;ab&lt;/li&gt;\n当路由中携带参数时（即？key=value）html:1&lt;li [routerLink]=&quot;/a&quot; [class.active]=&quot;isActive(&quot;/a&quot;)&quot;&gt;a&lt;/li&gt;\ncomponent:123isActive(instruction: string): boolean &#123;  return this.router.isActive(this.router.createUrlTree([instruction]), false);&#125;\n参考：(https://stackoverflow.com/questions/39271654/routerlinkactive-for-routerlink-with-parameters-dynamic)[https://stackoverflow.com/questions/39271654/routerlinkactive-for-routerlink-with-parameters-dynamic](https://majing.io/posts/10000019031169)[https://majing.io/posts/10000019031169]  \n","dateCreated":"2019-05-28T16:16:54+08:00","dateModified":"2019-05-28T16:13:13+08:00","datePublished":"2019-05-28T16:16:54+08:00","description":"","headline":"angular根据路由展开菜单","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/05/28/angular根据路由展开菜单/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/05/28/angular根据路由展开菜单/","keywords":"angular"}</script>
-    <meta name="description" content="当路由为“/a”和“/a/b”class active都会被添加。active可以设置为展开菜单的样式html:12&amp;lt;li [routerLink]=&amp;quot;/a&amp;quot; routerLinkActive=&amp;quot;active&amp;quot;&amp;gt;a&amp;lt;/li&amp;gt;&amp;lt;li [routerLink]=&amp;quot;/a/b&amp;quot; routerLinkActive=&amp;q">
-<meta name="keywords" content="angular">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"1.配置阿里的docker源1234cat /etc/docker/daemon.json&#123;&quot;registry-mirrors&quot;: [&quot;https://pee6w651.mirror.aliyuncs.com&quot;]&#125;\n2.重启docker服务1systemctl restart docker\n3.拉取镜像1docker pull sath89/oracle-12c\n4.运行容器1docker run -d --name oracle -p 8080:8080 -p 1521:1521 -v $PWD/data:/mnt -e TZ=Asia/Shanghai sath89/oracle-12c\n5.进行容器1docker exec -it ef7e5bc1c20e /bin/bash (ef7e5bc1c20e自己容器的ID)\n6.相关操作1234567891011121314#root用户切换到oracle用户su oracle#使用sysdba登陆/u01/app/oracle-product/12.1.0/xe/bin/sqlplus / as sysdba#create tablespace 表空间名称 datafile 表空间路劲 size 3000m;SQL&gt;create tablespace bspdb datafile &apos;/u01/app/oracle/oradata/xe/bspdb.dbf&apos; size 3000m;#create user 用户名 identified by 密码 default tablespace 用户默认使用哪一个表空间;SQL&gt;create user bspdb identified by 123456 default tablespace bspdb;#grant 角色1,角色2 to 用户名;SQL&gt;grant dba, connect to bspdb;\n参考：https://www.cnblogs.com/Dev0ps/p/10676930.htmlhttps://blog.csdn.net/Damionew/article/details/84566718https://www.cnblogs.com/forturn/p/9371841.html  \n","dateCreated":"2019-07-10T16:35:48+08:00","dateModified":"2019-07-10T16:33:12+08:00","datePublished":"2019-07-10T16:35:48+08:00","description":"","headline":"docker安装Oracle 12c","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/07/10/docker安装Oracle 12c/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/07/10/docker安装Oracle 12c/","keywords":"oracle"}</script>
+    <meta name="description" content="1.配置阿里的docker源1234cat /etc/docker/daemon.json&amp;#123;&amp;quot;registry-mirrors&amp;quot;: [&amp;quot;https://pee6w651.mirror.aliyuncs.com&amp;quot;]&amp;#125; 2.重启docker服务1systemctl restart docker 3.拉取镜像1docker pull sath8">
+<meta name="keywords" content="oracle">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="angular根据路由展开菜单">
-<meta property="og:url" content="http://yoursite.com/2019/05/28/angular根据路由展开菜单/index.html">
+<meta property="og:title" content="docker安装Oracle 12c">
+<meta property="og:url" content="http://yoursite.com/2019/07/10/docker安装Oracle 12c/index.html">
 <meta property="og:site_name" content="Brotherc">
-<meta property="og:description" content="当路由为“/a”和“/a/b”class active都会被添加。active可以设置为展开菜单的样式html:12&amp;lt;li [routerLink]=&amp;quot;/a&amp;quot; routerLinkActive=&amp;quot;active&amp;quot;&amp;gt;a&amp;lt;/li&amp;gt;&amp;lt;li [routerLink]=&amp;quot;/a/b&amp;quot; routerLinkActive=&amp;q">
+<meta property="og:description" content="1.配置阿里的docker源1234cat /etc/docker/daemon.json&amp;#123;&amp;quot;registry-mirrors&amp;quot;: [&amp;quot;https://pee6w651.mirror.aliyuncs.com&amp;quot;]&amp;#125; 2.重启docker服务1systemctl restart docker 3.拉取镜像1docker pull sath8">
 <meta property="og:locale" content="zh-cn">
-<meta property="og:updated_time" content="2019-05-28T08:13:13.235Z">
+<meta property="og:updated_time" content="2019-07-10T08:33:12.394Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="angular根据路由展开菜单">
-<meta name="twitter:description" content="当路由为“/a”和“/a/b”class active都会被添加。active可以设置为展开菜单的样式html:12&amp;lt;li [routerLink]=&amp;quot;/a&amp;quot; routerLinkActive=&amp;quot;active&amp;quot;&amp;gt;a&amp;lt;/li&amp;gt;&amp;lt;li [routerLink]=&amp;quot;/a/b&amp;quot; routerLinkActive=&amp;q">
+<meta name="twitter:title" content="docker安装Oracle 12c">
+<meta name="twitter:description" content="1.配置阿里的docker源1234cat /etc/docker/daemon.json&amp;#123;&amp;quot;registry-mirrors&amp;quot;: [&amp;quot;https://pee6w651.mirror.aliyuncs.com&amp;quot;]&amp;#125; 2.重启docker服务1systemctl restart docker 3.拉取镜像1docker pull sath8">
     
     
         
@@ -168,14 +168,14 @@
         <div class="post-header main-content-wrap text-left">
     
         <h1 class="post-title">
-            angular根据路由展开菜单
+            docker安装Oracle 12c
         </h1>
     
     
         <div class="post-meta">
-    <time datetime="2019-05-28T16:16:54+08:00">
+    <time datetime="2019-07-10T16:35:48+08:00">
 	
-		    5月 28, 2019
+		    7月 10, 2019
     	
     </time>
     
@@ -187,10 +187,13 @@
     
     <div class="post-content markdown">
         <div class="main-content-wrap">
-            <h5 id="当路由为“-a”和“-a-b”class-active都会被添加。active可以设置为展开菜单的样式"><a href="#当路由为“-a”和“-a-b”class-active都会被添加。active可以设置为展开菜单的样式" class="headerlink" title="当路由为“/a”和“/a/b”class active都会被添加。active可以设置为展开菜单的样式"></a>当路由为“/a”和“/a/b”class active都会被添加。active可以设置为展开菜单的样式</h5><p>html:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;li [routerLink]=&quot;/a&quot; routerLinkActive=&quot;active&quot;&gt;a&lt;/li&gt;</span><br><span class="line">&lt;li [routerLink]=&quot;/a/b&quot; routerLinkActive=&quot;active&quot;&gt;ab&lt;/li&gt;</span><br></pre></td></tr></table></figure></p>
-<h5 id="当路由中携带参数时（即？key-value）"><a href="#当路由中携带参数时（即？key-value）" class="headerlink" title="当路由中携带参数时（即？key=value）"></a>当路由中携带参数时（即？key=value）</h5><p>html:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;li [routerLink]=&quot;/a&quot; [class.active]=&quot;isActive(&quot;/a&quot;)&quot;&gt;a&lt;/li&gt;</span><br></pre></td></tr></table></figure></p>
-<p>component:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">isActive(instruction: string): boolean &#123;</span><br><span class="line">  return this.router.isActive(this.router.createUrlTree([instruction]), false);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>参考：<br>(<a href="https://stackoverflow.com/questions/39271654/routerlinkactive-for-routerlink-with-parameters-dynamic)[https://stackoverflow.com/questions/39271654/routerlinkactive-for-routerlink-with-parameters-dynamic]" target="_blank" rel="noopener">https://stackoverflow.com/questions/39271654/routerlinkactive-for-routerlink-with-parameters-dynamic)[https://stackoverflow.com/questions/39271654/routerlinkactive-for-routerlink-with-parameters-dynamic]</a><br>(<a href="https://majing.io/posts/10000019031169)[https://majing.io/posts/10000019031169]" target="_blank" rel="noopener">https://majing.io/posts/10000019031169)[https://majing.io/posts/10000019031169]</a>  </p>
+            <p>1.配置阿里的docker源<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/docker/daemon.json</span><br><span class="line">&#123;</span><br><span class="line">&quot;registry-mirrors&quot;: [&quot;https://pee6w651.mirror.aliyuncs.com&quot;]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>2.重启docker服务<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart docker</span><br></pre></td></tr></table></figure></p>
+<p>3.拉取镜像<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull sath89/oracle-12c</span><br></pre></td></tr></table></figure></p>
+<p>4.运行容器<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name oracle -p 8080:8080 -p 1521:1521 -v $PWD/data:/mnt -e TZ=Asia/Shanghai sath89/oracle-12c</span><br></pre></td></tr></table></figure></p>
+<p>5.进行容器<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it ef7e5bc1c20e /bin/bash (ef7e5bc1c20e自己容器的ID)</span><br></pre></td></tr></table></figure></p>
+<p>6.相关操作<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">#root用户切换到oracle用户</span><br><span class="line">su oracle</span><br><span class="line"></span><br><span class="line">#使用sysdba登陆</span><br><span class="line">/u01/app/oracle-product/12.1.0/xe/bin/sqlplus / as sysdba</span><br><span class="line"></span><br><span class="line">#create tablespace 表空间名称 datafile 表空间路劲 size 3000m;</span><br><span class="line">SQL&gt;create tablespace bspdb datafile &apos;/u01/app/oracle/oradata/xe/bspdb.dbf&apos; size 3000m;</span><br><span class="line"></span><br><span class="line">#create user 用户名 identified by 密码 default tablespace 用户默认使用哪一个表空间;</span><br><span class="line">SQL&gt;create user bspdb identified by 123456 default tablespace bspdb;</span><br><span class="line"></span><br><span class="line">#grant 角色1,角色2 to 用户名;</span><br><span class="line">SQL&gt;grant dba, connect to bspdb;</span><br></pre></td></tr></table></figure></p>
+<p>参考：<br><a href="https://www.cnblogs.com/Dev0ps/p/10676930.html" target="_blank" rel="noopener">https://www.cnblogs.com/Dev0ps/p/10676930.html</a><br><a href="https://blog.csdn.net/Damionew/article/details/84566718" target="_blank" rel="noopener">https://blog.csdn.net/Damionew/article/details/84566718</a><br><a href="https://www.cnblogs.com/forturn/p/9371841.html" target="_blank" rel="noopener">https://www.cnblogs.com/forturn/p/9371841.html</a>  </p>
 
             
 
@@ -201,7 +204,7 @@
             <div class="post-footer-tags">
                 <span class="text-color-light text-small">标签</span><br>
                 
-    <a class="tag tag--primary tag--small t-link" href="/tags/angular/">angular</a>
+    <a class="tag tag--primary tag--small t-link" href="/tags/oracle/">oracle</a>
 
             </div>
         
@@ -211,8 +214,7 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/07/10/docker安装Oracle 12c/" data-tooltip="docker安装Oracle 12c" aria-label="上一篇: docker安装Oracle 12c">
+                    <a class="post-action-btn btn btn--disabled">
                 
                     <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -221,7 +223,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/05/24/oracle_table/" data-tooltip="oracle-monitor-toptable" aria-label="下一篇: oracle-monitor-toptable">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/05/28/angular根据路由展开菜单/" data-tooltip="angular根据路由展开菜单" aria-label="下一篇: angular根据路由展开菜单">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right" aria-hidden="true"></i>
@@ -239,7 +241,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/05/28/angular根据路由展开菜单/" title="分享到 Facebook">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/07/10/docker安装Oracle 12c/" title="分享到 Facebook">
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
@@ -247,7 +249,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/05/28/angular根据路由展开菜单/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/07/10/docker安装Oracle 12c/" title="分享到 Twitter">
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -255,7 +257,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/05/28/angular根据路由展开菜单/" title="分享到 Google+">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/07/10/docker安装Oracle 12c/" title="分享到 Google+">
                     <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
             </li>
@@ -297,8 +299,7 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/07/10/docker安装Oracle 12c/" data-tooltip="docker安装Oracle 12c" aria-label="上一篇: docker安装Oracle 12c">
+                    <a class="post-action-btn btn btn--disabled">
                 
                     <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -307,7 +308,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/05/24/oracle_table/" data-tooltip="oracle-monitor-toptable" aria-label="下一篇: oracle-monitor-toptable">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/05/28/angular根据路由展开菜单/" data-tooltip="angular根据路由展开菜单" aria-label="下一篇: angular根据路由展开菜单">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right" aria-hidden="true"></i>
@@ -325,7 +326,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/05/28/angular根据路由展开菜单/" title="分享到 Facebook">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/07/10/docker安装Oracle 12c/" title="分享到 Facebook">
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
@@ -333,7 +334,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/05/28/angular根据路由展开菜单/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/07/10/docker安装Oracle 12c/" title="分享到 Twitter">
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -341,7 +342,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/05/28/angular根据路由展开菜单/" title="分享到 Google+">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/07/10/docker安装Oracle 12c/" title="分享到 Google+">
                     <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
             </li>
@@ -369,7 +370,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/05/28/angular根据路由展开菜单/">
+                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/07/10/docker安装Oracle 12c/">
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>分享到 Facebook</span>
                     </a>
                 </li>
@@ -377,7 +378,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/05/28/angular根据路由展开菜单/">
+                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/07/10/docker安装Oracle 12c/">
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
                     </a>
                 </li>
@@ -385,7 +386,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/05/28/angular根据路由展开菜单/">
+                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/07/10/docker安装Oracle 12c/">
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>分享到 Google+</span>
                     </a>
                 </li>
