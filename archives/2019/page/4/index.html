@@ -339,11 +339,11 @@
 </li>
 <li><p>rdbms的实现的一套完整的解决方案</p>
 </li>
-<li>一个实例（内存结构和后台进程）和数据库（物理文件和文件的逻辑结构）构成了oracle服务器</li>
+<li>一个实例（内存结构和后台进程）和数据库（物理文件和文件的逻辑结构）构成了oracle服务器<div class="figure center" style="width:80%;"><a class="fancybox" href="/assets/images/oracle体系结构.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/images/oracle体系结构.jpg" style="width:80%;height:30%;" alt=""></a></div><div style="clear:both;"></div>
+用户进程产生的日志文件<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">show parameter user_</span><br><span class="line">desc v$session v$process v$sql v$sqltext</span><br></pre></td></tr></table></figure>
+</li>
 </ul>
-<p>用户进程产生的日志文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">show parameter user_</span><br><span class="line">desc v$session v$process v$sql v$sqltext</span><br></pre></td></tr></table></figure></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select username,sid from v$session;</span><br></pre></td></tr></table></figure>
-<div class="figure center" style="width:80%;"><a class="fancybox" href="/assets/images/oracle体系结构.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/images/oracle体系结构.jpg" style="width:80%;height:30%;" alt=""></a></div><div style="clear:both;"></div>
 
                     
                         
