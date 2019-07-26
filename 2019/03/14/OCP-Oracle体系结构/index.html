@@ -11,7 +11,7 @@
     
     
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"工具使用\nsqlplus\npl/sql\ndevelop\nsqldevelop\ntoad\n……\n\n访问数据库的方式\n本机直接通过sock方式访问（IPC）\n1sqlplus / as sysdba\n\n通过TCP建立连接到Oracle服务器&amp;Oracle网络配置\n方式一：\n123// ora10g --&gt;必须在 $ORACLE_HOME/network/admin/tnsnames.ora配置出如何访问到远程数据库服务器tnsping ora10gsqlplus sys/oracle@ora10g as sysdba\n方式二：\n12// 不需要任何配置，但oracle服务器必须在listener.ora定义被远程访问的方式sqlplus sys/oracle@ip:1521/ora10g as sysdba\n\n\n数据库模型1.专用型一个进程一个会话2.共享型\n执行sql流程\n能执行sql语句的程序或进程就是用户进程\n用户进程 执行一个查询语句，比如select * from emp where empno=7839;\n用户进程已经跟服务进程建立链接,服务器进程会响应用户进程,一些会话信息就会存储在内存（PGA）中,把该用户进程的信息存储到PGA的UGA中。\n语句经过PGA处理后传递给实例\n实例中的共享池负责处理这条语句\n库缓存区去判断语句如何分析–软分析或硬分析(以前是否执行过)\nsql语句操作的表在哪，表里面的行放在哪个block里面，所以需要数据字典\n根据cbo得到的执行计划准备去执行语句，查询语句中的对象存放在哪个表空间的指定的行放在哪个块里面，数据字典缓存区得到这些信息\n开始执行\n判断在数据缓存区data buffer cache中是否缓存需要的块\n如果是，在内存读取数据得到所需行的结果返回给用户，用户看到这行的结果如果没有，则服务器进程读取data file文件中对应的block到data buffer cache中，data buffer cache中的undo块用来做镜像，undo缓存块会对该块做镜像，然后读该镜像中的数据得到行的结果，用户看到执行的结果，\nredo log buffer记录数据库中块的更改，修改前后的块（提交和未提交）都在undo块中做了镜像，意味着可以写入磁盘与不可写入磁盘\n\noracle做这么多就是为了尽可能用内存去操作，关系型数据库最重要的就是内存和磁盘\n\n语句执行性能的高低，从shared pool中的library cache和data dict cache的命中率进行判断\ndatabase buffer cache 命中率 关系到逻辑读（内存取数据）或物理读（磁盘取数据）\nredo log buffer 记录块的变化\n\nDBWR进程会将已提交的数据写到物理磁盘data file，只有当redo log buffer 将所有块的变更信息记录下来之后才会开始写\n\n内存中的redo log 日志会定时通过LGWR写到磁盘Redo Log file(主要用于恢复)\nCKPT保证数据同步，一旦触发，DBWR就开始写数据，接着LGWR也开始写数据（比如手动commit）\n\nrdbms的实现的一套完整的解决方案\n\n一个实例（内存结构和后台进程）和数据库（物理文件和文件的逻辑结构）构成了oracle服务器\n\n用户进程产生的日志文件12show parameter user_desc v$session v$process v$sql v$sqltext\n1select username,sid from v$session;\n\n","dateCreated":"2019-03-14T19:05:07+08:00","dateModified":"2019-07-26T16:11:12+08:00","datePublished":"2019-03-14T19:05:07+08:00","description":"","headline":"OCP-Oracle体系结构","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/03/14/OCP-Oracle体系结构/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/03/14/OCP-Oracle体系结构/","keywords":"oracle"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"工具使用\nsqlplus\npl/sql\ndevelop\nsqldevelop\ntoad\n……\n\n访问数据库的方式\n本机直接通过sock方式访问（IPC）\n1sqlplus / as sysdba\n\n通过TCP建立连接到Oracle服务器&amp;Oracle网络配置\n方式一：\n123// ora10g --&gt;必须在 $ORACLE_HOME/network/admin/tnsnames.ora配置出如何访问到远程数据库服务器tnsping ora10gsqlplus sys/oracle@ora10g as sysdba\n方式二：\n12// 不需要任何配置，但oracle服务器必须在listener.ora定义被远程访问的方式sqlplus sys/oracle@ip:1521/ora10g as sysdba\n\n\n数据库模型1.专用型一个进程一个会话2.共享型\n执行sql流程\n能执行sql语句的程序或进程就是用户进程\n用户进程 执行一个查询语句，比如select * from emp where empno=7839;\n用户进程已经跟服务进程建立链接,服务器进程会响应用户进程,一些会话信息就会存储在内存（PGA）中,把该用户进程的信息存储到PGA的UGA中。\n语句经过PGA处理后传递给实例\n实例中的共享池负责处理这条语句\n库缓存区去判断语句如何分析–软分析或硬分析(以前是否执行过)\nsql语句操作的表在哪，表里面的行放在哪个block里面，所以需要数据字典\n根据cbo得到的执行计划准备去执行语句，查询语句中的对象存放在哪个表空间的指定的行放在哪个块里面，数据字典缓存区得到这些信息\n开始执行\n判断在数据缓存区data buffer cache中是否缓存需要的块\n如果是，在内存读取数据得到所需行的结果返回给用户，用户看到这行的结果如果没有，则服务器进程读取data file文件中对应的block到data buffer cache中，data buffer cache中的undo块用来做镜像，undo缓存块会对该块做镜像，然后读该镜像中的数据得到行的结果，用户看到执行的结果，\nredo log buffer记录数据库中块的更改，修改前后的块（提交和未提交）都在undo块中做了镜像，意味着可以写入磁盘与不可写入磁盘\n\noracle做这么多就是为了尽可能用内存去操作，关系型数据库最重要的就是内存和磁盘\n\n语句执行性能的高低，从shared pool中的library cache和data dict cache的命中率进行判断\ndatabase buffer cache 命中率 关系到逻辑读（内存取数据）或物理读（磁盘取数据）\nredo log buffer 记录块的变化\n\nDBWR进程会将已提交的数据写到物理磁盘data file，只有当redo log buffer 将所有块的变更信息记录下来之后才会开始写\n\n内存中的redo log 日志会定时通过LGWR写到磁盘Redo Log file(主要用于恢复)\nCKPT保证数据同步，一旦触发，DBWR就开始写数据，接着LGWR也开始写数据（比如手动commit）\n\nrdbms的实现的一套完整的解决方案\n\n一个实例（内存结构和后台进程）和数据库（物理文件和文件的逻辑结构）构成了oracle服务器\n\n用户进程产生的日志文件12show parameter user_desc v$session v$process v$sql v$sqltext\n1select username,sid from v$session;\n\n","dateCreated":"2019-03-14T19:05:07+08:00","dateModified":"2019-07-26T16:14:31+08:00","datePublished":"2019-03-14T19:05:07+08:00","description":"","headline":"OCP-Oracle体系结构","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/03/14/OCP-Oracle体系结构/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/03/14/OCP-Oracle体系结构/","keywords":"oracle"}</script>
     <meta name="description" content="工具使用 sqlplus pl/sql develop sqldevelop toad ……  访问数据库的方式 本机直接通过sock方式访问（IPC） 1sqlplus / as sysdba  通过TCP建立连接到Oracle服务器&amp;amp;Oracle网络配置 方式一： 123// ora10g --&amp;gt;必须在 $ORACLE_HOME/network/admin/tnsnames.or">
 <meta name="keywords" content="oracle">
 <meta property="og:type" content="blog">
@@ -21,7 +21,7 @@
 <meta property="og:description" content="工具使用 sqlplus pl/sql develop sqldevelop toad ……  访问数据库的方式 本机直接通过sock方式访问（IPC） 1sqlplus / as sysdba  通过TCP建立连接到Oracle服务器&amp;amp;Oracle网络配置 方式一： 123// ora10g --&amp;gt;必须在 $ORACLE_HOME/network/admin/tnsnames.or">
 <meta property="og:locale" content="zh-cn">
 <meta property="og:image" content="http://yoursite.com/assets/images/oracle体系结构.jpg">
-<meta property="og:updated_time" content="2019-07-26T08:11:12.569Z">
+<meta property="og:updated_time" content="2019-07-26T08:14:31.529Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="OCP-Oracle体系结构">
 <meta name="twitter:description" content="工具使用 sqlplus pl/sql develop sqldevelop toad ……  访问数据库的方式 本机直接通过sock方式访问（IPC） 1sqlplus / as sysdba  通过TCP建立连接到Oracle服务器&amp;amp;Oracle网络配置 方式一： 123// ora10g --&amp;gt;必须在 $ORACLE_HOME/network/admin/tnsnames.or">
@@ -240,7 +240,7 @@
 </ul>
 <p>用户进程产生的日志文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">show parameter user_</span><br><span class="line">desc v$session v$process v$sql v$sqltext</span><br></pre></td></tr></table></figure></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select username,sid from v$session;</span><br></pre></td></tr></table></figure>
-<div class="figure left" style="width:80%;"><a class="fancybox" href="/assets/images/oracle体系结构.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/images/oracle体系结构.jpg" style="width:80%;height:30%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:80%;"><a class="fancybox" href="/assets/images/oracle体系结构.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/images/oracle体系结构.jpg" style="width:80%;height:30%;" alt=""></a></div><div style="clear:both;"></div>
 
             
 
@@ -280,7 +280,7 @@
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
@@ -314,7 +314,7 @@
         
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
             
                 <i class="fa fa-list" aria-hidden="true"></i>
             </a>
@@ -365,7 +365,7 @@
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
@@ -399,7 +399,7 @@
         
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
             
                 <i class="fa fa-list" aria-hidden="true"></i>
             </a>
