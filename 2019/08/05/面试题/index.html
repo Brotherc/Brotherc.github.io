@@ -1,0 +1,501 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Brotherc">
+    <title>面试题 - Brotherc</title>
+    <meta name="author" content="Brotherc">
+    
+    
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"MySQL中InnoDB的一级索引、二级索引12345678每个InnoDB表具有一个特殊的索引称为聚簇索引（也叫聚集索引，聚类索引，簇集索引）。如果表上定义有主键，该主键索引就是聚簇索引。如果未定义主键，MySQL取第一个唯一索引（unique）而且只含非空列（NOT NULL）作为主键，InnoDB使用它作为聚簇索引。如果没有这样的列，InnoDB就自己产生一个这样的ID值，它有六个字节，而且是隐藏的，使其作为聚簇索引。表中的聚簇索引（clustered index ）就是一级索引，除此之外，表上的其他非聚簇索引都是二级索引，又叫辅助索引（secondary indexes）。\nmysql索引有哪些123456789101112131415161718192021从数据结构角度 1、B+树索引(O(log(n)))：关于B+树索引。 2、hash索引： a 仅仅能满足”=”,”IN”和”&lt;=&gt;”查询，不能使用范围查询 b 其检索效率非常高，索引的检索可以一次定位，不像B-Tree 索引需要从根节点到枝节点，最后才能访问到页节点这样多次的IO访问，所以 Hash 索引的查询效率要远高于 B-Tree 索引 c 只有Memory存储引擎显示支持hash索引 3、FULLTEXT索引（现在MyISAM和InnoDB引擎都支持了） 4、R-Tree索引（用于对GIS数据类型创建SPATIAL索引） 从物理存储角度 1、聚集索引（clustered index） 2、非聚集索引（non-clustered index） 从逻辑角度 1、主键索引：主键索引是一种特殊的唯一索引，不允许有空值 2、普通索引或者单列索引 3、多列索引（复合索引）：复合索引指多个字段上创建的索引，只有在查询条件中使用了创建索引时的第一个字段，索引才会被使用。使用复合索引时遵循最左前缀集合 4、唯一索引或者非唯一索引 5、空间索引：空间索引是对空间数据类型的字段建立的索引，MYSQL中的空间数据类型有4种，分别是GEOMETRY、POINT、LINESTRING、POLYGON。MYSQL使用SPATIAL关键字进行扩展，使得能够用于创建正规索引类型的语法创建空间索引。创建空间索引的列，必须将其声明为NOT NULL，空间索引只能在存储引擎为MYISAM的表中创建\n关于索引：12345678910应该建索引的字段： 1.经常作为查询条件的字段 2.外键 3.经常需要排序的字段 4.分组排序的字段应该少建或者不建索引的字段有： 1.表记录太少 2.经常需要插入，删除，修改的表， 3.表中数据重复且分布平均的字段\nleft join与right join的区别:1234左外：SELECT * FROM 表1 别名1 LEFT OUTER JOIN 表2 别名2 ON 别名1.xx=别名2.xx左表记录无论是否满足条件都会查询出来，而右表只有满足条件才能出来。左表中不满足条件的记录，右表部分都为NULL右外：SELECT * FROM 表1 别名1 RIGHT OUTER JOIN 表2 别名2 ON 别名1.xx=别名2.xx右表记录无论是否满足条件都会查询出来，而左表只有满足条件才能出来。右表不满足条件的记录，其左表部分都为NULL\ninner join:1234* 方言：SELECT * FROM 表1 别名1, 表2 别名2 WHERE 别名1.xx=别名2.xx* 标准：SELECT * FROM 表1 别名1 INNER JOIN 表2 别名2 ON 别名1.xx=别名2.xx* 自然：SELECT * FROM 表1 别名1 NATURAL JOIN 表2 别名2* 内连接查询出的所有记录都满足条件。\n各种连接区别：1234inner join 产生的结果是AB的交集left outer join 产生表A的完全集，而B表中匹配的则有值，没有匹配的则以null值取代right outer join 产生表B的完全集，而A表中匹配的则有值，没有匹配的则以null值取代full outer join 产生A和B的并集，对于没有匹配的记录，则会以null作为值\n\nB+树：12345678910111213141516171819202122有了B树，为什么还需要B+树呢？那就要先说下B树的缺点了，人类对于性能的追求是无止境的，B树相比二叉树虽好，但还是存在以下问题：1.每个节点中既要存索引信息，又要存其对应的数据，如果数据很大，那么当树的体量很大时，每次读到内存中的树的信息就会不太够。2.B树遍历整个树的过程和二叉树本质上是一样的，B树相对二叉树虽然提高了磁盘IO性能，但并没有解决遍历元素效率低下的问题。针对以上两个问题，B+树诞生了，B+树相比B树，本质上是一样的，区别就在与B+树的所有根节点都不带有任何数据信息，只有索引信息，所有数据信息全部存储在叶子节点里，这样，整个树的每个节点所占的内存空间就变小了，读到内存中的索引信息就会更多一些，相当于减少了磁盘IO次数，问题1就得到了解决。又由B树的性质可以得到，所有叶子节点都会在同一层，B+树会以一个链表的形式将所有叶子节点的信息全部串联起来，这样，想遍历所有数据信息只需要顺序遍历叶子节点就可以了，方便又高效，问题二就得到了解决。不仅如此，B+树还有一个相应的优质特性，就是B+树的查询效率是非常稳定的，因为所有信息都存储在了叶子节点里面，从根节点到所有叶子节点的路径是相同的。那么，我们总结一下B+树的优点：（1) B+树的磁盘读写代价更低 B+的内部结点并没有指向关键字具体信息的指针。因此其内部结点相对B树更小。如果把所有同一内部结点的关键字存放在同一盘块中，那么盘块所能容纳的关键字数量也越多。一次性读入内存中的需要查找的关键字也就越多。相对来说IO读写次数也就降低了。（2）B+树的数据信息遍历更加方便B+树只要遍历叶子节点就可以实现整棵树的遍历，而B树不支持这样的操作（或者说效率太低），而且在数据库中基于范围的查询是非常频繁的，所以数据库索引基本采用B+树（3) B+树的查询效率更加稳定由于非终结点并不是最终指向文件内容的结点，而只是叶子结点中关键字的索引。所以任何关键字的查找必须走一条从根结点到叶子结点的路。所有关键字查询的路径长度相同，导致每一个数据的查询效率相当。B+ 树是一种树数据结构，是一个n叉排序树，每个节点通常有多个孩子，一棵B+树包含根节点、内部节点和叶子节点。根节点可能是一个叶子节点，也可能是一个包含两个或两个以上孩子节点的节点。B+ 树通常用于数据库和操作系统的文件系统中。NTFS, ReiserFS, NSS, XFS, JFS, ReFS 和BFS等文件系统都在使用B+树作为元数据索引。B+ 树的特点是能够保持数据稳定有序，其插入与修改拥有较稳定的对数时间复杂度。B+ 树元素自底向上插入。\n参考：https://www.cnblogs.com/wade-luffy/p/6292784.htmlhttps://www.cnblogs.com/nullzx/p/8729425.html\nSql语句执行顺序:1234567先执行from关键字后面的语句，明确数据的来源，它是从哪张表取来的。接着执行where关键字后面的语句，对数据进行筛选。再接着执行group by后面的语句，对数据进行分组分类。然后执行select后面的语句，也就是对处理好的数据，具体要取哪一部分。最后执行order by后面的语句，对最终的结果进行排序。可得 from &gt; where &gt; group by &gt; select &gt; order by。这就是一条基本sql的执行顺序。\nmysql or条件可以使用索引而避免全表1234567891011where 语句里面如果带有or条件，必须所有的or条件都必须是独立索引，myisam表能用到索引，如果有column没有被索引或innodb则不行，不过后面版本的innodb好像可以支持在所有的or条件都是独立索引的情况下使用到索引用UNION替换OR (适用于索引列)在下面的例子中, LOC_ID 和REGION上都建有索引高效:select loc_id , loc_desc , region from location where loc_id = 10unionselect loc_id , loc_desc , region  from location where region = &quot;melbourne&quot;低效:select loc_id , loc desc , region from location where loc_id = 10 or region = &quot;melbourne&quot;\nMyISAM 和 INNODB的区别12345671. 事务安全（MyISAM不支持事务，INNODB支持事务）2. 查询和添加速度（MyISAM批量插入速度快）3. 支持全文索引（MyISAM支持全文索引，INNODB不支持全文索引）4. 锁机制（MyISAM时表锁，innodb是行锁）5. 外键 MyISAM 不支持外键， INNODB支持外键. (在PHP开发中，通常不设置外键，通常是在程序中保证数据的一致)Memory 存储，比如我们数据变化频繁，不需要入库，同时又频繁的查询和修改，我们考虑使用memory, 速度极快. （如果mysql重启的话，数据就不存在了）\nmysql优化123456789101112131415161718192021222324252627282930313233343536373839404142434445a: 表的设计合理化(符合3NF)b: 添加适当索引(index) [四种: 普通索引、主键索引、唯一索引unique、全文索引]c: 分表技术(水平分割、垂直分割)d: 读写[写: update/delete/add]分离e: 存储过程 [模块化编程，可以提高速度]f: 对mysql配置优化 [配置最大并发数my.ini, 调整缓存大小，默认为100，max_connection=1000 ]g: mysql服务器硬件升级h: 定时的去清除不需要的数据,定时进行碎片整理(MyISAM)使用SHOW STATUS语句查看MySQL数据库的性能参数•SHOW STATUS LIKE &apos;value‘常用的参数：•Slow_queries  慢查询次数•Com_(CRUD) 操作的次数•Uptime  上线时间在MySQL中可以使用EXPLAIN查看SQL执行计划，用法：EXPLAIN SELECT * FROM tb_item对于创建的多列索引，只要查询条件使用了最左边的列，索引一般就会被使用。对于使用like的查询，查询如果是  ‘%aaa’ 不会使用到索引‘aaa%’ 会使用到索引。如果条件中有or，即使其中有条件带索引也不会使用。换言之，就是要求使用的所有字段，都必须建立索引, 我们建议大家尽量避免使用or关键字如果列类型是字符串，那一定要在条件中将数据使用引号引用起来如果mysql估计使用全表扫描要比使用索引快，则不使用索引。在使用group by 分组查询是，默认分组后，还会排序，可能会降低速度,在group by 后面增加 order by null 就可以防止排序.有些情况下，可以使用连接来替代子查询。因为使用join，MySQL不需要在内存中创建临时表。插入数据时，影响插入速度的主要是索引、唯一性校验、一次插入的数据条数等。myisam:对于非空表，插入记录时，MySQL会根据表的索引对插入的记录建立索引。如果插入大量数据，建立索引会降低插入数据速度。为了解决这个问题，可以在批量插入数据之前禁用索引，数据插入完成后再开启索引。对于空表批量插入数据，则不需要进行操作，因为MyISAM引擎的表是在导入数据后才建立索引。唯一性校验会降低插入记录的速度，可以在插入记录之前禁用唯一性检查，插入数据完成后再开启。当需要批量导入数据时，使用LOAD DATA INFILE语句比INSERT语句插入速度快很多。innodb:禁用唯一性检查, 用法和MyISAM一样。插入数据之前执行禁止对外键的检查，数据插入完成后再恢复，可以提供插入速度。插入数据之前执行禁止事务的自动提交，数据插入完成后再恢复，可以提供插入速度。优化mysql数据库的配置:Max_connections（默认最大连接数并发）Query_cache_size 查询缓存大小最重要的参数就是内存，我们主要用的innodb引擎，所以下面两个参数调的很大innodb_additional_mem_pool_size = 64Minnodb_buffer_pool_size = 1G对于myisam，需要调整key_buffer_size\nSpring好处：123456方便解耦，简化开发AOP编程的支持声明式事务的支持方便程序的测试方便集成各种优秀框架降低JavaEE API的使用难度\tSpring\nBeanFactory和ApplicationContext对比：123456BeanFactory 采取延迟加载，第一次getBean时才会初始化BeanApplicationContext是对BeanFactory扩展，提供了更多功能- 国际化处理- 事件传递- Bean自动装配- 各种不同应用层的Context实现\n生命周期图解释：12345678910111.instantiate bean对象实例化2.populate properties 封装属性3.如果Bean实现BeanNameAware 执行 setBeanName4.如果Bean实现BeanFactoryAware 执行setBeanFactory ，获取Spring容器5.如果存在类实现 BeanPostProcessor（后处理Bean） ，执行postProcessBeforeInitialization6.如果Bean实现InitializingBean 执行 afterPropertiesSet7.调用&lt;bean init-method=&quot;init&quot;&gt; 指定初始化方法 init8.如果存在类实现 BeanPostProcessor（处理Bean） ，执行postProcessAfterInitialization执行业务处理9.如果Bean实现 DisposableBean 执行 destroy101.调用&lt;bean destroy-method=&quot;customerDestroy&quot;&gt; 指定销毁方法 customerDestroy\nAOP经典应用：1事务管理、性能监视、安全检查、缓存 、日志等\n传播行为：在两个业务之间如何共享事务12345678Spring中Propagation类的事务属性详解：REQUIRED：支持当前事务，如果当前没有事务，就新建一个事务。这是最常见的选择。SUPPORTS：支持当前事务，如果当前没有事务，就以非事务方式执行。MANDATORY：支持当前事务，如果当前没有事务，就抛出异常。REQUIRES_NEW：新建事务，如果当前存在事务，把当前事务挂起。NOT_SUPPORTED：以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。NEVER：以非事务方式执行，如果当前存在事务，则抛出异常。NESTED：支持当前事务，如果当前事务存在，则执行一个嵌套事务，如果当前没有事务，就新建一个事务\n掌握：PROPAGATION_REQUIRED、PROPAGATION_REQUIRES_NEW、PROPAGATION_NESTED\nSpring的执行流程\nSpring与Struts的区别123456789101112131415实现机制：Struts2是基于过滤器实现的。Springmvc基于servlet实现。运行速度：Servlet比过滤器快。Struts2是多例每一次请求，都会创建一个Action对象请求来了以后，struts2创建多少个对象：ActionContext，valuestack，UAction，ActionSuport，ModelDrivenSpringmvc是单例。同一个Controller请求，只会创建一个ControllerStruts基于属性进行封装,Action有参数属性。Springmvc基于方法封装,参数是写在Controller的方法。\nget和load方法的区别123get方法是直接加载数据库load的设计是懒加载，用到时才去查询数据库load方法返回的是对象的一个代理\nsave和persist方法 区别123456789save方法：瞬时态 转换 持久态 ,会初始化OID1.执行save方法，立即触发insert语句，从数据库获得主键的值（OID值）2.执行save方法前，设置OID将忽略。3.如果执行查询，session缓存移除了，在执行save方法，将执行insertpersist方法：瞬时态 转换 持久态persist保存的对象，在保存前，不能设置id,否则会报错save和persist都是持久化对象的作用save 因为需要返回一个主键值，因此会立即执行 insert 语句，而 persist 在事务外部调用时则不会立即执行 insert 语句，在事务内调用还是会立即执行 insert 语句的。\n主键的生成策略1234567891011generator:id的生成策略      increment:也会自动增长id,但是它的这种增长是自己Hibernate实现                 执行select max(id) 查询，这种会有线程并发问题      sequence:一般在oracle数据库才用      hilo:hibernate自己实现的id规则【不用,不用学】      native:【经常常用】          如果是mysql数据库，id会自动增长          如果是oracle数据库，会自动增长，sequence      uuid:【经常常用】一个长字符串,需要把模型的id改成字符串             保存的时候，不用自己设置ID,hibernate会设置id      assigned:【经常常用】要手动设置id属性\nHibernate 实体的状态1234实体Entity有三种状态，瞬时状态、持久状态、脱管状态瞬时状态：transient,  session没有缓存，数据库也没有记录，oid没有值持久状态：persistent,  session有缓存，数据库也有记录,oid有值脱管状态/游离状态：detached，session没有缓存，数据库有记录,oid有值\n\n一级缓存1234一级缓存：又称为session级别的缓存。当获得一次会话（session），hibernate在session中创建多个集合（map），用于存放操作数据（PO对象），为程序优化服务，如果之后需要相应的数据，hibernate优先从session缓存中获取，如果有就使用；如果没有再查询数据库。当session关闭时，一级缓存销毁。\n一级缓存快照1234快照：与一级缓存存放位置是一样，对一级缓存数据备份。保证数据库的数据与 一级缓存的数据必须一致。如果一级缓存修改了，在执行commit提交时，将自动刷新一级缓存，执行update语句，将一级缓存的数据更新到数据库。\n\n二级缓存123456789101112hibernate 提供缓存机制：一级缓存、二级缓存\t一级缓存：session级别缓存，在一次请求中共享数据。\t二级缓存：sessionFactory级别缓存，整个应用程序共享一个会话工厂，共享一个二级缓存。SessionFactory的缓存两部分：内置缓存：使用一个Map，用于存放配置信息，预定义HQL语句等，提供给Hibernate框架自己使用，对外只读的。不能写入,也就是不能更改数据。外置缓存：使用另一个Map，用于存放用户自定义数据。默认不开启。外置缓存hibernate只提供规范（接口），需要第三方实现类。二级就是由4部分构成类级别缓存集合级别缓存时间戳缓存查询缓存(二级缓存的第2大部分,又称三级缓存)\nmybatis：123456789101112131415161718parameterType和resultTypeparameterType指定输入参数的java类型，可以填写别名或Java类的全限定名。resultType指定输出结果的java类型，可以填写别名或Java类的全限定名。#&#123;&#125;和$&#123;&#125;#&#123;&#125;：相当于预处理中的占位符？。#&#123;&#125;里面的参数表示接收java输入参数的名称。#&#123;&#125;可以接受HashMap、POJO类型的参数。当接受简单类型的参数时，#&#123;&#125;里面可以是value，也可以是其他。#&#123;&#125;可以防止SQL注入。$&#123;&#125;：相当于拼接SQL串，对传入的值不做任何解释的原样输出。$&#123;&#125;会引起SQL注入，所以要谨慎使用。$&#123;&#125;可以接受HashMap、POJO类型的参数。当接受简单类型的参数时，$&#123;&#125;里面只能是value。selectOne和selectListselectOne：只能查询0或1条记录，大于1条记录的话，会报错：selectList：可以查询0或N条记录\n输出映射 resultType/resultMap12345使用resultType进行结果映射时，查询的列名和映射的pojo属性名完全一致，该列才能映射成功。如果查询的列名和映射的pojo属性名全部不一致，则不会创建pojo对象；如果查询的列名和映射的pojo属性名有一个一致，就会创建pojo对象。如果查询出来的列名和属性名不一致，通过定义一个resultMap将列名和pojo属性名之间作一个映射关系。\nmybatis与hibernate的区别1234567891011121314151617181920212223Mybatis技术特点：好处：1、通过直接编写SQL语句，可以直接对SQL进行性能的优化；2、学习门槛低，学习成本低。只要有SQL基础，就可以学习mybatis，而且很容易上手；3、由于直接编写SQL语句，所以灵活多变，代码维护性更好。缺点：4、不能支持数据库无关性，即数据库发生变更，要写多套代码进行支持，移植性不好。a)Mysql:limitb)Oracle:rownum5、需要编写结果映射。Hibernate技术特点：好处：1、标准的orm框架，程序员不需要编写SQL语句。2、具有良好的数据库无关性，即数据库发生变化的话，代码无需再次编写。a)以后,mysql数据迁移到oracle，只需要改方言配置缺点:3、学习门槛高，需要对数据关系模型有良好的基础，而且在设置OR映射的时候，需要考虑好性能和对象模型的权衡。4、程序员不能自主的去进行SQL性能优化。Mybatis应用场景：需求多变的互联网项目，例如电商项目。Hibernate应用场景：需求明确、业务固定的项目，例如OA项目、ERP项目等。\n延迟加载12延迟加载又叫懒加载，也叫按需加载。也就是说先加载主信息，在需要的时候，再去加载从信息。在mybatis中，resultMap标签 的association标签和collection标签具有延迟加载的功能。\nMybatis的缓存理解123Mybatis的缓存，包括一级缓存和二级缓存，一级缓存是默认使用的。二级缓存需要手动开启。一级缓存指的就是sqlsession，在sqlsession中有一个数据区域，是map结构，这个区域就是一级缓存区域。一级缓存中的key是由sql语句、条件、statement等信息组成一个唯一值。一级缓存中的value，就是查询出的结果对象。二级缓存指的就是同一个namespace下的mapper，二级缓存中，也有一个map结构，这个区域就是一级缓存区域。一级缓存中的key是由sql语句、条件、statement等信息组成一个唯一值。一级缓存中的value，就是查询出的结果对象。\n\nmaven生命周期12345678Maven生命周期就是为了对所有的构建过程进行抽象和统一。包括项目清理、初始化、编译、打包、测试、部署等几乎所有构建步骤。生命周期可以理解为构建工程的步骤。在Maven中有三套相互独立的生命周期，请注意这里说的是“三套”，而且“相互独立”，这三套生命周期分别是：Clean Lifecycle： 在进行真正的构建之前进行一些清理工作。Default Lifecycle： 构建的核心部分，编译，测试，打包，部署等等。Site Lifecycle： 生成项目报告，站点，发布站点。\nMaven 解决jar包冲突的原理1234567891011121314包冲突如何产生？举个：假设 A-&gt;B-&gt;C-&gt;D1, E-&gt;F-&gt;D2，D1,D2 分别为 D 的不同版本。如果 pom.xml 文件中引入了 A 和 E 之后，按照 Maven 传递依赖原则，工程内需要引入的实际 Jar 包将会有：A B C D1 和 E F D2，因此 D1,D2 将会产生包冲突。如何解决包冲突Maven 解析 pom.xml 文件时，同一个 jar 包只会保留一个，这样有效的避免因引入两个 jar 包导致的工程运行不稳定性。Maven 默认处理策略最短路径优先Maven 面对 D1 和 D2 时，会默认选择最短路径的那个 jar 包，即 D2。E-&gt;F-&gt;D2 比 A-&gt;B-&gt;C-&gt;D1 路径短 1。最先声明优先如果路径一样的话，举个： A-&gt;B-&gt;C1, E-&gt;F-&gt;C2 ，两个依赖路径长度都是 2，那么就选择最先声明。移除依赖如果我们不想通过 A-&gt;B-&gt;-&gt;D1 引入 D1 的话，那么我们在声明引入 A 的时候将 D1 排除掉，这样也避免了包冲突。\nhttp特点123451.支持客户/服务器模式。2.简单快速：客户向服务器请求服务时，只需传送请求方法和路径。请求方法常用的有GET、HEAD、POST。每种方法规定了客户与服务器联系的类型不同。由于HTTP协议简单，使得HTTP服务器的程序规模小，因而通信速度很快。3.灵活：HTTP允许传输任意类型的数据对象。正在传输的类型由Content-Type加以标记。4.无连接：无连接的含义是限制每次连接只处理一个请求。服务器处理完客户的请求，并收到客户的应答后，即断开连接。采用这种方式可以节省传输时间。5.无状态：HTTP协议是无状态协议。无状态是指协议对于事务处理没有记忆能力。缺少状态意味着如果后续处理需要前面的信息，则它必须重传，这样可能导致每次连接传送的数据量增大。另一方面，在服务器不需要先前信息时它的应答就较快。\ntcp协议和udp协议的差别12345678910                          TCP         UDP是否连接                面向连接     面向非连接传输可靠性              可靠         不可靠应用场合                传输大量数据 少量数据速度                    慢          快对系统资源的要求         较多        少UDP程序结构较简单；流模式与数据报模式 ；TCP保证数据正确性，UDP可能丢包，TCP保证数据顺序，UDP不保证。\n三次握手：12345建立连接前，客户端和服务端状态都为CLOSED，服务端创建socket被动打开连接，并将状态置为LISTEN。客户端主动打开连接，向服务端发送SYN报文，将TCP首部控制位中的SYN置为1，同时序号seq为客户端随机生成的一个初始序号seq = x(SYN报文段不能携带数据，但要消耗一个序列号)，并将客户端状态置为SYN_SENT。服务端收到SYN报文后，如同意建立连接，则向客户端发送SYN+ACK报文，将TCP首部控制位中的SYN和ACK都置为1，确认号为ack = x + 1，同时随机生成一个自己的序号seq = y，并将服务端状态致为SYN_RCVD(同步收到状态)。客户端收到SYN+ACK报文后，还需向服务端发送ACK报文，将TCP首部控制位中的ACK置为1，确认号ack = y + 1，序列号seq = x + 1，并将客户端状态置为ESTABLISHED。服务端收到ACK报文后，也将状态置为ESTABLISHED，此时三次握手完成，连接建立，进入数据传送状态。\n为什么要三次握手而不是两次：1现假定出现一种异常情况：客户端发送的SYN报文并未丢失，而是在某个网络节点长时间滞留了，以致延误到客户端连接释放后的某个时间才到达服务端，但服务端收到此失效的SYN报文后，误以为是客户端又发出的一次新的连接请求，于是就向客户端发出SYN+ACK报文段，同意建立连接，假定不采用三次握手而是两次握手，服务端就认为连接已经建立，并一直等待客户端发送数据，但由于这次连接在客户端已经失效了，因此不会对服务端的SYN+ACK报文给予回应，这就造成了服务端许多资源的白白浪费，所有才有三次握手的办法可以防止上述现象的发生，即防止已失效的SYN报文突然又传回服务端，因为产生错误。例如上述的情况，客户端不向服务端发回ACK报文，由于服务端收不到ACK报文，就知道客户端并未要求建立连接，也不会造成资源的白白浪费，但三次握手也是有一定缺陷的，会被利用发起SYN flood攻击。\n四次挥手：123456TCP连接是全双工的，所以释放连接会比建立连接略微复杂，释放连接前，两端都处于ESTABLISHED数据传输状态。客户端先向服务器端发送FIN报文，将TCP首部控制位中的FIN置为1，其序号seq = u，u等于客户端前面最后一个已传送过的包seq，并将状态置为FIN_WAIT_1，等待服务端的确认。服务端收到FIN报文后，将发送ACK报文，确认号ack = u + 1，序号seq = v，v等于服务端前面最后一个已传送过的包的seq，之后将状态致为CLOSE_WAIT(此时TCP连接处于半关闭状态，即客户端已经没有数据要发送了，但若服务端要发送数据，客户端仍要接受，也就是说服务端到客户端这个方向的连接并未关闭，这个状态可能会持续一段时间)。当客户端收到服务端传来的确认报文后，将状态致为FIN_WATI_2，等待服务端发送的FIN+ACK报文段。若服务端没有要向客户端发送的数据，其应用进程就通知TCP释放连接，将FIN+ACK报文段TCP首部控制位FIN和ACK置为1，此时序号seq = w(因为之前可能又传递一些数据)，确认号ack = u + 1(上次的确认号)，并将状态置为LAST_ACK。客户端收到服务端的FIN+ACK报文后，需发送确认报文段，确认号ack = w + 1，序列号为seq = u + 1，并将状态置为TIME_WAIT状态，现在TCP连接还没有释放掉，必须经过2MSL(Max Segment Lifetime 最长报文段寿命)后才能进入CLOSED状态，服务端在接受到确认报文后将状态置为CLOSED。\n为什么四次挥手：123TCP连接是全双工的，当关闭连接时，当收到客户端的FIN报文时，仅仅表示客户端没有数据发送给服务端了；但未必服务端所有的数据都发送给客户端了，所以服务端未必会马上会关闭SOCKET，也即服务端可能还需要发送一些数据给客户端之后，再发送FIN+ACK报文给客户端来表示现在可以关闭连接了，所以服务端这里的ACK报文和FIN报文多数情况下都是分开发送的以确保数据能够完成传输。\ntime_wait状态必须等待多长时间：2MSL12什么是2MSL MSL是Maximum Segment Lifetime英文的缩写，中文可以译为“报文最大生存时间”，他是任何报文在网络上存在的最长时间，超过这个时间报文将被丢弃。第3次握手完成后发送了第四次握手的ACK包后就进入了TIME_WAIT状态，必须在此状态上停留两倍的MSL时间，等待2MSL时间主要目的是怕最后一个ACK包对方没收到，那么对方在超时后将重发第三次握手的FIN包，主动关闭端接到重发的FIN包后可以再发一个ACK应答包。在TIME_WAIT状态时两端的端口不能使用，要等到2MSL时间结束才可继续使用。当连接处于2MSL等待阶段时任何迟到的报文段都将被丢弃。不过在实际应用中可以通过设置SO_REUSEADDR选项达到不必等待2MSL时间结束再使用此端口。\n网络模型7层概述：12345671.物理层：主要定义物理设备标准，如网线的接口类型、光纤的接口类型、各种传输介质的传输速率等。它的主要作用是传输比特流（就是由1、0转化为电流强弱来进行传输,到达目的地后在转化为1、0，也就是我们常说的数模转换与模数转换）。这一层的数据叫做比特。2.数据链路层：主要将从物理层接收的数据进行MAC地址（网卡的地址）的封装与解封装。常把这一层的数据叫做帧。在这一层工作的设备是交换机，数据通过交换机来传输。3.网络层：主要将从下层接收到的数据进行IP地址（例192.168.0.1)的封装与解封装。在这一层工作的设备是路由器，常把这一层的数据叫做数据包。4.传输层：定义了一些传输数据的协议和端口号（WWW端口80等），如：TCP（传输控制协议，传输效率低，可靠性强，用于传输可靠性要求高，数据量大的数据），UDP（用户数据报协议，与TCP特性恰恰相反，用于传输可靠性要求不高，数据量小的数据，如QQ聊天数据就是通过这种方式传输的）。 主要是将从下层接收的数据进行分段和传输，到达目的地址后再进行重组。常常把这一层数据叫做段。5.会话层：通过传输层（端口号：传输端口与接收端口）建立数据传输的通路。主要在你的系统之间发起会话或者接受会话请求（设备之间需要互相认识可以是IP也可以是MAC或者是主机名）6.表示层：主要是进行对接收的数据进行解释、加密与解密、压缩与解压缩等（也就是把计算机能够识别的东西转换成人能够能识别的东西（如图片、声音等）。7.应用层： 主要是一些终端的应用，比如说FTP（各种文件下载），WEB（IE浏览），QQ之类的（可以把它理解成我们在电脑屏幕上可以看到的东西．就是终端应用）。\nSession机制？参考：http://justsee.iteye.com/blog/1570652123补充：打开两个浏览器窗口访问应用程序会使用同一个session还是不同的session 通常session cookie是不能跨窗口使用的，当你新开了一个浏览器窗口进入相同页面时，系统会赋予你一个新的session id，这样我们信息共享的目的就达不到了。此时我们可以先把session id保存在persistent cookie中(通过设置session的最大有效时间)，然后在新窗口中读出来，就可以得到上一个窗口的session id了，这样通过session cookie和persistent cookie的结合我们就可以实现了跨窗口的会话跟踪。\n","dateCreated":"2019-08-05T16:25:24+08:00","dateModified":"2019-08-05T16:16:20+08:00","datePublished":"2019-08-05T16:25:24+08:00","description":"","headline":"面试题","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/05/面试题/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/08/05/面试题/","keywords":"面试题"}</script>
+    <meta name="description" content="MySQL中InnoDB的一级索引、二级索引12345678每个InnoDB表具有一个特殊的索引称为聚簇索引（也叫聚集索引，聚类索引，簇集索引）。如果表上定义有主键，该主键索引就是聚簇索引。如果未定义主键，MySQL取第一个唯一索引（unique）而且只含非空列（NOT NULL）作为主键，InnoDB使用它作为聚簇索引。如果没有这样的列，InnoDB就自己产生一个这样的ID值，它有六个字节，而且">
+<meta name="keywords" content="面试题">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="面试题">
+<meta property="og:url" content="http://yoursite.com/2019/08/05/面试题/index.html">
+<meta property="og:site_name" content="Brotherc">
+<meta property="og:description" content="MySQL中InnoDB的一级索引、二级索引12345678每个InnoDB表具有一个特殊的索引称为聚簇索引（也叫聚集索引，聚类索引，簇集索引）。如果表上定义有主键，该主键索引就是聚簇索引。如果未定义主键，MySQL取第一个唯一索引（unique）而且只含非空列（NOT NULL）作为主键，InnoDB使用它作为聚簇索引。如果没有这样的列，InnoDB就自己产生一个这样的ID值，它有六个字节，而且">
+<meta property="og:locale" content="zh-cn">
+<meta property="og:image" content="http://yoursite.com/2019/08/05/面试题/assets/8.png">
+<meta property="og:image" content="http://yoursite.com/2019/08/05/面试题/assets/1.png">
+<meta property="og:image" content="http://yoursite.com/2019/08/05/面试题/assets/2.png">
+<meta property="og:image" content="http://yoursite.com/2019/08/05/面试题/assets/4.png">
+<meta property="og:image" content="http://yoursite.com/2019/08/05/面试题/assets/3.png">
+<meta property="og:image" content="http://yoursite.com/2019/08/05/面试题/assets/5.png">
+<meta property="og:image" content="http://yoursite.com/2019/08/05/面试题/assets/6.png">
+<meta property="og:image" content="http://yoursite.com/2019/08/05/面试题/assets/7.png">
+<meta property="og:image" content="http://yoursite.com/2019/08/05/面试题/assets/9.png">
+<meta property="og:image" content="http://yoursite.com/2019/08/05/面试题/assets/10.png">
+<meta property="og:updated_time" content="2019-08-05T08:16:20.260Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="面试题">
+<meta name="twitter:description" content="MySQL中InnoDB的一级索引、二级索引12345678每个InnoDB表具有一个特殊的索引称为聚簇索引（也叫聚集索引，聚类索引，簇集索引）。如果表上定义有主键，该主键索引就是聚簇索引。如果未定义主键，MySQL取第一个唯一索引（unique）而且只含非空列（NOT NULL）作为主键，InnoDB使用它作为聚簇索引。如果没有这样的列，InnoDB就自己产生一个这样的ID值，它有六个字节，而且">
+<meta name="twitter:image" content="http://yoursite.com/2019/08/05/面试题/assets/8.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://yoursite.com/assets/images/head.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-c4ozcsklz4kht2pebhp44xorvyverh23toayhn7i6ubrpyedak24hv1v0hyd.min.css">
+    <!--STYLES END-->
+    
+
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/ ">Brotherc</a>
+    </div>
+    
+        
+            <a class="header-right-picture " href="#about">
+        
+        
+            <img class="header-picture" src="/assets/images/head.jpg" alt="作者的图片">
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/#about">
+                    <img class="sidebar-profile-picture" src="/assets/images/head.jpg" alt="作者的图片">
+                </a>
+                <h4 class="sidebar-profile-name">Brotherc</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>java development</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/ " title="首页">
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">首页</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-categories" title="分类">
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">分类</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-tags" title="标签">
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">标签</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link open-algolia-search" href="/all-archives" title="归档">
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">归档</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="#about" title="关于">
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">关于</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://github.com/Brotherc" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="4"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            面试题
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-08-05T16:25:24+08:00">
+	
+		    8月 05, 2019
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p>MySQL中InnoDB的一级索引、二级索引<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">每个InnoDB表具有一个特殊的索引称为聚簇索引（也叫聚集索引，聚类索引，簇集索引）。</span><br><span class="line">如果表上定义有主键，该主键索引就是聚簇索引。如果未定义主键，</span><br><span class="line">MySQL取第一个唯一索引（unique）而且只含非空列（NOT NULL）作为主键，</span><br><span class="line">InnoDB使用它作为聚簇索引。如果没有这样的列，</span><br><span class="line">InnoDB就自己产生一个这样的ID值，它有六个字节，而且是隐藏的，使其作为聚簇索引。</span><br><span class="line"></span><br><span class="line">表中的聚簇索引（clustered index ）就是一级索引，</span><br><span class="line">除此之外，表上的其他非聚簇索引都是二级索引，又叫辅助索引（secondary indexes）。</span><br></pre></td></tr></table></figure></p>
+<p>mysql索引有哪些<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">从数据结构角度 </span><br><span class="line">1、B+树索引(O(log(n)))：关于B+树索引。 </span><br><span class="line">2、hash索引： </span><br><span class="line">a 仅仅能满足”=”,”IN”和”&lt;=&gt;”查询，不能使用范围查询 </span><br><span class="line">b 其检索效率非常高，索引的检索可以一次定位，不像B-Tree 索引需要从根节点到枝节点，最后才能访问到页节点这样多次的IO访问，所以 Hash 索引的查询效率要远高于 B-Tree 索引 </span><br><span class="line">c 只有Memory存储引擎显示支持hash索引 </span><br><span class="line">3、FULLTEXT索引（现在MyISAM和InnoDB引擎都支持了） </span><br><span class="line">4、R-Tree索引（用于对GIS数据类型创建SPATIAL索引） </span><br><span class="line"></span><br><span class="line">从物理存储角度 </span><br><span class="line">1、聚集索引（clustered index） </span><br><span class="line">2、非聚集索引（non-clustered index） </span><br><span class="line"></span><br><span class="line">从逻辑角度 </span><br><span class="line">1、主键索引：主键索引是一种特殊的唯一索引，不允许有空值 </span><br><span class="line">2、普通索引或者单列索引 </span><br><span class="line">3、多列索引（复合索引）：复合索引指多个字段上创建的索引，只有在查询条件中使用了创建索引时的第一个字段，索引才会被使用。使用复合索引时遵循最左前缀集合 </span><br><span class="line">4、唯一索引或者非唯一索引 </span><br><span class="line">5、空间索引：空间索引是对空间数据类型的字段建立的索引，MYSQL中的空间数据类型有4种，分别是GEOMETRY、POINT、LINESTRING、POLYGON。</span><br><span class="line">MYSQL使用SPATIAL关键字进行扩展，使得能够用于创建正规索引类型的语法创建空间索引。</span><br><span class="line">创建空间索引的列，必须将其声明为NOT NULL，空间索引只能在存储引擎为MYISAM的表中创建</span><br></pre></td></tr></table></figure></p>
+<p>关于索引：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">应该建索引的字段： </span><br><span class="line">1.经常作为查询条件的字段 </span><br><span class="line">2.外键 </span><br><span class="line">3.经常需要排序的字段 </span><br><span class="line">4.分组排序的字段</span><br><span class="line"></span><br><span class="line">应该少建或者不建索引的字段有： </span><br><span class="line">1.表记录太少 </span><br><span class="line">2.经常需要插入，删除，修改的表， </span><br><span class="line">3.表中数据重复且分布平均的字段</span><br></pre></td></tr></table></figure></p>
+<p>left join与right join的区别:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">左外：SELECT * FROM 表1 别名1 LEFT OUTER JOIN 表2 别名2 ON 别名1.xx=别名2.xx</span><br><span class="line">左表记录无论是否满足条件都会查询出来，而右表只有满足条件才能出来。左表中不满足条件的记录，右表部分都为NULL</span><br><span class="line">右外：SELECT * FROM 表1 别名1 RIGHT OUTER JOIN 表2 别名2 ON 别名1.xx=别名2.xx</span><br><span class="line">右表记录无论是否满足条件都会查询出来，而左表只有满足条件才能出来。右表不满足条件的记录，其左表部分都为NULL</span><br></pre></td></tr></table></figure></p>
+<p>inner join:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">* 方言：SELECT * FROM 表1 别名1, 表2 别名2 WHERE 别名1.xx=别名2.xx</span><br><span class="line">* 标准：SELECT * FROM 表1 别名1 INNER JOIN 表2 别名2 ON 别名1.xx=别名2.xx</span><br><span class="line">* 自然：SELECT * FROM 表1 别名1 NATURAL JOIN 表2 别名2</span><br><span class="line">* 内连接查询出的所有记录都满足条件。</span><br></pre></td></tr></table></figure></p>
+<p>各种连接区别：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">inner join 产生的结果是AB的交集</span><br><span class="line">left outer join 产生表A的完全集，而B表中匹配的则有值，没有匹配的则以null值取代</span><br><span class="line">right outer join 产生表B的完全集，而A表中匹配的则有值，没有匹配的则以null值取代</span><br><span class="line">full outer join 产生A和B的并集，对于没有匹配的记录，则会以null作为值</span><br></pre></td></tr></table></figure></p>
+<p><img src="assets/8.png" alt="8"></p>
+<p>B+树：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">有了B树，为什么还需要B+树呢？那就要先说下B树的缺点了，人类对于性能的追求是无止境的，B树相比二叉树虽好，但还是存在以下问题：</span><br><span class="line">1.每个节点中既要存索引信息，又要存其对应的数据，如果数据很大，那么当树的体量很大时，每次读到内存中的树的信息就会不太够。</span><br><span class="line">2.B树遍历整个树的过程和二叉树本质上是一样的，B树相对二叉树虽然提高了磁盘IO性能，但并没有解决遍历元素效率低下的问题。</span><br><span class="line"></span><br><span class="line">针对以上两个问题，B+树诞生了，B+树相比B树，本质上是一样的，</span><br><span class="line">区别就在与B+树的所有根节点都不带有任何数据信息，只有索引信息，所有数据信息全部存储在叶子节点里，这样，整个树的每个节点所占的内存空间就变小了，读到内存中的索引信息就会更多一些，相当于减少了磁盘IO次数，问题1就得到了解决。</span><br><span class="line">又由B树的性质可以得到，所有叶子节点都会在同一层，B+树会以一个链表的形式将所有叶子节点的信息全部串联起来，这样，想遍历所有数据信息只需要顺序遍历叶子节点就可以了，方便又高效，问题二就得到了解决。</span><br><span class="line">不仅如此，B+树还有一个相应的优质特性，就是B+树的查询效率是非常稳定的，因为所有信息都存储在了叶子节点里面，从根节点到所有叶子节点的路径是相同的。那么，我们总结一下B+树的优点：</span><br><span class="line"></span><br><span class="line">（1) B+树的磁盘读写代价更低</span><br><span class="line"> B+的内部结点并没有指向关键字具体信息的指针。因此其内部结点相对B树更小。</span><br><span class="line">如果把所有同一内部结点的关键字存放在同一盘块中，那么盘块所能容纳的关键字数量也越多。</span><br><span class="line">一次性读入内存中的需要查找的关键字也就越多。相对来说IO读写次数也就降低了。</span><br><span class="line"></span><br><span class="line">（2）B+树的数据信息遍历更加方便</span><br><span class="line">B+树只要遍历叶子节点就可以实现整棵树的遍历，而B树不支持这样的操作（或者说效率太低），而且在数据库中基于范围的查询是非常频繁的，所以数据库索引基本采用B+树</span><br><span class="line"></span><br><span class="line">（3) B+树的查询效率更加稳定</span><br><span class="line">由于非终结点并不是最终指向文件内容的结点，而只是叶子结点中关键字的索引。所以任何关键字的查找必须走一条从根结点到叶子结点的路。所有关键字查询的路径长度相同，导致每一个数据的查询效率相当。</span><br><span class="line"></span><br><span class="line">B+ 树是一种树数据结构，是一个n叉排序树，每个节点通常有多个孩子，一棵B+树包含根节点、内部节点和叶子节点。根节点可能是一个叶子节点，也可能是一个包含两个或两个以上孩子节点的节点。</span><br><span class="line">B+ 树通常用于数据库和操作系统的文件系统中。NTFS, ReiserFS, NSS, XFS, JFS, ReFS 和BFS等文件系统都在使用B+树作为元数据索引。B+ 树的特点是能够保持数据稳定有序，其插入与修改拥有较稳定的对数时间复杂度。B+ 树元素自底向上插入。</span><br></pre></td></tr></table></figure></p>
+<p>参考：<br><a href="https://www.cnblogs.com/wade-luffy/p/6292784.html" target="_blank" rel="noopener">https://www.cnblogs.com/wade-luffy/p/6292784.html</a><br><a href="https://www.cnblogs.com/nullzx/p/8729425.html" target="_blank" rel="noopener">https://www.cnblogs.com/nullzx/p/8729425.html</a></p>
+<p>Sql语句执行顺序:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">先执行from关键字后面的语句，明确数据的来源，它是从哪张表取来的。</span><br><span class="line">接着执行where关键字后面的语句，对数据进行筛选。</span><br><span class="line">再接着执行group by后面的语句，对数据进行分组分类。</span><br><span class="line">然后执行select后面的语句，也就是对处理好的数据，具体要取哪一部分。</span><br><span class="line">最后执行order by后面的语句，对最终的结果进行排序。</span><br><span class="line"></span><br><span class="line">可得 from &gt; where &gt; group by &gt; select &gt; order by。这就是一条基本sql的执行顺序。</span><br></pre></td></tr></table></figure></p>
+<p>mysql or条件可以使用索引而避免全表<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">where 语句里面如果带有or条件，必须所有的or条件都必须是独立索引，myisam表能用到索引，如果有column没有被索引或innodb则不行，</span><br><span class="line">不过后面版本的innodb好像可以支持在所有的or条件都是独立索引的情况下使用到索引</span><br><span class="line"></span><br><span class="line">用UNION替换OR (适用于索引列)</span><br><span class="line">在下面的例子中, LOC_ID 和REGION上都建有索引</span><br><span class="line">高效:</span><br><span class="line">select loc_id , loc_desc , region from location where loc_id = 10</span><br><span class="line">union</span><br><span class="line">select loc_id , loc_desc , region  from location where region = &quot;melbourne&quot;</span><br><span class="line">低效:</span><br><span class="line">select loc_id , loc desc , region from location where loc_id = 10 or region = &quot;melbourne&quot;</span><br></pre></td></tr></table></figure></p>
+<p>MyISAM 和 INNODB的区别<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1. 事务安全（MyISAM不支持事务，INNODB支持事务）</span><br><span class="line">2. 查询和添加速度（MyISAM批量插入速度快）</span><br><span class="line">3. 支持全文索引（MyISAM支持全文索引，INNODB不支持全文索引）</span><br><span class="line">4. 锁机制（MyISAM时表锁，innodb是行锁）</span><br><span class="line">5. 外键 MyISAM 不支持外键， INNODB支持外键. (在PHP开发中，通常不设置外键，通常是在程序中保证数据的一致)</span><br><span class="line"></span><br><span class="line">Memory 存储，比如我们数据变化频繁，不需要入库，同时又频繁的查询和修改，我们考虑使用memory, 速度极快. （如果mysql重启的话，数据就不存在了）</span><br></pre></td></tr></table></figure></p>
+<p>mysql优化<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">a: 表的设计合理化(符合3NF)</span><br><span class="line">b: 添加适当索引(index) [四种: 普通索引、主键索引、唯一索引unique、全文索引]</span><br><span class="line">c: 分表技术(水平分割、垂直分割)</span><br><span class="line">d: 读写[写: update/delete/add]分离</span><br><span class="line">e: 存储过程 [模块化编程，可以提高速度]</span><br><span class="line">f: 对mysql配置优化 [配置最大并发数my.ini, 调整缓存大小，默认为100，max_connection=1000 ]</span><br><span class="line">g: mysql服务器硬件升级</span><br><span class="line">h: 定时的去清除不需要的数据,定时进行碎片整理(MyISAM)</span><br><span class="line"></span><br><span class="line">使用SHOW STATUS语句查看MySQL数据库的性能参数</span><br><span class="line">•SHOW STATUS LIKE &apos;value‘</span><br><span class="line">常用的参数：</span><br><span class="line">•Slow_queries  慢查询次数</span><br><span class="line">•Com_(CRUD) 操作的次数</span><br><span class="line">•Uptime  上线时间</span><br><span class="line"></span><br><span class="line">在MySQL中可以使用EXPLAIN查看SQL执行计划，用法：EXPLAIN SELECT * FROM tb_item</span><br><span class="line"></span><br><span class="line">对于创建的多列索引，只要查询条件使用了最左边的列，索引一般就会被使用。</span><br><span class="line">对于使用like的查询，查询如果是  ‘%aaa’ 不会使用到索引‘aaa%’ 会使用到索引。</span><br><span class="line">如果条件中有or，即使其中有条件带索引也不会使用。换言之，就是要求使用的所有字段，都必须建立索引, 我们建议大家尽量避免使用or关键字</span><br><span class="line">如果列类型是字符串，那一定要在条件中将数据使用引号引用起来</span><br><span class="line">如果mysql估计使用全表扫描要比使用索引快，则不使用索引。</span><br><span class="line">在使用group by 分组查询是，默认分组后，还会排序，可能会降低速度,在group by 后面增加 order by null 就可以防止排序.</span><br><span class="line">有些情况下，可以使用连接来替代子查询。因为使用join，MySQL不需要在内存中创建临时表。</span><br><span class="line"></span><br><span class="line">插入数据时，影响插入速度的主要是索引、唯一性校验、一次插入的数据条数等。</span><br><span class="line">myisam:</span><br><span class="line">对于非空表，插入记录时，MySQL会根据表的索引对插入的记录建立索引。如果插入大量数据，建立索引会降低插入数据速度。</span><br><span class="line">为了解决这个问题，可以在批量插入数据之前禁用索引，数据插入完成后再开启索引。</span><br><span class="line">对于空表批量插入数据，则不需要进行操作，因为MyISAM引擎的表是在导入数据后才建立索引。</span><br><span class="line">唯一性校验会降低插入记录的速度，可以在插入记录之前禁用唯一性检查，插入数据完成后再开启。</span><br><span class="line">当需要批量导入数据时，使用LOAD DATA INFILE语句比INSERT语句插入速度快很多。</span><br><span class="line">innodb:</span><br><span class="line">禁用唯一性检查, 用法和MyISAM一样。</span><br><span class="line">插入数据之前执行禁止对外键的检查，数据插入完成后再恢复，可以提供插入速度。</span><br><span class="line">插入数据之前执行禁止事务的自动提交，数据插入完成后再恢复，可以提供插入速度。</span><br><span class="line"></span><br><span class="line">优化mysql数据库的配置:</span><br><span class="line">Max_connections（默认最大连接数并发）</span><br><span class="line">Query_cache_size 查询缓存大小</span><br><span class="line">最重要的参数就是内存，我们主要用的innodb引擎，所以下面两个参数调的很大</span><br><span class="line">innodb_additional_mem_pool_size = 64M</span><br><span class="line">innodb_buffer_pool_size = 1G</span><br><span class="line">对于myisam，需要调整key_buffer_size</span><br></pre></td></tr></table></figure></p>
+<p>Spring好处：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">方便解耦，简化开发</span><br><span class="line">AOP编程的支持</span><br><span class="line">声明式事务的支持</span><br><span class="line">方便程序的测试</span><br><span class="line">方便集成各种优秀框架</span><br><span class="line">降低JavaEE API的使用难度	Spring</span><br></pre></td></tr></table></figure></p>
+<p>BeanFactory和ApplicationContext对比：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">BeanFactory 采取延迟加载，第一次getBean时才会初始化Bean</span><br><span class="line">ApplicationContext是对BeanFactory扩展，提供了更多功能</span><br><span class="line">- 国际化处理</span><br><span class="line">- 事件传递</span><br><span class="line">- Bean自动装配</span><br><span class="line">- 各种不同应用层的Context实现</span><br></pre></td></tr></table></figure></p>
+<p>生命周期图解释：<br><img src="assets/1.png" alt="1"><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">1.instantiate bean对象实例化</span><br><span class="line">2.populate properties 封装属性</span><br><span class="line">3.如果Bean实现BeanNameAware 执行 setBeanName</span><br><span class="line">4.如果Bean实现BeanFactoryAware 执行setBeanFactory ，获取Spring容器</span><br><span class="line">5.如果存在类实现 BeanPostProcessor（后处理Bean） ，执行postProcessBeforeInitialization</span><br><span class="line">6.如果Bean实现InitializingBean 执行 afterPropertiesSet</span><br><span class="line">7.调用&lt;bean init-method=&quot;init&quot;&gt; 指定初始化方法 init</span><br><span class="line">8.如果存在类实现 BeanPostProcessor（处理Bean） ，执行postProcessAfterInitialization</span><br><span class="line">执行业务处理</span><br><span class="line">9.如果Bean实现 DisposableBean 执行 destroy</span><br><span class="line">101.调用&lt;bean destroy-method=&quot;customerDestroy&quot;&gt; 指定销毁方法 customerDestroy</span><br></pre></td></tr></table></figure></p>
+<p>AOP经典应用：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">事务管理、性能监视、安全检查、缓存 、日志等</span><br></pre></td></tr></table></figure></p>
+<p>传播行为：在两个业务之间如何共享事务<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Spring中Propagation类的事务属性详解：</span><br><span class="line">REQUIRED：支持当前事务，如果当前没有事务，就新建一个事务。这是最常见的选择。</span><br><span class="line">SUPPORTS：支持当前事务，如果当前没有事务，就以非事务方式执行。</span><br><span class="line">MANDATORY：支持当前事务，如果当前没有事务，就抛出异常。</span><br><span class="line">REQUIRES_NEW：新建事务，如果当前存在事务，把当前事务挂起。</span><br><span class="line">NOT_SUPPORTED：以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。</span><br><span class="line">NEVER：以非事务方式执行，如果当前存在事务，则抛出异常。</span><br><span class="line">NESTED：支持当前事务，如果当前事务存在，则执行一个嵌套事务，如果当前没有事务，就新建一个事务</span><br></pre></td></tr></table></figure></p>
+<p>掌握：PROPAGATION_REQUIRED、PROPAGATION_REQUIRES_NEW、PROPAGATION_NESTED</p>
+<p>Spring的执行流程<br><img src="assets/2.png" alt="2"></p>
+<p>Spring与Struts的区别<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">实现机制：</span><br><span class="line">Struts2是基于过滤器实现的。</span><br><span class="line">Springmvc基于servlet实现。</span><br><span class="line"></span><br><span class="line">运行速度：</span><br><span class="line">Servlet比过滤器快。</span><br><span class="line"></span><br><span class="line">Struts2是多例</span><br><span class="line">每一次请求，都会创建一个Action对象</span><br><span class="line">请求来了以后，struts2创建多少个对象：ActionContext，valuestack，UAction，ActionSuport，ModelDriven</span><br><span class="line">Springmvc是单例。</span><br><span class="line">同一个Controller请求，只会创建一个Controller</span><br><span class="line"></span><br><span class="line">Struts基于属性进行封装,Action有参数属性。</span><br><span class="line">Springmvc基于方法封装,参数是写在Controller的方法。</span><br></pre></td></tr></table></figure></p>
+<p>get和load方法的区别<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">get方法是直接加载数据库</span><br><span class="line">load的设计是懒加载，用到时才去查询数据库</span><br><span class="line">load方法返回的是对象的一个代理</span><br></pre></td></tr></table></figure></p>
+<p>save和persist方法 区别<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">save方法：瞬时态 转换 持久态 ,会初始化OID</span><br><span class="line">1.执行save方法，立即触发insert语句，从数据库获得主键的值（OID值）</span><br><span class="line">2.执行save方法前，设置OID将忽略。</span><br><span class="line">3.如果执行查询，session缓存移除了，在执行save方法，将执行insert</span><br><span class="line"></span><br><span class="line">persist方法：瞬时态 转换 持久态</span><br><span class="line">persist保存的对象，在保存前，不能设置id,否则会报错</span><br><span class="line">save和persist都是持久化对象的作用</span><br><span class="line">save 因为需要返回一个主键值，因此会立即执行 insert 语句，而 persist 在事务外部调用时则不会立即执行 insert 语句，在事务内调用还是会立即执行 insert 语句的。</span><br></pre></td></tr></table></figure></p>
+<p>主键的生成策略<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">generator:id的生成策略</span><br><span class="line">      increment:也会自动增长id,但是它的这种增长是自己Hibernate实现</span><br><span class="line">                 执行select max(id) 查询，这种会有线程并发问题</span><br><span class="line">      sequence:一般在oracle数据库才用</span><br><span class="line">      hilo:hibernate自己实现的id规则【不用,不用学】</span><br><span class="line">      native:【经常常用】</span><br><span class="line">          如果是mysql数据库，id会自动增长</span><br><span class="line">          如果是oracle数据库，会自动增长，sequence</span><br><span class="line">      uuid:【经常常用】一个长字符串,需要把模型的id改成字符串</span><br><span class="line">             保存的时候，不用自己设置ID,hibernate会设置id</span><br><span class="line">      assigned:【经常常用】要手动设置id属性</span><br></pre></td></tr></table></figure></p>
+<p>Hibernate 实体的状态<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">实体Entity有三种状态，瞬时状态、持久状态、脱管状态</span><br><span class="line">瞬时状态：transient,  session没有缓存，数据库也没有记录，oid没有值</span><br><span class="line">持久状态：persistent,  session有缓存，数据库也有记录,oid有值</span><br><span class="line">脱管状态/游离状态：detached，session没有缓存，数据库有记录,oid有值</span><br></pre></td></tr></table></figure></p>
+<p><img src="assets/4.png" alt="4"></p>
+<p>一级缓存<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">一级缓存：又称为session级别的缓存。</span><br><span class="line">当获得一次会话（session），hibernate在session中创建多个集合（map），用于存放操作数据（PO对象），为程序优化服务，</span><br><span class="line">如果之后需要相应的数据，hibernate优先从session缓存中获取，如果有就使用；如果没有再查询数据库。</span><br><span class="line">当session关闭时，一级缓存销毁。</span><br></pre></td></tr></table></figure></p>
+<p>一级缓存快照<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">快照：与一级缓存存放位置是一样，对一级缓存数据备份。</span><br><span class="line">保证数据库的数据与 一级缓存的数据必须一致。</span><br><span class="line">如果一级缓存修改了，在执行commit提交时，将自动刷新一级缓存，</span><br><span class="line">执行update语句，将一级缓存的数据更新到数据库。</span><br></pre></td></tr></table></figure></p>
+<p><img src="assets/3.png" alt="3"></p>
+<p>二级缓存<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">hibernate 提供缓存机制：一级缓存、二级缓存</span><br><span class="line">	一级缓存：session级别缓存，在一次请求中共享数据。</span><br><span class="line">	二级缓存：sessionFactory级别缓存，整个应用程序共享一个会话工厂，共享一个二级缓存。</span><br><span class="line">SessionFactory的缓存两部分：</span><br><span class="line">内置缓存：使用一个Map，用于存放配置信息，预定义HQL语句等，提供给Hibernate框架自己使用，对外只读的。不能写入,也就是不能更改数据。</span><br><span class="line">外置缓存：使用另一个Map，用于存放用户自定义数据。默认不开启。外置缓存hibernate只提供规范（接口），需要第三方实现类。</span><br><span class="line"></span><br><span class="line">二级就是由4部分构成</span><br><span class="line">类级别缓存</span><br><span class="line">集合级别缓存</span><br><span class="line">时间戳缓存</span><br><span class="line">查询缓存(二级缓存的第2大部分,又称三级缓存)</span><br></pre></td></tr></table></figure></p>
+<p>mybatis：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">parameterType和resultType</span><br><span class="line">parameterType指定输入参数的java类型，可以填写别名或Java类的全限定名。</span><br><span class="line">resultType指定输出结果的java类型，可以填写别名或Java类的全限定名。</span><br><span class="line"></span><br><span class="line">#&#123;&#125;和$&#123;&#125;</span><br><span class="line">#&#123;&#125;：相当于预处理中的占位符？。</span><br><span class="line">#&#123;&#125;里面的参数表示接收java输入参数的名称。</span><br><span class="line">#&#123;&#125;可以接受HashMap、POJO类型的参数。</span><br><span class="line">当接受简单类型的参数时，#&#123;&#125;里面可以是value，也可以是其他。</span><br><span class="line">#&#123;&#125;可以防止SQL注入。</span><br><span class="line">$&#123;&#125;：相当于拼接SQL串，对传入的值不做任何解释的原样输出。</span><br><span class="line">$&#123;&#125;会引起SQL注入，所以要谨慎使用。</span><br><span class="line">$&#123;&#125;可以接受HashMap、POJO类型的参数。</span><br><span class="line">当接受简单类型的参数时，$&#123;&#125;里面只能是value。</span><br><span class="line"></span><br><span class="line">selectOne和selectList</span><br><span class="line">selectOne：只能查询0或1条记录，大于1条记录的话，会报错：</span><br><span class="line">selectList：可以查询0或N条记录</span><br></pre></td></tr></table></figure></p>
+<p>输出映射 resultType/resultMap<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">使用resultType进行结果映射时，查询的列名和映射的pojo属性名完全一致，该列才能映射成功。</span><br><span class="line">如果查询的列名和映射的pojo属性名全部不一致，则不会创建pojo对象；</span><br><span class="line">如果查询的列名和映射的pojo属性名有一个一致，就会创建pojo对象。</span><br><span class="line"></span><br><span class="line">如果查询出来的列名和属性名不一致，通过定义一个resultMap将列名和pojo属性名之间作一个映射关系。</span><br></pre></td></tr></table></figure></p>
+<p>mybatis与hibernate的区别<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">Mybatis技术特点：</span><br><span class="line">好处：</span><br><span class="line">1、通过直接编写SQL语句，可以直接对SQL进行性能的优化；</span><br><span class="line">2、学习门槛低，学习成本低。只要有SQL基础，就可以学习mybatis，而且很容易上手；</span><br><span class="line">3、由于直接编写SQL语句，所以灵活多变，代码维护性更好。</span><br><span class="line">缺点：</span><br><span class="line">4、不能支持数据库无关性，即数据库发生变更，要写多套代码进行支持，移植性不好。</span><br><span class="line">a)Mysql:limit</span><br><span class="line">b)Oracle:rownum</span><br><span class="line">5、需要编写结果映射。</span><br><span class="line">Hibernate技术特点：</span><br><span class="line">好处：</span><br><span class="line">1、标准的orm框架，程序员不需要编写SQL语句。</span><br><span class="line">2、具有良好的数据库无关性，即数据库发生变化的话，代码无需再次编写。</span><br><span class="line">a)以后,mysql数据迁移到oracle，只需要改方言配置</span><br><span class="line">缺点:</span><br><span class="line">3、学习门槛高，需要对数据关系模型有良好的基础，而且在设置OR映射的时候，需要考虑好性能和对象模型的权衡。</span><br><span class="line">4、程序员不能自主的去进行SQL性能优化。</span><br><span class="line"></span><br><span class="line">Mybatis应用场景：</span><br><span class="line">需求多变的互联网项目，例如电商项目。</span><br><span class="line">Hibernate应用场景：</span><br><span class="line">需求明确、业务固定的项目，例如OA项目、ERP项目等。</span><br></pre></td></tr></table></figure></p>
+<p>延迟加载<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">延迟加载又叫懒加载，也叫按需加载。也就是说先加载主信息，在需要的时候，再去加载从信息。</span><br><span class="line">在mybatis中，resultMap标签 的association标签和collection标签具有延迟加载的功能。</span><br></pre></td></tr></table></figure></p>
+<p>Mybatis的缓存理解<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Mybatis的缓存，包括一级缓存和二级缓存，一级缓存是默认使用的。二级缓存需要手动开启。</span><br><span class="line">一级缓存指的就是sqlsession，在sqlsession中有一个数据区域，是map结构，这个区域就是一级缓存区域。一级缓存中的key是由sql语句、条件、statement等信息组成一个唯一值。一级缓存中的value，就是查询出的结果对象。</span><br><span class="line">二级缓存指的就是同一个namespace下的mapper，二级缓存中，也有一个map结构，这个区域就是一级缓存区域。一级缓存中的key是由sql语句、条件、statement等信息组成一个唯一值。一级缓存中的value，就是查询出的结果对象。</span><br></pre></td></tr></table></figure></p>
+<p><img src="assets/5.png" alt="5"><br><img src="assets/6.png" alt="6"><br><img src="assets/7.png" alt="7"></p>
+<p>maven生命周期<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Maven生命周期就是为了对所有的构建过程进行抽象和统一。</span><br><span class="line">包括项目清理、初始化、编译、打包、测试、部署等几乎所有构建步骤。</span><br><span class="line">生命周期可以理解为构建工程的步骤。</span><br><span class="line"></span><br><span class="line">在Maven中有三套相互独立的生命周期，请注意这里说的是“三套”，而且“相互独立”，这三套生命周期分别是：</span><br><span class="line">Clean Lifecycle： 在进行真正的构建之前进行一些清理工作。</span><br><span class="line">Default Lifecycle： 构建的核心部分，编译，测试，打包，部署等等。</span><br><span class="line">Site Lifecycle： 生成项目报告，站点，发布站点。</span><br></pre></td></tr></table></figure></p>
+<p>Maven 解决jar包冲突的原理<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">包冲突如何产生？</span><br><span class="line">举个：假设 A-&gt;B-&gt;C-&gt;D1, E-&gt;F-&gt;D2，D1,D2 分别为 D 的不同版本。</span><br><span class="line">如果 pom.xml 文件中引入了 A 和 E 之后，按照 Maven 传递依赖原则，工程内需要引入的实际 Jar 包将会有：A B C D1 和 E F D2，因此 D1,D2 将会产生包冲突。</span><br><span class="line"></span><br><span class="line">如何解决包冲突</span><br><span class="line">Maven 解析 pom.xml 文件时，同一个 jar 包只会保留一个，这样有效的避免因引入两个 jar 包导致的工程运行不稳定性。</span><br><span class="line"></span><br><span class="line">Maven 默认处理策略</span><br><span class="line">最短路径优先</span><br><span class="line">Maven 面对 D1 和 D2 时，会默认选择最短路径的那个 jar 包，即 D2。E-&gt;F-&gt;D2 比 A-&gt;B-&gt;C-&gt;D1 路径短 1。</span><br><span class="line">最先声明优先</span><br><span class="line">如果路径一样的话，举个： A-&gt;B-&gt;C1, E-&gt;F-&gt;C2 ，两个依赖路径长度都是 2，那么就选择最先声明。</span><br><span class="line">移除依赖</span><br><span class="line">如果我们不想通过 A-&gt;B-&gt;-&gt;D1 引入 D1 的话，那么我们在声明引入 A 的时候将 D1 排除掉，这样也避免了包冲突。</span><br></pre></td></tr></table></figure></p>
+<p>http特点<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1.支持客户/服务器模式。</span><br><span class="line">2.简单快速：客户向服务器请求服务时，只需传送请求方法和路径。请求方法常用的有GET、HEAD、POST。每种方法规定了客户与服务器联系的类型不同。由于HTTP协议简单，使得HTTP服务器的程序规模小，因而通信速度很快。</span><br><span class="line">3.灵活：HTTP允许传输任意类型的数据对象。正在传输的类型由Content-Type加以标记。</span><br><span class="line">4.无连接：无连接的含义是限制每次连接只处理一个请求。服务器处理完客户的请求，并收到客户的应答后，即断开连接。采用这种方式可以节省传输时间。</span><br><span class="line">5.无状态：HTTP协议是无状态协议。无状态是指协议对于事务处理没有记忆能力。缺少状态意味着如果后续处理需要前面的信息，则它必须重传，这样可能导致每次连接传送的数据量增大。另一方面，在服务器不需要先前信息时它的应答就较快。</span><br></pre></td></tr></table></figure></p>
+<p>tcp协议和udp协议的差别<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">                          TCP         UDP</span><br><span class="line">是否连接                面向连接     面向非连接</span><br><span class="line">传输可靠性              可靠         不可靠</span><br><span class="line">应用场合                传输大量数据 少量数据</span><br><span class="line">速度                    慢          快</span><br><span class="line">对系统资源的要求         较多        少</span><br><span class="line"></span><br><span class="line">UDP程序结构较简单；</span><br><span class="line">流模式与数据报模式 ；</span><br><span class="line">TCP保证数据正确性，UDP可能丢包，TCP保证数据顺序，UDP不保证。</span><br></pre></td></tr></table></figure></p>
+<p>三次握手：<br><img src="assets/9.png" alt="9"><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">建立连接前，客户端和服务端状态都为CLOSED，服务端创建socket被动打开连接，并将状态置为LISTEN。</span><br><span class="line">客户端主动打开连接，向服务端发送SYN报文，将TCP首部控制位中的SYN置为1，同时序号seq为客户端随机生成的一个初始序号seq = x(SYN报文段不能携带数据，但要消耗一个序列号)，并将客户端状态置为SYN_SENT。</span><br><span class="line">服务端收到SYN报文后，如同意建立连接，则向客户端发送SYN+ACK报文，将TCP首部控制位中的SYN和ACK都置为1，确认号为ack = x + 1，同时随机生成一个自己的序号seq = y，并将服务端状态致为SYN_RCVD(同步收到状态)。</span><br><span class="line">客户端收到SYN+ACK报文后，还需向服务端发送ACK报文，将TCP首部控制位中的ACK置为1，确认号ack = y + 1，序列号seq = x + 1，并将客户端状态置为ESTABLISHED。</span><br><span class="line">服务端收到ACK报文后，也将状态置为ESTABLISHED，此时三次握手完成，连接建立，进入数据传送状态。</span><br></pre></td></tr></table></figure></p>
+<p>为什么要三次握手而不是两次：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">现假定出现一种异常情况：客户端发送的SYN报文并未丢失，而是在某个网络节点长时间滞留了，以致延误到客户端连接释放后的某个时间才到达服务端，但服务端收到此失效的SYN报文后，误以为是客户端又发出的一次新的连接请求，于是就向客户端发出SYN+ACK报文段，同意建立连接，假定不采用三次握手而是两次握手，服务端就认为连接已经建立，并一直等待客户端发送数据，但由于这次连接在客户端已经失效了，因此不会对服务端的SYN+ACK报文给予回应，这就造成了服务端许多资源的白白浪费，所有才有三次握手的办法可以防止上述现象的发生，即防止已失效的SYN报文突然又传回服务端，因为产生错误。例如上述的情况，客户端不向服务端发回ACK报文，由于服务端收不到ACK报文，就知道客户端并未要求建立连接，也不会造成资源的白白浪费，但三次握手也是有一定缺陷的，会被利用发起SYN flood攻击。</span><br></pre></td></tr></table></figure></p>
+<p>四次挥手：<br><img src="assets/10.png" alt="10"><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">TCP连接是全双工的，所以释放连接会比建立连接略微复杂，释放连接前，两端都处于ESTABLISHED数据传输状态。</span><br><span class="line">客户端先向服务器端发送FIN报文，将TCP首部控制位中的FIN置为1，其序号seq = u，u等于客户端前面最后一个已传送过的包seq，并将状态置为FIN_WAIT_1，等待服务端的确认。</span><br><span class="line">服务端收到FIN报文后，将发送ACK报文，确认号ack = u + 1，序号seq = v，v等于服务端前面最后一个已传送过的包的seq，之后将状态致为CLOSE_WAIT(此时TCP连接处于半关闭状态，即客户端已经没有数据要发送了，但若服务端要发送数据，客户端仍要接受，也就是说服务端到客户端这个方向的连接并未关闭，这个状态可能会持续一段时间)。</span><br><span class="line">当客户端收到服务端传来的确认报文后，将状态致为FIN_WATI_2，等待服务端发送的FIN+ACK报文段。</span><br><span class="line">若服务端没有要向客户端发送的数据，其应用进程就通知TCP释放连接，将FIN+ACK报文段TCP首部控制位FIN和ACK置为1，此时序号seq = w(因为之前可能又传递一些数据)，确认号ack = u + 1(上次的确认号)，并将状态置为LAST_ACK。</span><br><span class="line">客户端收到服务端的FIN+ACK报文后，需发送确认报文段，确认号ack = w + 1，序列号为seq = u + 1，并将状态置为TIME_WAIT状态，现在TCP连接还没有释放掉，必须经过2MSL(Max Segment Lifetime 最长报文段寿命)后才能进入CLOSED状态，服务端在接受到确认报文后将状态置为CLOSED。</span><br></pre></td></tr></table></figure></p>
+<p>为什么四次挥手：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">TCP连接是全双工的，当关闭连接时，当收到客户端的FIN报文时，仅仅表示客户端没有数据发送给服务端了；</span><br><span class="line">但未必服务端所有的数据都发送给客户端了，所以服务端未必会马上会关闭SOCKET，也即服务端可能还需要发送一些数据给客户端之后，</span><br><span class="line">再发送FIN+ACK报文给客户端来表示现在可以关闭连接了，所以服务端这里的ACK报文和FIN报文多数情况下都是分开发送的以确保数据能够完成传输。</span><br></pre></td></tr></table></figure></p>
+<p>time_wait状态必须等待多长时间：2MSL<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">什么是2MSL MSL是Maximum Segment Lifetime英文的缩写，中文可以译为“报文最大生存时间”，他是任何报文在网络上存在的最长时间，超过这个时间报文将被丢弃。</span><br><span class="line">第3次握手完成后发送了第四次握手的ACK包后就进入了TIME_WAIT状态，必须在此状态上停留两倍的MSL时间，等待2MSL时间主要目的是怕最后一个ACK包对方没收到，那么对方在超时后将重发第三次握手的FIN包，主动关闭端接到重发的FIN包后可以再发一个ACK应答包。在TIME_WAIT状态时两端的端口不能使用，要等到2MSL时间结束才可继续使用。当连接处于2MSL等待阶段时任何迟到的报文段都将被丢弃。不过在实际应用中可以通过设置SO_REUSEADDR选项达到不必等待2MSL时间结束再使用此端口。</span><br></pre></td></tr></table></figure></p>
+<p>网络模型7层概述：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1.物理层：主要定义物理设备标准，如网线的接口类型、光纤的接口类型、各种传输介质的传输速率等。它的主要作用是传输比特流（就是由1、0转化为电流强弱来进行传输,到达目的地后在转化为1、0，也就是我们常说的数模转换与模数转换）。这一层的数据叫做比特。</span><br><span class="line">2.数据链路层：主要将从物理层接收的数据进行MAC地址（网卡的地址）的封装与解封装。常把这一层的数据叫做帧。在这一层工作的设备是交换机，数据通过交换机来传输。</span><br><span class="line">3.网络层：主要将从下层接收到的数据进行IP地址（例192.168.0.1)的封装与解封装。在这一层工作的设备是路由器，常把这一层的数据叫做数据包。</span><br><span class="line">4.传输层：定义了一些传输数据的协议和端口号（WWW端口80等），如：TCP（传输控制协议，传输效率低，可靠性强，用于传输可靠性要求高，数据量大的数据），UDP（用户数据报协议，与TCP特性恰恰相反，用于传输可靠性要求不高，数据量小的数据，如QQ聊天数据就是通过这种方式传输的）。 主要是将从下层接收的数据进行分段和传输，到达目的地址后再进行重组。常常把这一层数据叫做段。</span><br><span class="line">5.会话层：通过传输层（端口号：传输端口与接收端口）建立数据传输的通路。主要在你的系统之间发起会话或者接受会话请求（设备之间需要互相认识可以是IP也可以是MAC或者是主机名）</span><br><span class="line">6.表示层：主要是进行对接收的数据进行解释、加密与解密、压缩与解压缩等（也就是把计算机能够识别的东西转换成人能够能识别的东西（如图片、声音等）。</span><br><span class="line">7.应用层： 主要是一些终端的应用，比如说FTP（各种文件下载），WEB（IE浏览），QQ之类的（可以把它理解成我们在电脑屏幕上可以看到的东西．就是终端应用）。</span><br></pre></td></tr></table></figure></p>
+<p>Session机制？<br>参考：<br><a href="http://justsee.iteye.com/blog/1570652" target="_blank" rel="noopener">http://justsee.iteye.com/blog/1570652</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">补充：打开两个浏览器窗口访问应用程序会使用同一个session还是不同的session </span><br><span class="line">通常session cookie是不能跨窗口使用的，当你新开了一个浏览器窗口进入相同页面时，系统会赋予你一个新的session id，这样我们信息共享的目的就达不到了。</span><br><span class="line">此时我们可以先把session id保存在persistent cookie中(通过设置session的最大有效时间)，然后在新窗口中读出来，就可以得到上一个窗口的session id了，这样通过session cookie和persistent cookie的结合我们就可以实现了跨窗口的会话跟踪。</span><br></pre></td></tr></table></figure></p>
+
+            
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">标签</span><br>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/面试题/">面试题</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/08/05/面试题2/" data-tooltip="面试题2" aria-label="下一篇: 面试题2">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/05/面试题/" title="分享到 Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/05/面试题/" title="分享到 Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/05/面试题/" title="分享到 Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 Brotherc. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/08/05/面试题2/" data-tooltip="面试题2" aria-label="下一篇: 面试题2">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/05/面试题/" title="分享到 Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/05/面试题/" title="分享到 Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/05/面试题/" title="分享到 Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/05/面试题/">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>分享到 Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/05/面试题/">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/05/面试题/">
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>分享到 Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/head.jpg" alt="作者的图片">
+        
+            <h4 id="about-card-name">Brotherc</h4>
+        
+            <div id="about-card-bio"><p>java development</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br>
+                <p>java</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br>
+                zhuhai
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-dbd16rvloemmuxdzniplmnxxvwoz24eya9wol0b7vvmlokgqsjivmb8dnscy.min.js"></script>
+<!--SCRIPTS END-->
+
+    
+
+
+
+    </body>
+</html>

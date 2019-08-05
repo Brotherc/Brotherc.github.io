@@ -1,0 +1,465 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Brotherc">
+    <title>面试题2 - Brotherc</title>
+    <meta name="author" content="Brotherc">
+    
+    
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"HashMap、HashTable、ConCurrentHasgMap的区别以及实现原理？ConCurrentHasgMap调用get（）方法的时候有锁吗？为什么hashmap扩容是是扩大成原来的2倍，而不是3倍?1234567hash算法   跟数组的长度-1做一次“与”运算（&amp;）数组大小为2的幂时hashmap访问的性能最高，能减少key之间的碰撞，而加快查询的效率。其他的大小可能有几个位置永远都不能存放元素了hashmap中默认的数组大小是16当hashmap中的元素个数超过数组大小*loadFactor时，就会进行数组扩容，loadFactor的默认值为0.75，数组的大小即扩大一倍，然后重新计算每个元素在数组中的位置。对于put和remove操作，是使用锁同步来进行的，不过是用的ReentrantLock而不是synchronized，性能上要更高一些。它们的实现前文都已经提到过，就没什么可分析的了。我们还需要知道一点，ConcurrentHashMap的迭代器不是Fast-Fail的方式，所以在迭代的过程中别其他线程添加/删除了元素，不会抛出异常，也不能体现出元素的改动。但也没有关系，因为每个entry的成员除了value都是final修饰的，暴漏出去也不会对其他元素造成影响。\n参考：http://www.iteye.com/topic/539465https://blog.csdn.net/seapeak007/article/details/53409618\nJAVA 常用容器初始值大小123451.StringBuffer和StringBuilder初始化默认大小为16个字符2.HashMap初始化默认大小16，自增为2n.3.HashTable默认初始值为11，加载因子为0.75，自增为2n+14.ArrayList初始化默认值为10，自增为1.5n5.Vector初始化默认值为10，自增为2n\n使用ArrayList初始化时注意事项？（自动扩充机制方面，原理实现）？参考：https://blog.csdn.net/xidiancoder/article/details/55003916\nList接口、Set接口和Map接口的区别参考：https://blog.csdn.net/zcg_java/article/details/43232251\ncomparable与comparator的区别？参考：http://www.cnblogs.com/szlbm/p/5504634.html\nArrays和Collections 对于sort的不同实现原理？12341、Arrays.sort() 该算法是一个经过调优的快速排序，此算法在很多数据集上提供N*log(N)的性能，这导致其他快速排序会降低二次型性能。2、Collections.sort() 该算法是一个经过修改的合并排序算法（其中，如果低子列表中的最高元素效益高子列表中的最低元素，则忽略合并）。此算法可提供保证的N*log(N)的性能，此实现将指定列表转储到一个数组中，然后再对数组进行排序，在重置数组中相应位置处每个元素的列表上进行迭代。这避免了由于试图原地对链接列表进行排序而产生的n2log(n)n2log(n)性能。\nHashMap到底是插入链表头部还是尾部1在jdk1.8之前是插入头部的，在jdk1.8中是插入尾部的。\n怎么实现并发编程？请详细描述？锁机制（Lock）、CAS无锁算法、Synchronized区别Java中CAS算法参考：https://www.kancloud.cn/seaboat/java-concurrent/117870参考：https://www.kancloud.cn/seaboat/java-concurrent/117869\nAQS锁机制原理参考：https://blog.csdn.net/paul_wei2008/article/details/25722023https://www.cnblogs.com/200911/p/6031350.htmlhttps://blog.csdn.net/babylove_BaLe/article/details/78291071\nCAS 和ABA问题参考：https://blog.csdn.net/u012834750/article/details/69387975\nDEF三个线程在ABC线程后运行如何实现参考：https://www.cnblogs.com/lcplcpjava/p/6896904.htmlJava线程-运动员赛跑参考：https://blog.csdn.net/cicon/article/details/80365717\n虚拟机内的锁优化（偏向锁，轻量级锁，自旋锁，重量级锁）参考：https://www.jianshu.com/p/5da9ef598604Java多线程优化之偏向锁原理分析参考：https://blog.csdn.net/zhaoqiang121121/article/details/45673011\n栅栏和闭锁的区别参考：https://blog.csdn.net/yujin753/article/details/46125283\nJDK7、8的区别？12345678在JVM方面的区别：永久代 在JDK8之前的HotSpot实现中，类的元数据如方法数据、方法信息（字节码，栈和变量大小）、运行时常量池、已确定的符号引用和虚方法表等被保存在永久代中，32位默认永久代的大小为64M，64位默认为85M，可以通过参数-XX:MaxPermSize进行设置，一旦类的元数据超过了永久代大小，就会抛出OOM异常。虚拟机团队在JDK8的HotSpot中，把永久代从Java堆中移除了，并把类的元数据直接保存在本地内存区域（堆外内存），称之为元空间。这样做有什么好处？ 有经验的同学会发现，对永久代的调优过程非常困难，永久代的大小很难确定，其中涉及到太多因素，如类的总数、常量池大小和方法数量等，而且永久代的数据可能会随着每一次Full GC而发生移动。而在JDK8中，类的元数据保存在本地内存中，元空间的最大可分配空间就是系统可用内存空间，可以避免永久代的内存溢出问题，不过需要监控内存的消耗情况，一旦发生内存泄漏，会占用大量的本地内存。ps：JDK7之前的HotSpot，字符串常量池的字符串被存储在永久代中，因此可能导致一系列的性能问题和内存溢出错误。在JDK8中，字符串常量池中只保存字符串的引用。\nJVM在初始化堆内存时，新生代与老年代的默认比例是多少？123456永久代不属于堆内存，堆内存只包含新生代和老年代。默认的，新生代 ( Young ) 与老年代 ( Old ) 的比例的值为 1:2 ( 该值可以通过参数 –XX:NewRatio 来指定 )，即：新生代 ( Young ) = 1/3 的堆空间大小。 老年代 ( Old ) = 2/3 的堆空间大小。其中，新生代 ( Young ) 被细分为 Eden 和 两个 Survivor 区域，这两个 Survivor 区域分别被命名为 from 和 to，以示区分。 默认的，Edem : from : to = 8 : 1 : 1 ( 可以通过参数 –XX:SurvivorRatio 来设定 )，即： Eden = 8/10 的新生代空间大小，from = to = 1/10 的新生代空间大小。 ‍JVM 每次只会使用 Eden 和其中的一块 Survivor 区域来为对象服务，所以无论什么时候，总是有一块 Survivor 区域是空闲着的。 因此，新生代实际可用的内存空间为 9/10 ( 即90% )的新生代空间。\nJava8的内存分代改进参考：https://blog.csdn.net/chlu113/article/details/51890469\n对Java内存模型的理解以及其在并发当中的作用？参考：http://www.cnblogs.com/_popc/p/6096517.html\nJava中堆内存和栈内存区别？参考：http://www.cnblogs.com/whgw/archive/2011/09/29/2194997.html\nJdk1.7 与 jdk1.8的区别参考：https://www.cnblogs.com/aspirant/p/8617201.html\n","dateCreated":"2019-08-05T16:25:24+08:00","dateModified":"2019-08-05T16:15:39+08:00","datePublished":"2019-08-05T16:25:24+08:00","description":"","headline":"面试题2","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/05/面试题2/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/08/05/面试题2/","keywords":"面试题"}</script>
+    <meta name="description" content="HashMap、HashTable、ConCurrentHasgMap的区别以及实现原理？ConCurrentHasgMap调用get（）方法的时候有锁吗？为什么hashmap扩容是是扩大成原来的2倍，而不是3倍?1234567hash算法   跟数组的长度-1做一次“与”运算（&amp;amp;）数组大小为2的幂时hashmap访问的性能最高，能减少key之间的碰撞，而加快查询的效率。其他的大小可能有几">
+<meta name="keywords" content="面试题">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="面试题2">
+<meta property="og:url" content="http://yoursite.com/2019/08/05/面试题2/index.html">
+<meta property="og:site_name" content="Brotherc">
+<meta property="og:description" content="HashMap、HashTable、ConCurrentHasgMap的区别以及实现原理？ConCurrentHasgMap调用get（）方法的时候有锁吗？为什么hashmap扩容是是扩大成原来的2倍，而不是3倍?1234567hash算法   跟数组的长度-1做一次“与”运算（&amp;amp;）数组大小为2的幂时hashmap访问的性能最高，能减少key之间的碰撞，而加快查询的效率。其他的大小可能有几">
+<meta property="og:locale" content="zh-cn">
+<meta property="og:updated_time" content="2019-08-05T08:15:39.526Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="面试题2">
+<meta name="twitter:description" content="HashMap、HashTable、ConCurrentHasgMap的区别以及实现原理？ConCurrentHasgMap调用get（）方法的时候有锁吗？为什么hashmap扩容是是扩大成原来的2倍，而不是3倍?1234567hash算法   跟数组的长度-1做一次“与”运算（&amp;amp;）数组大小为2的幂时hashmap访问的性能最高，能减少key之间的碰撞，而加快查询的效率。其他的大小可能有几">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://yoursite.com/assets/images/head.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-c4ozcsklz4kht2pebhp44xorvyverh23toayhn7i6ubrpyedak24hv1v0hyd.min.css">
+    <!--STYLES END-->
+    
+
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/ ">Brotherc</a>
+    </div>
+    
+        
+            <a class="header-right-picture " href="#about">
+        
+        
+            <img class="header-picture" src="/assets/images/head.jpg" alt="作者的图片">
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/#about">
+                    <img class="sidebar-profile-picture" src="/assets/images/head.jpg" alt="作者的图片">
+                </a>
+                <h4 class="sidebar-profile-name">Brotherc</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>java development</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/ " title="首页">
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">首页</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-categories" title="分类">
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">分类</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-tags" title="标签">
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">标签</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link open-algolia-search" href="/all-archives" title="归档">
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">归档</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="#about" title="关于">
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">关于</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://github.com/Brotherc" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="4"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            面试题2
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-08-05T16:25:24+08:00">
+	
+		    8月 05, 2019
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p>HashMap、HashTable、ConCurrentHasgMap的区别以及实现原理？<br>ConCurrentHasgMap调用get（）方法的时候有锁吗？为什么hashmap扩容是是扩大成原来的2倍，而不是3倍?<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">hash算法   跟数组的长度-1做一次“与”运算（&amp;）</span><br><span class="line">数组大小为2的幂时hashmap访问的性能最高，能减少key之间的碰撞，而加快查询的效率。其他的大小可能有几个位置永远都不能存放元素了</span><br><span class="line">hashmap中默认的数组大小是16</span><br><span class="line">当hashmap中的元素个数超过数组大小*loadFactor时，就会进行数组扩容，loadFactor的默认值为0.75，数组的大小即扩大一倍，然后重新计算每个元素在数组中的位置。</span><br><span class="line"></span><br><span class="line">对于put和remove操作，是使用锁同步来进行的，不过是用的ReentrantLock而不是synchronized，性能上要更高一些。它们的实现前文都已经提到过，就没什么可分析的了。</span><br><span class="line">我们还需要知道一点，ConcurrentHashMap的迭代器不是Fast-Fail的方式，所以在迭代的过程中别其他线程添加/删除了元素，不会抛出异常，也不能体现出元素的改动。但也没有关系，因为每个entry的成员除了value都是final修饰的，暴漏出去也不会对其他元素造成影响。</span><br></pre></td></tr></table></figure></p>
+<p>参考：<br><a href="http://www.iteye.com/topic/539465" target="_blank" rel="noopener">http://www.iteye.com/topic/539465</a><br><a href="https://blog.csdn.net/seapeak007/article/details/53409618" target="_blank" rel="noopener">https://blog.csdn.net/seapeak007/article/details/53409618</a></p>
+<p>JAVA 常用容器初始值大小<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1.StringBuffer和StringBuilder初始化默认大小为16个字符</span><br><span class="line">2.HashMap初始化默认大小16，自增为2n.</span><br><span class="line">3.HashTable默认初始值为11，加载因子为0.75，自增为2n+1</span><br><span class="line">4.ArrayList初始化默认值为10，自增为1.5n</span><br><span class="line">5.Vector初始化默认值为10，自增为2n</span><br></pre></td></tr></table></figure></p>
+<p>使用ArrayList初始化时注意事项？（自动扩充机制方面，原理实现）？<br>参考：<br><a href="https://blog.csdn.net/xidiancoder/article/details/55003916" target="_blank" rel="noopener">https://blog.csdn.net/xidiancoder/article/details/55003916</a></p>
+<p>List接口、Set接口和Map接口的区别<br>参考：<br><a href="https://blog.csdn.net/zcg_java/article/details/43232251" target="_blank" rel="noopener">https://blog.csdn.net/zcg_java/article/details/43232251</a></p>
+<p>comparable与comparator的区别？<br>参考：<br><a href="http://www.cnblogs.com/szlbm/p/5504634.html" target="_blank" rel="noopener">http://www.cnblogs.com/szlbm/p/5504634.html</a></p>
+<p>Arrays和Collections 对于sort的不同实现原理？<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1、Arrays.sort() </span><br><span class="line">该算法是一个经过调优的快速排序，此算法在很多数据集上提供N*log(N)的性能，这导致其他快速排序会降低二次型性能。</span><br><span class="line">2、Collections.sort() </span><br><span class="line">该算法是一个经过修改的合并排序算法（其中，如果低子列表中的最高元素效益高子列表中的最低元素，则忽略合并）。此算法可提供保证的N*log(N)的性能，此实现将指定列表转储到一个数组中，然后再对数组进行排序，在重置数组中相应位置处每个元素的列表上进行迭代。这避免了由于试图原地对链接列表进行排序而产生的n2log(n)n2log(n)性能。</span><br></pre></td></tr></table></figure></p>
+<p>HashMap到底是插入链表头部还是尾部<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">在jdk1.8之前是插入头部的，在jdk1.8中是插入尾部的。</span><br></pre></td></tr></table></figure></p>
+<p>怎么实现并发编程？请详细描述？<br>锁机制（Lock）、CAS无锁算法、Synchronized区别<br>Java中CAS算法<br>参考：<br><a href="https://www.kancloud.cn/seaboat/java-concurrent/117870" target="_blank" rel="noopener">https://www.kancloud.cn/seaboat/java-concurrent/117870</a><br>参考：<br><a href="https://www.kancloud.cn/seaboat/java-concurrent/117869" target="_blank" rel="noopener">https://www.kancloud.cn/seaboat/java-concurrent/117869</a></p>
+<p>AQS锁机制原理<br>参考：<br><a href="https://blog.csdn.net/paul_wei2008/article/details/25722023" target="_blank" rel="noopener">https://blog.csdn.net/paul_wei2008/article/details/25722023</a><br><a href="https://www.cnblogs.com/200911/p/6031350.html" target="_blank" rel="noopener">https://www.cnblogs.com/200911/p/6031350.html</a><br><a href="https://blog.csdn.net/babylove_BaLe/article/details/78291071" target="_blank" rel="noopener">https://blog.csdn.net/babylove_BaLe/article/details/78291071</a></p>
+<p>CAS 和ABA问题<br>参考：<br><a href="https://blog.csdn.net/u012834750/article/details/69387975" target="_blank" rel="noopener">https://blog.csdn.net/u012834750/article/details/69387975</a></p>
+<p>DEF三个线程在ABC线程后运行如何实现<br>参考：<br><a href="https://www.cnblogs.com/lcplcpjava/p/6896904.html" target="_blank" rel="noopener">https://www.cnblogs.com/lcplcpjava/p/6896904.html</a><br>Java线程-运动员赛跑<br>参考：<br><a href="https://blog.csdn.net/cicon/article/details/80365717" target="_blank" rel="noopener">https://blog.csdn.net/cicon/article/details/80365717</a></p>
+<p>虚拟机内的锁优化（偏向锁，轻量级锁，自旋锁，重量级锁）<br>参考：<br><a href="https://www.jianshu.com/p/5da9ef598604" target="_blank" rel="noopener">https://www.jianshu.com/p/5da9ef598604</a><br>Java多线程优化之偏向锁原理分析<br>参考：<br><a href="https://blog.csdn.net/zhaoqiang121121/article/details/45673011" target="_blank" rel="noopener">https://blog.csdn.net/zhaoqiang121121/article/details/45673011</a></p>
+<p>栅栏和闭锁的区别<br>参考：<br><a href="https://blog.csdn.net/yujin753/article/details/46125283" target="_blank" rel="noopener">https://blog.csdn.net/yujin753/article/details/46125283</a></p>
+<p>JDK7、8的区别？<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">在JVM方面的区别：</span><br><span class="line">永久代 </span><br><span class="line">在JDK8之前的HotSpot实现中，类的元数据如方法数据、方法信息（字节码，栈和变量大小）、运行时常量池、已确定的符号引用和虚方法表等被保存在永久代中，32位默认永久代的大小为64M，64位默认为85M，可以通过参数-XX:MaxPermSize进行设置，一旦类的元数据超过了永久代大小，就会抛出OOM异常。</span><br><span class="line">虚拟机团队在JDK8的HotSpot中，把永久代从Java堆中移除了，并把类的元数据直接保存在本地内存区域（堆外内存），称之为元空间。</span><br><span class="line">这样做有什么好处？ </span><br><span class="line">有经验的同学会发现，对永久代的调优过程非常困难，永久代的大小很难确定，其中涉及到太多因素，如类的总数、常量池大小和方法数量等，而且永久代的数据可能会随着每一次Full GC而发生移动。</span><br><span class="line">而在JDK8中，类的元数据保存在本地内存中，元空间的最大可分配空间就是系统可用内存空间，可以避免永久代的内存溢出问题，不过需要监控内存的消耗情况，一旦发生内存泄漏，会占用大量的本地内存。</span><br><span class="line">ps：JDK7之前的HotSpot，字符串常量池的字符串被存储在永久代中，因此可能导致一系列的性能问题和内存溢出错误。在JDK8中，字符串常量池中只保存字符串的引用。</span><br></pre></td></tr></table></figure></p>
+<p>JVM在初始化堆内存时，新生代与老年代的默认比例是多少？<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">永久代不属于堆内存，堆内存只包含新生代和老年代。</span><br><span class="line">默认的，新生代 ( Young ) 与老年代 ( Old ) 的比例的值为 1:2 ( 该值可以通过参数 –XX:NewRatio 来指定 )，即：新生代 ( Young ) = 1/3 的堆空间大小。 </span><br><span class="line">老年代 ( Old ) = 2/3 的堆空间大小。其中，新生代 ( Young ) 被细分为 Eden 和 两个 Survivor 区域，这两个 Survivor 区域分别被命名为 from 和 to，以示区分。 </span><br><span class="line">默认的，Edem : from : to = 8 : 1 : 1 ( 可以通过参数 –XX:SurvivorRatio 来设定 )，即： Eden = 8/10 的新生代空间大小，from = to = 1/10 的新生代空间大小。 </span><br><span class="line">‍JVM 每次只会使用 Eden 和其中的一块 Survivor 区域来为对象服务，所以无论什么时候，总是有一块 Survivor 区域是空闲着的。 </span><br><span class="line">因此，新生代实际可用的内存空间为 9/10 ( 即90% )的新生代空间。</span><br></pre></td></tr></table></figure></p>
+<p>Java8的内存分代改进<br>参考：<br><a href="https://blog.csdn.net/chlu113/article/details/51890469" target="_blank" rel="noopener">https://blog.csdn.net/chlu113/article/details/51890469</a></p>
+<p>对Java内存模型的理解以及其在并发当中的作用？<br>参考：<br><a href="http://www.cnblogs.com/_popc/p/6096517.html" target="_blank" rel="noopener">http://www.cnblogs.com/_popc/p/6096517.html</a></p>
+<p>Java中堆内存和栈内存区别？<br>参考：<br><a href="http://www.cnblogs.com/whgw/archive/2011/09/29/2194997.html" target="_blank" rel="noopener">http://www.cnblogs.com/whgw/archive/2011/09/29/2194997.html</a></p>
+<p>Jdk1.7 与 jdk1.8的区别<br>参考：<br><a href="https://www.cnblogs.com/aspirant/p/8617201.html" target="_blank" rel="noopener">https://www.cnblogs.com/aspirant/p/8617201.html</a></p>
+
+            
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">标签</span><br>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/面试题/">面试题</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/08/05/面试题/" data-tooltip="面试题" aria-label="上一篇: 面试题">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/07/10/docker安装Oracle 12c/" data-tooltip="docker安装Oracle 12c" aria-label="下一篇: docker安装Oracle 12c">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/05/面试题2/" title="分享到 Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/05/面试题2/" title="分享到 Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/05/面试题2/" title="分享到 Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 Brotherc. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/08/05/面试题/" data-tooltip="面试题" aria-label="上一篇: 面试题">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/07/10/docker安装Oracle 12c/" data-tooltip="docker安装Oracle 12c" aria-label="下一篇: docker安装Oracle 12c">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/05/面试题2/" title="分享到 Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/05/面试题2/" title="分享到 Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/05/面试题2/" title="分享到 Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/05/面试题2/">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>分享到 Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/05/面试题2/">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/05/面试题2/">
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>分享到 Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/head.jpg" alt="作者的图片">
+        
+            <h4 id="about-card-name">Brotherc</h4>
+        
+            <div id="about-card-bio"><p>java development</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br>
+                <p>java</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br>
+                zhuhai
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-dbd16rvloemmuxdzniplmnxxvwoz24eya9wol0b7vvmlokgqsjivmb8dnscy.min.js"></script>
+<!--SCRIPTS END-->
+
+    
+
+
+
+    </body>
+</html>
