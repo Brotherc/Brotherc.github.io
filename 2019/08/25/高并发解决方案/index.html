@@ -1,0 +1,556 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Brotherc">
+    <title>高并发解决方案 - Brotherc</title>
+    <meta name="author" content="Brotherc">
+    
+    
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"高并发处理思路与手段扩容\n123随着并发线程的增加，从几十到几百，几千，几万垂直扩展：可能就得考虑给系统增内存水平扩展：复杂一点可能要增服务器来分担压力\n\n缓存特征、场景及组件介绍\n\n\n123456789101112131415适合读多写少的场景，实时性越低越适合缓存在相同key和请求数的情况下，缓存的时间越长命中率越高。缓存的粒度越小，命中率越高。当缓存当个对象时，比如单个用户信息，只有当该对象对应的数据发生变化的时候我们才要更新缓存或者移除缓存。而当缓存一个集合时，例如我们要缓存所有用户数据，期中任何一个对象当中的数据发生变化时，我们都要更新或移除缓存。还有另一种情况，假设其他地方也要获取该对象对应的数据时，比如也要获取单个用户信息，如果缓存的是单个对象，那么就可以直接命中缓存，否则就无法直接命中。此外，缓存的更新过期策略也直接影响到缓存的命中率，当数据发生变化时，直接更新缓存的值会比移除缓存或让缓存过期的命中率更高，当然这个时候的系统复杂度也会变得更高。缓存的容量有限，就容易引起缓存失效和被淘汰，目前多数的缓存框架或中间件都采用LRU算法。同时缓存的技术选型也是至关重要的，比如采用应用内置的本地缓存，比较容易出现单机瓶颈，而采用分布式缓存则容易拓展，所以需要做好系统容量规划，并考虑是否可拓展。此外，不同的缓存框架和中间件的效率和稳定性也是存在一定的差异，还有一些会影响到缓存命中率的因素，比如当缓存节点发生故障时，需要避免缓存失效并最大化程度降低影响，业内比较典型的做法就是通过一致性哈希算法或者节点冗余的方式来避免这个问题，并发越高，缓存的收益越高，即使缓存的时间很短。需要应用尽可能的通过缓存来直接获取数据并避免缓存失效，尽可能的聚集在高频访问且时效性不高的热点业务上，通过缓存预加载，增加存储容量，调整缓存粒度，更新缓存等手段来提高命中率。对于时效性很高或缓存空间有限的情况下内容跨度越大或者访问很随机并且访问量不高的业务来说，缓存命中率可能会长期的很低，可能预热后的缓存还没来得及访问就过期了。\n\n\n\n\n\n12345678910111213redis是远程内存数据库，非关系型数据库，性能强劲，具有复制特性，解决问题而生的独一无二的数据模型，存储键值对与5种不同类型的值之间的映射，可以将存储在内存的键值对数据持久化到硬盘，可以使用复制特性来拓展读性能，还可以使用客户端分片来拓展写性能。特点：支持数据的持久化，可以将数据保存到磁盘里，重启的时候可以再次加载进行使用，redis不仅支持简单的key,value数据，同时它还提供特殊类型的存储如：list，hash支持数据的备份，即master slave模式（主从数据备份）性能极高：读的速度 11万次/s  写的速度  81000次/s丰富的数据类型原子性支持对多个操作后的原子性执行支持publish,subscribe，key过期等等特性场景：取最新n个操作；排行榜（取top N 操作）精准设置过期的应用；应用于计数器；做唯一性检查的操作；实时系统；队列系统\n高并发场景问题及实战讲解\n\n\n\n123在高并发的场景下，如果某个key被高并发的访问，没有被命中，出于对容错性的考虑，可以尝试去后端数据库获取，从而达到了大量请求到达数据库，而当该key对应的数据本身就是空的情况下，这就导致数据库中并发的执行了很多不必要的查询操作，从而导致了巨大的冲击和压力。我们可以缓存空对象，对查询结果为空的对象也进行缓存，如果是集合的话，可以缓存一个空的集合，但不是null，如果是缓存单个对象，则可以通过字段标识来区分，避免请求穿透到后端数据库，同时也需要保证缓存数据的时效性，这种方式实现起来成本较低，比较适合命中不高，但比较频繁更新的数据。单独过滤处理，对所有可能对应数据为空的key进行统一的存放，并在请求前做拦截，这样避免请求穿透到后端的数据库，这种方式实现起来相对复杂一些，比较适合命中不高但是更新不频繁的数据。\n\n123456由于缓存的原因导致大量的请求到达后端数据库而导致数据库奔溃整个系统奔溃发生灾难。导致的原因有很多种，比如提到的缓存并发，缓存穿透，缓存抖动，都有可能造成缓存雪崩的现象。这些问题也可能被恶意攻击者利用，还有一种情况，例如某个时间点内，系统预加载的缓存周期性的集中失效了，也有可能导致雪崩。为了避免这种周期性的失效，可以通过设置不同的过期时间来错开他们的缓存过期时间，从而避免缓存集中失效。从应用架构角度，我们可以通过限流，降级，熔断等手段来降低影响，也可以通过多级缓存来避免这种灾难。此外，从整个研发体系流程角度，应该多加强压力测试，尽量模拟真实场景，尽早暴露问题，从而进行防范。\n\n参考:http://www.imooc.com/article/20918\n消息队列\n\n\n\n\n业务解耦1234所谓解耦，本质上讲的就是一个事务只关心简单的流程，而需要依赖其它的系统但不那么重要的事情，有通知即可无需等待结果。基于消息的模型关心的是通知，不是处理。如：对于订单系统，用户支付成功之后，我们可能需要给用户发送一条短信通知。但其实呢，这已经不是系统的核心流程了。如果外部系统偏慢，比如短信网关速度不好，那么主流程的时间就会加强很多，用户肯定不想点击支付之后几分钟才看到结果，那么我们只需通知短信系统我们支付成功了，去发送短信通知就好了，并不一定要等待它处理完成才结束。\n最终一致性12345678910111213141516指的是两个系统的状态保持一致，要么都成功，要么都失败。当然了，有个时间限制，理论上是越快越好。但实际上各种异常的情况下，可能会有一定的延迟达到最终的一致状态。但最后两个系统的状态还是要一样的。如：转账功能，A系统扣钱成功，B系统加钱一定也要成功。反之，它们就一起回滚，像什么都没发生一样，然而这个过程中存在很多可能的意外，比如：1.A系统扣钱成功，调用B系统加钱失效2.A扣钱成功，调用B系统加钱接口虽然成功，但是获取最终结果的时候网络异常引起的超时3.A扣钱成功，但B系统加钱失效了，A系统想回滚刚才扣除的钱，但是系统宕机了，无法回滚通过这三个场景，我们看出了想把这件看似简单的事情做成真的不容易，所有跨JVM一致性的问题，从技术的角度讲，通用的解决方法包括两个：1.强一致性分布式事务，落地太难，而且成本太高，我们就不做具体介绍了。2.最终一致性也是消息队列可以使用的场景，主要是用记录和补偿的方式来处理，在做所有的不确定事情之前，先把事情记录下来，然后去做不确定的事，它的结果通常分三种：成功/失败/不确定（超时等等可以等价为失败）如果是成功的话，就可以把我们记录的东西清理掉，对于失败和不确定，我们可以依靠定时任务等方式把所有失败的事情重新做一遍，知道成功为止。系统在A扣钱成功的情况下，需要给B通知的这件事情记录在库中，为了保证最高的可靠性，也可以把通知B系统加钱和扣钱成功这两件事情维护在一个本地事务里面。通知成功，则删除这条记录，通知失败或不确定则依靠定时任务可尝试地通知我们，直到我们把状态更加为正确的为止。这时，可能会遇到重复消息的问题，需要处理消息的地方做好幂等操作。最终一致性不是消息队列必备的特性。但确实可以依靠队列来做最终一致性的事情。需要注意的是，像kafka等消息队列，它的设计层面上有丢消息的可能，比如定时刷盘，如果掉列会丢消息的可能等等。哪怕只丢千分之一的消息，业务也要通过其它手段来保证结果的正确。\n广播1如果没有队列，每当一个新的业务方介入，我们都要联调一次新接口，有了消息队列，我们只需要关心消息是否达到消息队列，新接入的接口订阅相关的消息，自己去做处理就可以了。\n错峰和流控1234567上下游对性能处理能力是不同的，比如：Web前端每秒承受上千万的请求并不是什么神奇的事情，只需要多加一点机器，再搭建一些LVS负载均衡设备和nginx服务器即可。但是，数据库处理却是十分有限，即使使用了SSD加上分库分表单机处理能力仍然有限，出于成本考虑，我们不能奢求数据库的机器数量追上前端。这种问题同样出现于系统和系统之间，比如短信系统可能由于短板效应，速度卡在网关上，比如每秒几百次请求，它跟前端的并发量不是一个数量级的，但是，用户晚个半分钟左右收到短信一般也不会有太大问题，如果没有消息队列，两个系统之间通过协商，滑动窗口等方案也不是不能实现。但是，系统的复杂性将会成指数性增长。势必在上游或下游做些存储，并且要处理定时、阻塞等一些列问题，而且每当处理能力有些差异的时候，都需要单独开发一套逻辑来维护这套逻辑。所以，利用中间系统，如消息队列转储两个系统的消息内容，并在下游系统有能力处理这些消息的时候再处理，是一套相对比较通用的方式。总而言之，对于需要强事务保证，而且延迟很敏感的，RPC是优于队列的，对于一些无关痛痒或者一些对于别人很重要，但对于自己不是那么关心的事情可以利用消息队列去做。支持最终一致性的消息队列能够用来处理延迟不那么敏感的分布式事务场景，而且相对于笨重的分布式事务可能是更优的处理方式。\n\n\n\n应用拆分\n\n\n\n\n\n\n应用限流\n\n\n\n\n\n\n服务降级与服务熔断\n12对一些服务，界面有策略地降级以此缓解保证了部分甚至大部分客户能得到正确的响应，简单来说，如果当前请求处理不了了或者出错了，我给一个默认的返回，根据不同的接口做不同的默认返回和定制\n1熔断是指软件系统里由于某些原因使得服务出现了过载的现象，为了防止整个系统出现故障，从而采用的一种保护措施，所以很多地方也把熔断称为过载保护\n\n\n\n\n\n\n\n数据库切库、分库、分表\n\n\n\n","dateCreated":"2019-08-25T18:31:43+08:00","dateModified":"2019-08-25T20:52:32+08:00","datePublished":"2019-08-25T18:31:43+08:00","description":"","headline":"高并发解决方案","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/25/高并发解决方案/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/08/25/高并发解决方案/","keywords":"并发编程与高并发解决方案"}</script>
+    <meta name="description" content="高并发处理思路与手段扩容 123随着并发线程的增加，从几十到几百，几千，几万垂直扩展：可能就得考虑给系统增内存水平扩展：复杂一点可能要增服务器来分担压力  缓存特征、场景及组件介绍   123456789101112131415适合读多写少的场景，实时性越低越适合缓存在相同key和请求数的情况下，缓存的时间越长命中率越高。缓存的粒度越小，命中率越高。当缓存当个对象时，比如单个用户信息，只有当该对象">
+<meta name="keywords" content="并发编程与高并发解决方案">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="高并发解决方案">
+<meta property="og:url" content="http://yoursite.com/2019/08/25/高并发解决方案/index.html">
+<meta property="og:site_name" content="Brotherc">
+<meta property="og:description" content="高并发处理思路与手段扩容 123随着并发线程的增加，从几十到几百，几千，几万垂直扩展：可能就得考虑给系统增内存水平扩展：复杂一点可能要增服务器来分担压力  缓存特征、场景及组件介绍   123456789101112131415适合读多写少的场景，实时性越低越适合缓存在相同key和请求数的情况下，缓存的时间越长命中率越高。缓存的粒度越小，命中率越高。当缓存当个对象时，比如单个用户信息，只有当该对象">
+<meta property="og:locale" content="zh-cn">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/96.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/97.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/98.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/99.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/100.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/101.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/102.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/103.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/104.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/105.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/106.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/107.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/108.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/109.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/110.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/111.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/112.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/113.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/114.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/134.png">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/115.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/116.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/117.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/118.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/119.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/120.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/121.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/122.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/123.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/124.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/125.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/126.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/127.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/128.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/129.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/130.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/131.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/132.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/135.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/136.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/137.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/138.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/139.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/140.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/141.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/142.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/143.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/144.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/145.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/146.jpg">
+<meta property="og:updated_time" content="2019-08-25T12:52:32.080Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="高并发解决方案">
+<meta name="twitter:description" content="高并发处理思路与手段扩容 123随着并发线程的增加，从几十到几百，几千，几万垂直扩展：可能就得考虑给系统增内存水平扩展：复杂一点可能要增服务器来分担压力  缓存特征、场景及组件介绍   123456789101112131415适合读多写少的场景，实时性越低越适合缓存在相同key和请求数的情况下，缓存的时间越长命中率越高。缓存的粒度越小，命中率越高。当缓存当个对象时，比如单个用户信息，只有当该对象">
+<meta name="twitter:image" content="http://yoursite.com/assets/并发编程与高并发解决方案/96.jpg">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://yoursite.com/assets/images/head.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-c4ozcsklz4kht2pebhp44xorvyverh23toayhn7i6ubrpyedak24hv1v0hyd.min.css">
+    <!--STYLES END-->
+    
+
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/ ">Brotherc</a>
+    </div>
+    
+        
+            <a class="header-right-picture " href="#about">
+        
+        
+            <img class="header-picture" src="/assets/images/head.jpg" alt="作者的图片">
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/#about">
+                    <img class="sidebar-profile-picture" src="/assets/images/head.jpg" alt="作者的图片">
+                </a>
+                <h4 class="sidebar-profile-name">Brotherc</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>java development</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/ " title="首页">
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">首页</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-categories" title="分类">
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">分类</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-tags" title="标签">
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">标签</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link open-algolia-search" href="/all-archives" title="归档">
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">归档</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="#about" title="关于">
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">关于</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://github.com/Brotherc" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="4"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            高并发解决方案
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-08-25T18:31:43+08:00">
+	
+		    8月 25, 2019
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <h3 id="高并发处理思路与手段"><a href="#高并发处理思路与手段" class="headerlink" title="高并发处理思路与手段"></a>高并发处理思路与手段</h3><h4 id="扩容"><a href="#扩容" class="headerlink" title="扩容"></a>扩容</h4><div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/96.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/96.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">随着并发线程的增加，从几十到几百，几千，几万</span><br><span class="line">垂直扩展：可能就得考虑给系统增内存</span><br><span class="line">水平扩展：复杂一点可能要增服务器来分担压力</span><br></pre></td></tr></table></figure>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/97.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/97.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<h4 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h4><h5 id="特征、场景及组件介绍"><a href="#特征、场景及组件介绍" class="headerlink" title="特征、场景及组件介绍"></a>特征、场景及组件介绍</h5><div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/98.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/98.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/99.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/99.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/100.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/100.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">适合读多写少的场景，实时性越低越适合缓存</span><br><span class="line"></span><br><span class="line">在相同key和请求数的情况下，缓存的时间越长命中率越高。缓存的粒度越小，命中率越高。</span><br><span class="line">当缓存当个对象时，比如单个用户信息，只有当该对象对应的数据发生变化的时候我们才要更新缓存或者移除缓存。</span><br><span class="line">而当缓存一个集合时，例如我们要缓存所有用户数据，期中任何一个对象当中的数据发生变化时，我们都要更新或移除缓存。</span><br><span class="line">还有另一种情况，假设其他地方也要获取该对象对应的数据时，比如也要获取单个用户信息，如果缓存的是单个对象，那么就可以直接命中缓存，否则就无法直接命中。</span><br><span class="line"></span><br><span class="line">此外，缓存的更新过期策略也直接影响到缓存的命中率，当数据发生变化时，直接更新缓存的值会比移除缓存或让缓存过期的命中率更高，当然这个时候的系统复杂度也会变得更高。</span><br><span class="line"></span><br><span class="line">缓存的容量有限，就容易引起缓存失效和被淘汰，目前多数的缓存框架或中间件都采用LRU算法。</span><br><span class="line">同时缓存的技术选型也是至关重要的，比如采用应用内置的本地缓存，比较容易出现单机瓶颈，而采用分布式缓存则容易拓展，所以需要做好系统容量规划，并考虑是否可拓展。</span><br><span class="line">此外，不同的缓存框架和中间件的效率和稳定性也是存在一定的差异，还有一些会影响到缓存命中率的因素，</span><br><span class="line">比如当缓存节点发生故障时，需要避免缓存失效并最大化程度降低影响，业内比较典型的做法就是通过一致性哈希算法或者节点冗余的方式来避免这个问题，并发越高，缓存的收益越高，即使缓存的时间很短。</span><br><span class="line">需要应用尽可能的通过缓存来直接获取数据并避免缓存失效，尽可能的聚集在高频访问且时效性不高的热点业务上，通过缓存预加载，增加存储容量，调整缓存粒度，更新缓存等手段来提高命中率。</span><br><span class="line">对于时效性很高或缓存空间有限的情况下内容跨度越大或者访问很随机并且访问量不高的业务来说，缓存命中率可能会长期的很低，可能预热后的缓存还没来得及访问就过期了。</span><br></pre></td></tr></table></figure>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/101.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/101.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/102.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/102.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/103.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/103.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/104.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/104.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/105.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/105.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">redis是远程内存数据库，非关系型数据库，性能强劲，具有复制特性，解决问题而生的独一无二的数据模型，存储键值对与5种不同类型的值之间的映射，可以将存储在内存的键值对数据持久化到硬盘，可以使用复制特性来拓展读性能，还可以使用客户端分片来拓展写性能。</span><br><span class="line"></span><br><span class="line">特点：</span><br><span class="line">支持数据的持久化，可以将数据保存到磁盘里，重启的时候可以再次加载进行使用，redis不仅支持简单的key,value数据，同时它还提供特殊类型的存储如：list，hash</span><br><span class="line">支持数据的备份，即master slave模式（主从数据备份）</span><br><span class="line">性能极高：读的速度 11万次/s  写的速度  81000次/s</span><br><span class="line">丰富的数据类型</span><br><span class="line">原子性</span><br><span class="line">支持对多个操作后的原子性执行</span><br><span class="line">支持publish,subscribe，key过期等等特性</span><br><span class="line"></span><br><span class="line">场景：</span><br><span class="line">取最新n个操作；排行榜（取top N 操作）精准设置过期的应用；应用于计数器；做唯一性检查的操作；实时系统；队列系统</span><br></pre></td></tr></table></figure>
+<h4 id="高并发场景问题及实战讲解"><a href="#高并发场景问题及实战讲解" class="headerlink" title="高并发场景问题及实战讲解"></a>高并发场景问题及实战讲解</h4><div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/106.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/106.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/107.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/107.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/108.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/108.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/109.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/109.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">在高并发的场景下，如果某个key被高并发的访问，没有被命中，出于对容错性的考虑，可以尝试去后端数据库获取，从而达到了大量请求到达数据库，而当该key对应的数据本身就是空的情况下，这就导致数据库中并发的执行了很多不必要的查询操作，从而导致了巨大的冲击和压力。</span><br><span class="line">我们可以缓存空对象，对查询结果为空的对象也进行缓存，如果是集合的话，可以缓存一个空的集合，但不是null，如果是缓存单个对象，则可以通过字段标识来区分，避免请求穿透到后端数据库，同时也需要保证缓存数据的时效性，这种方式实现起来成本较低，比较适合命中不高，但比较频繁更新的数据。</span><br><span class="line">单独过滤处理，对所有可能对应数据为空的key进行统一的存放，并在请求前做拦截，这样避免请求穿透到后端的数据库，这种方式实现起来相对复杂一些，比较适合命中不高但是更新不频繁的数据。</span><br></pre></td></tr></table></figure>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/110.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/110.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">由于缓存的原因导致大量的请求到达后端数据库而导致数据库奔溃整个系统奔溃发生灾难。</span><br><span class="line">导致的原因有很多种，比如提到的缓存并发，缓存穿透，缓存抖动，都有可能造成缓存雪崩的现象。</span><br><span class="line">这些问题也可能被恶意攻击者利用，还有一种情况，例如某个时间点内，系统预加载的缓存周期性的集中失效了，也有可能导致雪崩。</span><br><span class="line">为了避免这种周期性的失效，可以通过设置不同的过期时间来错开他们的缓存过期时间，从而避免缓存集中失效。</span><br><span class="line">从应用架构角度，我们可以通过限流，降级，熔断等手段来降低影响，也可以通过多级缓存来避免这种灾难。</span><br><span class="line">此外，从整个研发体系流程角度，应该多加强压力测试，尽量模拟真实场景，尽早暴露问题，从而进行防范。</span><br></pre></td></tr></table></figure>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/111.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/111.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<p>参考:<br><a href="http://www.imooc.com/article/20918" target="_blank" rel="noopener">http://www.imooc.com/article/20918</a></p>
+<h4 id="消息队列"><a href="#消息队列" class="headerlink" title="消息队列"></a>消息队列</h4><div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/112.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/112.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/113.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/113.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/114.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/114.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/134.png" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/134.png" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/115.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/115.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<h5 id="业务解耦"><a href="#业务解耦" class="headerlink" title="业务解耦"></a>业务解耦</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">所谓解耦，本质上讲的就是一个事务只关心简单的流程，而需要依赖其它的系统但不那么重要的事情，有通知即可无需等待结果。</span><br><span class="line">基于消息的模型关心的是通知，不是处理。</span><br><span class="line">如：对于订单系统，用户支付成功之后，我们可能需要给用户发送一条短信通知。但其实呢，这已经不是系统的核心流程了。</span><br><span class="line">如果外部系统偏慢，比如短信网关速度不好，那么主流程的时间就会加强很多，用户肯定不想点击支付之后几分钟才看到结果，那么我们只需通知短信系统我们支付成功了，去发送短信通知就好了，并不一定要等待它处理完成才结束。</span><br></pre></td></tr></table></figure>
+<h5 id="最终一致性"><a href="#最终一致性" class="headerlink" title="最终一致性"></a>最终一致性</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">指的是两个系统的状态保持一致，要么都成功，要么都失败。当然了，有个时间限制，理论上是越快越好。但实际上各种异常的情况下，可能会有一定的延迟达到最终的一致状态。</span><br><span class="line">但最后两个系统的状态还是要一样的。</span><br><span class="line">如：转账功能，A系统扣钱成功，B系统加钱一定也要成功。反之，它们就一起回滚，像什么都没发生一样，然而这个过程中存在很多可能的意外，比如：</span><br><span class="line">1.A系统扣钱成功，调用B系统加钱失效</span><br><span class="line">2.A扣钱成功，调用B系统加钱接口虽然成功，但是获取最终结果的时候网络异常引起的超时</span><br><span class="line">3.A扣钱成功，但B系统加钱失效了，A系统想回滚刚才扣除的钱，但是系统宕机了，无法回滚</span><br><span class="line">通过这三个场景，我们看出了想把这件看似简单的事情做成真的不容易，所有跨JVM一致性的问题，从技术的角度讲，通用的解决方法包括两个：</span><br><span class="line">1.强一致性</span><br><span class="line">分布式事务，落地太难，而且成本太高，我们就不做具体介绍了。</span><br><span class="line">2.最终一致性</span><br><span class="line">也是消息队列可以使用的场景，主要是用记录和补偿的方式来处理，在做所有的不确定事情之前，先把事情记录下来，然后去做不确定的事，它的结果通常分三种：成功/失败/不确定（超时等等可以等价为失败）</span><br><span class="line">如果是成功的话，就可以把我们记录的东西清理掉，对于失败和不确定，我们可以依靠定时任务等方式把所有失败的事情重新做一遍，知道成功为止。</span><br><span class="line">系统在A扣钱成功的情况下，需要给B通知的这件事情记录在库中，为了保证最高的可靠性，也可以把通知B系统加钱和扣钱成功这两件事情维护在一个本地事务里面。</span><br><span class="line">通知成功，则删除这条记录，通知失败或不确定则依靠定时任务可尝试地通知我们，直到我们把状态更加为正确的为止。这时，可能会遇到重复消息的问题，需要处理消息的地方做好幂等操作。</span><br><span class="line">最终一致性不是消息队列必备的特性。但确实可以依靠队列来做最终一致性的事情。需要注意的是，像kafka等消息队列，它的设计层面上有丢消息的可能，比如定时刷盘，如果掉列会丢消息的可能等等。</span><br><span class="line">哪怕只丢千分之一的消息，业务也要通过其它手段来保证结果的正确。</span><br></pre></td></tr></table></figure>
+<h5 id="广播"><a href="#广播" class="headerlink" title="广播"></a>广播</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">如果没有队列，每当一个新的业务方介入，我们都要联调一次新接口，有了消息队列，我们只需要关心消息是否达到消息队列，新接入的接口订阅相关的消息，自己去做处理就可以了。</span><br></pre></td></tr></table></figure>
+<h5 id="错峰和流控"><a href="#错峰和流控" class="headerlink" title="错峰和流控"></a>错峰和流控</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">上下游对性能处理能力是不同的，比如：Web前端每秒承受上千万的请求并不是什么神奇的事情，只需要多加一点机器，再搭建一些LVS负载均衡设备和nginx服务器即可。</span><br><span class="line">但是，数据库处理却是十分有限，即使使用了SSD加上分库分表单机处理能力仍然有限，出于成本考虑，我们不能奢求数据库的机器数量追上前端。这种问题同样出现于系统和系统之间，</span><br><span class="line">比如短信系统可能由于短板效应，速度卡在网关上，比如每秒几百次请求，它跟前端的并发量不是一个数量级的，但是，用户晚个半分钟左右收到短信一般也不会有太大问题，如果没有消息队列，</span><br><span class="line">两个系统之间通过协商，滑动窗口等方案也不是不能实现。但是，系统的复杂性将会成指数性增长。势必在上游或下游做些存储，并且要处理定时、阻塞等一些列问题，</span><br><span class="line">而且每当处理能力有些差异的时候，都需要单独开发一套逻辑来维护这套逻辑。所以，利用中间系统，如消息队列转储两个系统的消息内容，并在下游系统有能力处理这些消息的时候再处理，是一套相对比较通用的方式。</span><br><span class="line">总而言之，对于需要强事务保证，而且延迟很敏感的，RPC是优于队列的，对于一些无关痛痒或者一些对于别人很重要，但对于自己不是那么关心的事情可以利用消息队列去做。</span><br><span class="line">支持最终一致性的消息队列能够用来处理延迟不那么敏感的分布式事务场景，而且相对于笨重的分布式事务可能是更优的处理方式。</span><br></pre></td></tr></table></figure>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/116.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/116.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/117.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/117.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/118.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/118.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<h5 id="应用拆分"><a href="#应用拆分" class="headerlink" title="应用拆分"></a>应用拆分</h5><div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/119.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/119.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/120.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/120.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/121.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/121.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/122.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/122.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/123.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/123.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/124.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/124.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/125.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/125.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<h5 id="应用限流"><a href="#应用限流" class="headerlink" title="应用限流"></a>应用限流</h5><div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/126.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/126.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/127.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/127.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/128.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/128.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/129.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/129.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/130.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/130.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/131.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/131.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/132.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/132.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<h5 id="服务降级与服务熔断"><a href="#服务降级与服务熔断" class="headerlink" title="服务降级与服务熔断"></a>服务降级与服务熔断</h5><div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/135.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/135.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">对一些服务，界面有策略地降级以此缓解保证了部分甚至大部分客户能得到正确的响应，</span><br><span class="line">简单来说，如果当前请求处理不了了或者出错了，我给一个默认的返回，根据不同的接口做不同的默认返回和定制</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">熔断是指软件系统里由于某些原因使得服务出现了过载的现象，为了防止整个系统出现故障，从而采用的一种保护措施，所以很多地方也把熔断称为过载保护</span><br></pre></td></tr></table></figure>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/136.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/136.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/137.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/137.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/138.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/138.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/139.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/139.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/140.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/140.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/141.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/141.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/142.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/142.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<h5 id="数据库切库、分库、分表"><a href="#数据库切库、分库、分表" class="headerlink" title="数据库切库、分库、分表"></a>数据库切库、分库、分表</h5><div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/143.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/143.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/144.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/144.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/145.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/145.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/并发编程与高并发解决方案/146.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/并发编程与高并发解决方案/146.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+
+            
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">标签</span><br>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/并发编程与高并发解决方案/">并发编程与高并发解决方案</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/08/25/并发编程与高并发解决方案/" data-tooltip="并发编程" aria-label="下一篇: 并发编程">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/25/高并发解决方案/" title="分享到 Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/25/高并发解决方案/" title="分享到 Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/25/高并发解决方案/" title="分享到 Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 Brotherc. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/08/25/并发编程与高并发解决方案/" data-tooltip="并发编程" aria-label="下一篇: 并发编程">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/25/高并发解决方案/" title="分享到 Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/25/高并发解决方案/" title="分享到 Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/25/高并发解决方案/" title="分享到 Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/25/高并发解决方案/">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>分享到 Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/25/高并发解决方案/">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/25/高并发解决方案/">
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>分享到 Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/head.jpg" alt="作者的图片">
+        
+            <h4 id="about-card-name">Brotherc</h4>
+        
+            <div id="about-card-bio"><p>java development</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br>
+                <p>java</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br>
+                zhuhai
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-dbd16rvloemmuxdzniplmnxxvwoz24eya9wol0b7vvmlokgqsjivmb8dnscy.min.js"></script>
+<!--SCRIPTS END-->
+
+    
+
+
+
+    </body>
+</html>
