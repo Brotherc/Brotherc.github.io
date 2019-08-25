@@ -166,6 +166,58 @@
             <div class="postShorten-header">
                 <h1 class="postShorten-title">
                     
+                        <a class="link-unstyled" href="/2019/04/04/typescript常用操作/">
+                            typescript常用操作
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2019-04-04T14:51:07+08:00">
+	
+		    4月 04, 2019
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <h3 id="保留两位小数"><a href="#保留两位小数" class="headerlink" title="保留两位小数"></a>保留两位小数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Math.floor(15.7784514000 * 100) / 100 // 输出结果为 15.77</span><br><span class="line">parseInt(7/2) // 丢弃小数部分,保留整数部分</span><br><span class="line"></span><br><span class="line">const a = 2.461;</span><br><span class="line">const b = (parseInt(a * 100) / 100).toFixed(2); // 2.46</span><br></pre></td></tr></table></figure>
+<h3 id="创建Map并赋值"><a href="#创建Map并赋值" class="headerlink" title="创建Map并赋值"></a>创建Map并赋值</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const map = new Map([[2, &apos;foo&apos;], [1, &apos;bar&apos;]]);</span><br></pre></td></tr></table></figure>
+<h3 id="判断Map类型"><a href="#判断Map类型" class="headerlink" title="判断Map类型"></a>判断Map类型</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">isMap(obj) &#123;</span><br><span class="line">  return obj instanceof Map;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="删除数组中的某个元素"><a href="#删除数组中的某个元素" class="headerlink" title="删除数组中的某个元素"></a>删除数组中的某个元素</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">const arr = [&apos;a&apos;,&apos;b&apos;,&apos;c&apos;,&apos;d&apos;];</span><br><span class="line">arr.splice(1,1);</span><br><span class="line">console.log(arr); //[&apos;a&apos;,&apos;c&apos;,&apos;d&apos;];</span><br></pre></td></tr></table></figure>
+<h3 id="Object转成Map"><a href="#Object转成Map" class="headerlink" title="Object转成Map"></a>Object转成Map</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const result = new Map(Object.entries(map));</span><br></pre></td></tr></table></figure>
+<h3 id="将Map的key、value转成数组"><a href="#将Map的key、value转成数组" class="headerlink" title="将Map的key、value转成数组"></a>将Map的key、value转成数组</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">const values = Array.from(map.values());</span><br><span class="line">const keys = Array.from(map.keys());</span><br></pre></td></tr></table></figure>
+<h3 id="求数组最大值"><a href="#求数组最大值" class="headerlink" title="求数组最大值"></a>求数组最大值</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">const maxN = Math.max.apply(null,ary);</span><br><span class="line">const minN = Math.min.apply(null,ary);</span><br></pre></td></tr></table></figure>
+<h3 id="实现Map的深克隆"><a href="#实现Map的深克隆" class="headerlink" title="实现Map的深克隆"></a>实现Map的深克隆</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">export class MapUtils &#123;</span><br><span class="line">    public static deepClone(obj) &#123;</span><br><span class="line">        if (!obj || true === obj) &#123; // this also handles boolean as true and false</span><br><span class="line">            return obj;</span><br><span class="line">        &#125;</span><br><span class="line">        const objType = typeof(obj);</span><br><span class="line">        if (&apos;number&apos; === objType || &apos;string&apos; === objType) &#123; // add your immutables here</span><br><span class="line">            return obj;</span><br><span class="line">        &#125;</span><br><span class="line">        const result = Array.isArray(obj) ? [] : !obj.constructor ? &#123;&#125; : new obj.constructor();</span><br><span class="line">        if (obj instanceof Map) &#123;</span><br><span class="line">            for (const key of obj.keys()) &#123;</span><br><span class="line">                result.set(key, this.deepClone(obj.get(key)));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        for (const key in obj) &#123;</span><br><span class="line">            if (obj.hasOwnProperty(key)) &#123;</span><br><span class="line">                result[key] = this.deepClone(obj[key]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>参考：<br><a href="https://stackoverflow.com/questions/8206988/clone-copy-a-map-instance/39643085#39643085" target="_blank" rel="noopener">https://stackoverflow.com/questions/8206988/clone-copy-a-map-instance/39643085#39643085</a></p>
+<h3 id="请求的url后面添加时间戳参数或者随机数的参数"><a href="#请求的url后面添加时间戳参数或者随机数的参数" class="headerlink" title="请求的url后面添加时间戳参数或者随机数的参数"></a>请求的url后面添加时间戳参数或者随机数的参数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 添加时间戳</span><br><span class="line">...?time=new Date();</span><br><span class="line">// 添加随机数</span><br><span class="line">...?number=Math.random();</span><br></pre></td></tr></table></figure>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2019/04/04/typescript常用操作/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
                         <a class="link-unstyled" href="/2019/04/04/world目录，显示“错误！未定义书签/">
                             world目录，显示“错误！未定义书签”
                         </a>
@@ -629,49 +681,6 @@
                     
                         <p>
                             <a href="/2019/03/28/java8/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2019/03/14/momentJs常用操作/">
-                            moment.js常用操作
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-03-14T19:05:08+08:00">
-	
-		    3月 14, 2019
-    	
-    </time>
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-content">
-                    <h3 id="将String转成moment再格式化"><a href="#将String转成moment再格式化" class="headerlink" title="将String转成moment再格式化"></a>将String转成moment再格式化</h3><p>const date = ‘2019-03-07T21:16:00Z’;<br>moment(date, ‘YYYY-MM-DDTHH:mm:ssZ’).format(‘HH:mm’)</p>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2019/03/14/momentJs常用操作/#post-footer" class="postShorten-excerpt_link link">
                                 评论和共享
                             </a>
                         </p>
