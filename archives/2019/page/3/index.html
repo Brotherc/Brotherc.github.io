@@ -166,6 +166,267 @@
             <div class="postShorten-header">
                 <h1 class="postShorten-title">
                     
+                        <a class="link-unstyled" href="/2019/03/31/angular基础-表单处理/">
+                            angular基础-表单处理
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2019-03-31T12:34:41+08:00">
+	
+		    3月 31, 2019
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <h3 id="模板式表单"><a href="#模板式表单" class="headerlink" title="模板式表单"></a>模板式表单</h3><p>表单的数据模型是通过组件模板中的相关指令来定义的，因为使用这种方式定义表单的数据模型时，<br>我们会受限于HTML的语法，所以，模板驱动方式只适合用于一些简单的场景。</p>
+<p>需要在app.module.ts中引入：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">imports: [</span><br><span class="line">  FormsModule</span><br><span class="line">]</span><br></pre></td></tr></table></figure></p>
+<h5 id="NgForm-ngNoForm"><a href="#NgForm-ngNoForm" class="headerlink" title="NgForm / ngNoForm:"></a>NgForm / ngNoForm:</h5><p>简单使用：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;div ngForm&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line"></span><br><span class="line">&lt;form ngNoForm&gt;</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure></p>
+<p>取值：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;form #myForm=&quot;ngForm&quot;&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line"></span><br><span class="line">&lt;div&gt;</span><br><span class="line">  &#123;&#123;myForm.value | json&#125;&#125;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure></p>
+<p>提交：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;form #myForm=&quot;ngForm&quot; (onSubmit)=&quot;onSubmit(myForm.value)&quot;&gt;</span><br><span class="line">  &lt;button type=&quot;submit&quot;&gt;注册&lt;/button&gt;</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure></p>
+<h5 id="NgModel"><a href="#NgModel" class="headerlink" title="NgModel:"></a>NgModel:</h5><p>简单使用：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;form #myForm=&quot;ngForm&quot; (onSubmit)=&quot;onSubmit(myForm.value)&quot;&gt;</span><br><span class="line">  &lt;div&gt;用户名：&lt;input ngModel name=&quot;username&quot; type=&quot;text&quot;&gt;&lt;/div&gt;</span><br><span class="line">  &lt;button type=&quot;submit&quot;&gt;注册&lt;/button&gt;</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure></p>
+<p>取值：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;form #myForm=&quot;ngForm&quot; (onSubmit)=&quot;onSubmit(myForm.value)&quot;&gt;</span><br><span class="line">  &lt;div&gt;用户名：&lt;input #username=&quot;ngModel&quot; ngModel name=&quot;username&quot; type=&quot;text&quot;&gt;&lt;/div&gt;</span><br><span class="line">  &lt;button type=&quot;submit&quot;&gt;注册&lt;/button&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line"></span><br><span class="line">&lt;div&gt;</span><br><span class="line">  &#123;&#123;username.value&#125;&#125;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure></p>
+<h5 id="NgModelGroup："><a href="#NgModelGroup：" class="headerlink" title="NgModelGroup："></a>NgModelGroup：</h5><p>简单使用：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;div ngModelGroup=&quot;userInfo&quot;&gt;</span><br><span class="line">  &lt;div&gt;用户名：&lt;input #username=&quot;ngModel&quot; ngModel name=&quot;username&quot; type=&quot;text&quot;&gt;&lt;/div&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line"></span><br><span class="line">&lt;div&gt;</span><br><span class="line">  &#123;&#123;username.value&#125;&#125; &lt;!-- &#123;&quot;userInfo&quot;: &#123;&quot;username&quot;: &quot;&quot;&#125;&#125; --&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure></p>
+<h5 id="样例："><a href="#样例：" class="headerlink" title="样例："></a>样例：</h5><p>html：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;form #myForm=&quot;ngForm&quot; (onSubmit)=&quot;onSubmit(myForm.value)&quot;&gt;</span><br><span class="line">  &lt;div&gt;用户名：&lt;input ngModel name=&quot;username&quot; type=&quot;text&quot;&gt;&lt;/div&gt;</span><br><span class="line">  &lt;div&gt;手机号：&lt;input ngModel name=&quot;mobile&quot; type=&quot;number&quot;&gt;&lt;/div&gt;</span><br><span class="line">  &lt;div ngModelGroup=&quot;passwordsGroup&quot;&gt;</span><br><span class="line">    &lt;div&gt;密码：&lt;input ngModel name=&quot;password&quot; type=&quot;password&quot;&gt;&lt;/div&gt;</span><br><span class="line">    &lt;div&gt;确认密码：&lt;input ngModel name=&quot;pconfirm&quot; type=&quot;password&quot;&gt;&lt;/div&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">  &lt;button type=&quot;submit&quot;&gt;注册&lt;/button&gt;</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure></p>
+<p>component:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">onSubmit(value: any) &#123;</span><br><span class="line">  console.log(value);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="响应式表单"><a href="#响应式表单" class="headerlink" title="响应式表单"></a>响应式表单</h3><p>使用响应式表单时，那你通过编写TypeScript代码而不是Html代码来创建一个底层的数据模型，<br>在这个模型定义好以后，你使用一些特定的指令，将模板上的html元素与底层的数据模型连接在<br>一起。</p>
+<p>需要在app.module.ts中引入：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">imports: [</span><br><span class="line">  ReactiveFormsModule</span><br><span class="line">]</span><br></pre></td></tr></table></figure></p>
+<h5 id="FormGroup："><a href="#FormGroup：" class="headerlink" title="FormGroup："></a>FormGroup：</h5><p>html<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;form [formGroup]=&quot;formModel&quot; (submit)=&quot;onSubmit()&quot;&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;button type=&quot;submit&quot;&gt;保存&lt;/button&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure></p>
+<p>component<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">formModel: FormGroup = new FormGroup (&#123;&#125;);</span><br><span class="line"></span><br><span class="line">onSubmit() &#123;</span><br><span class="line">  console.log(this.formModel.value);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h5 id="FormControl："><a href="#FormControl：" class="headerlink" title="FormControl："></a>FormControl：</h5><p>html<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;form [formGroup]=&quot;formModel&quot; (submit)=&quot;onSubmit()&quot;&gt;</span><br><span class="line">  &lt;input formControlName=&quot;username&quot;&gt;</span><br><span class="line">  &lt;div formGroupName=&quot;dateRange&quot;&gt;</span><br><span class="line">    起始日期：&lt;input type=&quot;date&quot; formControlName=&quot;from&quot;&gt;</span><br><span class="line">    截止日期：&lt;input type=&quot;date&quot; formControlName=&quot;to&quot;&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;button type=&quot;submit&quot;&gt;保存&lt;/button&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure></p>
+<p>component<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">formModel: FormGroup = new FormGroup (&#123;</span><br><span class="line">  username: new FormControl(&apos;aaa&apos;),</span><br><span class="line">  dateRange: new FormGroup(&#123;</span><br><span class="line">    from: new FormControl(),</span><br><span class="line">    to: new FormControl()</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<h5 id="FormArray："><a href="#FormArray：" class="headerlink" title="FormArray："></a>FormArray：</h5><p>html<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&lt;form [formGroup]=&quot;formModel&quot; (submit)=&quot;onSubmit()&quot;&gt;</span><br><span class="line">  &lt;div formGroupName=&quot;dateRange&quot;&gt;</span><br><span class="line">    起始日期：&lt;input type=&quot;date&quot; formControlName=&quot;from&quot;&gt;</span><br><span class="line">    截止日期：&lt;input type=&quot;date&quot; formControlName=&quot;to&quot;&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;ul formArrayName=&quot;emails&quot;&gt;</span><br><span class="line">      &lt;li *ngFor=&quot;let e of this.formModel.get(&apos;emails&apos;).controls; let i = index;&quot;&gt;</span><br><span class="line">        &lt;input type=&quot;text&quot; [formControlName]=&quot;i&quot;&gt;</span><br><span class="line">      &lt;/li&gt;</span><br><span class="line">    &lt;/ul&gt;</span><br><span class="line">    &lt;button type=&quot;button&quot; (click)=&quot;addEmail()&quot;&gt;增加Email&lt;/button&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;button type=&quot;submit&quot;&gt;保存&lt;/button&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure></p>
+<p>component<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">formModel: FormGroup = new FormGroup (&#123;</span><br><span class="line">  dateRange: new FormGroup(&#123;</span><br><span class="line">    from: new FormControl(),</span><br><span class="line">    to: new FormControl()</span><br><span class="line">  &#125;),</span><br><span class="line">  emails: new FormArray(&#123;</span><br><span class="line">    new FormControl(&quot;a@a.com&quot;),</span><br><span class="line">    new FormControl(&quot;b@b.com&quot;)</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">addEmail() &#123;</span><br><span class="line">  let emails = this.formModel.get(&apos;emails&apos;) as FormArray;</span><br><span class="line">  emails.push(new FormControl());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h5 id="样例"><a href="#样例" class="headerlink" title="样例"></a>样例</h5><p>html<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;form [FormGroup]=&quot;formModel&quot; (onSubmit)=&quot;onSubmit()&quot;&gt;</span><br><span class="line">  &lt;div&gt;用户名：&lt;input type=&quot;text&quot; formControlName=&quot;username&quot;&gt;&lt;/div&gt;</span><br><span class="line">  &lt;div&gt;手机号：&lt;input type=&quot;number&quot; formControlName=&quot;mobile&quot;&gt;&lt;/div&gt;</span><br><span class="line">  &lt;div formGroupName=&quot;passwordsGroup&quot;&gt;</span><br><span class="line">    &lt;div&gt;密码：&lt;input type=&quot;password&quot; formControlName=&quot;password&quot;&gt;&lt;/div&gt;</span><br><span class="line">    &lt;div&gt;确认密码：&lt;input type=&quot;password&quot; formControlName=&quot;pconfirm&quot;&gt;&lt;/div&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">  &lt;button type=&quot;submit&quot;&gt;注册&lt;/button&gt;</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure></p>
+<p>component<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">formModel: FormGroup;</span><br><span class="line"></span><br><span class="line">constructor() &#123;</span><br><span class="line">  this.formModel = new FormGroup (&#123;</span><br><span class="line">    username: new FormControl(),</span><br><span class="line">    mobile: new FormControl(),</span><br><span class="line">    passwordsGroup: new FormGroup(&#123;</span><br><span class="line">      password: new FormControl(),</span><br><span class="line">      pconfirm: new FormControl()</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h5 id="FromBuilder"><a href="#FromBuilder" class="headerlink" title="FromBuilder"></a>FromBuilder</h5><p>通过FromBuilder简化代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">formModel: FormGroup;</span><br><span class="line"></span><br><span class="line">constructor(fb: FormBuilder) &#123;</span><br><span class="line">  this.formModel = fb.group (&#123;</span><br><span class="line">    username: [&apos;&apos;],</span><br><span class="line">    mobile: [&apos;&apos;],</span><br><span class="line">    passwordsGroup: fb.group(&#123;</span><br><span class="line">      password: [&apos;&apos;],</span><br><span class="line">      pconfirm: [&apos;&apos;]</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="表单验证"><a href="#表单验证" class="headerlink" title="表单验证"></a>表单验证</h3><p>html<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&lt;form [FormGroup]=&quot;formModel&quot; (onSubmit)=&quot;onSubmit()&quot;&gt;</span><br><span class="line">  &lt;div&gt;用户名：&lt;input type=&quot;text&quot; formControlName=&quot;username&quot;&gt;&lt;/div&gt;</span><br><span class="line">  &lt;div [hidden]=&quot;!formModel.hasError(&apos;required&apos;, &apos;username&apos;)&quot;&gt;</span><br><span class="line">    用户名是必填项</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">  &lt;div [hidden]=&quot;!formModel.hasError(&apos;minLength&apos;, &apos;username&apos;)&quot;&gt;</span><br><span class="line">    用户名最小长度是6</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">  &lt;div&gt;手机号：&lt;input type=&quot;number&quot; formControlName=&quot;mobile&quot;&gt;&lt;/div&gt;</span><br><span class="line">  &lt;div [hidden]=&quot;!formModel.hasError(&apos;mobile&apos;, &apos;mobile&apos;)&quot;&gt;</span><br><span class="line">    请输入正确的手机号</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">  &lt;div formGroupName=&quot;passwordsGroup&quot;&gt;</span><br><span class="line">    &lt;div&gt;密码：&lt;input type=&quot;password&quot; formControlName=&quot;password&quot;&gt;&lt;/div&gt;</span><br><span class="line">    &lt;div [hidden]=&quot;!formModel.hasError(&apos;minLength&apos;, [&apos;passwordsGroup&apos;, [&apos;password&apos;]])&quot;&gt;</span><br><span class="line">      密码最小长度是6</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">    &lt;div&gt;确认密码：&lt;input type=&quot;password&quot; formControlName=&quot;pconfirm&quot;&gt;&lt;/div&gt;</span><br><span class="line">    &lt;div [hidden]=&quot;!formModel.hasError(&apos;equal&apos;, &apos;passwordsGroup&apos;)&quot;&gt;</span><br><span class="line">      &#123;&#123;formModel.getError(&apos;equal&apos;, &apos;passwordsGroup&apos;)?.descxxx&#125;&#125;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">  &lt;button type=&quot;submit&quot;&gt;注册&lt;/button&gt;</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure></p>
+<p>component<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">// 可以将以下angular校验器抽取到一个ts文件中</span><br><span class="line">mobileValidator(control: FormControl): any &#123;</span><br><span class="line">  const myreq = /^(((13[0-9]&#123;1&#125;)|(15[0-9]&#123;1&#125;)|(18[0-9]&#123;1&#125;))+\d&#123;8&#125;)$/;</span><br><span class="line">  const valid = myreq.test(control.calue);</span><br><span class="line">  console.log(&apos;mobile的校验结果是：&apos; + valid);</span><br><span class="line">  return valid ? null : &#123;mobile: true&#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">mobileAsyncValidator(control: FormControl): any &#123;</span><br><span class="line">  const myreq = /^(((13[0-9]&#123;1&#125;)|(15[0-9]&#123;1&#125;)|(18[0-9]&#123;1&#125;))+\d&#123;8&#125;)$/;</span><br><span class="line">  const valid = myreq.test(control.calue);</span><br><span class="line">  console.log(&apos;mobile的校验结果是：&apos; + valid);</span><br><span class="line">  // 模拟异步</span><br><span class="line">  return Observable.of(valid ? null : &#123;mobile: true&#125;).delay(5000);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">equalValidator(group: FormGroup): any &#123;</span><br><span class="line">  const password: FormControl = group.get(&apos;password&apos;) as FormControl;</span><br><span class="line">  const pconfirm: FormControl = group.get(&apos;pconfirm&apos;) as FormControl;</span><br><span class="line">  const valid: boolean = (password.value === pconfirm.value);</span><br><span class="line">  console.log(&apos;密码的校验结果是：&apos; + valid);</span><br><span class="line">  return valid ? null : &#123;equal: &#123;descxxx: &apos;密码和确认密码不匹配&apos;&#125;&#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">formModel: FormGroup;</span><br><span class="line"></span><br><span class="line">constructor(fb: FormBuilder) &#123;</span><br><span class="line">  this.formModel = fb.group (&#123;</span><br><span class="line">    username: [&apos;&apos;, [Vaildators.required, Validators.minLength(6)]],</span><br><span class="line">    mobile: [&apos;&apos;, this.mobileValidator],</span><br><span class="line">    passwordsGroup: fb.group(&#123;</span><br><span class="line">      password: [&apos;&apos;],</span><br><span class="line">      pconfirm: [&apos;&apos;]</span><br><span class="line">    &#125;, &#123;validator: this.equalValidator&#125;)</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">onSubmit() &#123;</span><br><span class="line">  // const isValid: boolean = this.formModel.get(&apos;username&apos;).valid;</span><br><span class="line">  // console.log(&apos;username的校验结果：&apos; + isValid);</span><br><span class="line">  // const errors: any = this.formModel.get(&quot;username&quot;).errors;</span><br><span class="line">  // console.log(&apos;username的错误信息是：&apos; + JSON.stringify(errors));</span><br><span class="line">  if (this.formModel.valid) &#123;</span><br><span class="line">    console.log(this.formModel.value);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h5 id="状态字段"><a href="#状态字段" class="headerlink" title="状态字段"></a>状态字段</h5><p>touched和untouched<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;form [FormGroup]=&quot;formModel&quot; (onSubmit)=&quot;onSubmit()&quot;&gt;</span><br><span class="line">  &lt;div&gt;用户名：&lt;input type=&quot;text&quot; formControlName=&quot;username&quot;&gt;&lt;/div&gt;</span><br><span class="line">  &lt;div [hidden]=&quot;formModel.get(&apos;mobile&apos;).valid || formModel.get(&apos;mobile&apos;).untouched&quot;&gt;</span><br><span class="line">    &lt;div [hidden]=&quot;!formModel.hasError(&apos;required&apos;, &apos;username&apos;)&quot;&gt;</span><br><span class="line">      用户名是必填项</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">  ...</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure></p>
+<p>pristine和dirty<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;form [FormGroup]=&quot;formModel&quot; (onSubmit)=&quot;onSubmit()&quot;&gt;</span><br><span class="line">  &lt;div&gt;用户名：&lt;input type=&quot;text&quot; formControlName=&quot;username&quot;&gt;&lt;/div&gt;</span><br><span class="line">  &lt;div [hidden]=&quot;formModel.get(&apos;mobile&apos;).valid || formModel.get(&apos;mobile&apos;).pristine&quot;&gt;</span><br><span class="line">    &lt;div [hidden]=&quot;!formModel.hasError(&apos;required&apos;, &apos;username&apos;)&quot;&gt;</span><br><span class="line">      用户名是必填项</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">  ...</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure></p>
+<p>pending<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;form [FormGroup]=&quot;formModel&quot; (onSubmit)=&quot;onSubmit()&quot;&gt;</span><br><span class="line">  &lt;div [hidden]=&quot;!formModel.get(&apos;mobile&apos;).pending&quot;&gt;</span><br><span class="line">    正在校验手机合法性</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">  ...</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure></p>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2019/03/31/angular基础-表单处理/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a class="link-unstyled" href="/2019/03/28/kapacitor_lambda/">
+                            kapacitor lambda
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2019-03-28T16:04:01+08:00">
+	
+		    3月 28, 2019
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <h3 id="lambda使用"><a href="#lambda使用" class="headerlink" title="lambda使用"></a>lambda使用</h3><p>简单使用：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">|where(lambda: &quot;tag&quot; == &apos;v1&apos; AND &quot;field&quot; == &apos;v2&apos;)</span><br><span class="line">|eval(lambda: (&quot;field1&quot; - &quot;field2&quot;) / &quot;field3&quot; * 100.0)</span><br><span class="line">|eval(lambda: float(&quot;field1&quot;) / float(&quot;field2&quot;) * 100.0)</span><br></pre></td></tr></table></figure></p>
+<p>保留两位小数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">|eval(lambda: float(int(&quot;field&quot; * 100.0)) / 100.0) // 保留两位小数</span><br></pre></td></tr></table></figure></p>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2019/03/28/kapacitor_lambda/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a class="link-unstyled" href="/2019/03/28/influxdb_query/">
+                            influxdb query
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2019-03-28T15:26:05+08:00">
+	
+		    3月 28, 2019
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <h3 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h3><ul>
+<li>查询结果如果要显示tag，则无需指定查询tag，只需要在GROUP BY 中带上tag。</li>
+<li>如果GROUP BY 除了time 还有其它tag，则最好不要加fill(previous)，否则数据可能会错乱。</li>
+<li>SELECT * FROM (SELECT …) 会将值为空的数据过滤掉。</li>
+<li>GROUP BY time() 之后要确定用FIRST() 或 LAST()。</li>
+<li>如果查询的字段带有空格，则需要使用”字段名”查询。</li>
+</ul>
+<h3 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h3><h4 id="数据"><a href="#数据" class="headerlink" title="数据"></a>数据</h4><p>以下数据来自telegraf 的[[inputs.prometheus]] 插件，每隔10秒从oracle_exporter中采集数据并写回influxdb，database为telegraf，measurement为oracledb_physical_iops，counter为field，其它为tag，<br>部分tag省略，部分值已被修改。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">#           time             counter            database        dbinstance            host           id                type</span><br><span class="line">1       2019/3/28 6:21:20       1                 orcl              ip1            localhost        orcl            read_iops</span><br><span class="line">2       2019/3/28 6:21:20       2                 orcl              ip1            localhost        orcl            write_iops</span><br><span class="line">3       2019/3/28 6:21:20       1                 orcl2             ip2            localhost        orcl2           read_iops</span><br><span class="line">4       2019/3/28 6:21:20       2                 orcl2             ip2            localhost        orcl2           write_iops</span><br><span class="line">5       2019/3/28 6:21:30       1                 orcl              ip1            localhost        orcl            read_iops</span><br><span class="line">6       2019/3/28 6:21:30       2                 orcl              ip1            localhost        orcl            write_iops</span><br><span class="line">7       2019/3/28 6:21:30       1                 orcl2             ip2            localhost        orcl2           read_iops</span><br><span class="line">8       2019/3/28 6:21:30       2                 orcl2             ip2            localhost        orcl2           write_iops</span><br><span class="line">[...]</span><br><span class="line">13     2019/3/28 6:21:50        1                 orcl              ip1            localhost        orcl            read_iops</span><br><span class="line">14     2019/3/28 6:21:50        2                 orcl              ip1            localhost        orcl            write_iops</span><br><span class="line">15     2019/3/28 6:21:50        1                 orcl2             ip2            localhost        orcl2           read_iops</span><br><span class="line">16     2019/3/28 6:21:50        2                 orcl2             ip2            localhost        orcl2           write_iops</span><br></pre></td></tr></table></figure></p>
+<h4 id="maven"><a href="#maven" class="headerlink" title="maven"></a>maven</h4><p>pom.xml：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- https://mvnrepository.com/artifact/org.influxdb/influxdb-java --&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.influxdb&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;influxdb-java&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;2.14&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure></p>
+<h4 id="springboot"><a href="#springboot" class="headerlink" title="springboot"></a>springboot</h4><p>application.yml：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">  influx:</span><br><span class="line">    url: http://localhost:8086</span><br></pre></td></tr></table></figure></p>
+<h4 id="java"><a href="#java" class="headerlink" title="java"></a>java</h4><p>config：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">@Component</span><br><span class="line">public class InfluxDbHolder &#123;</span><br><span class="line">    private final InfluxDBResultMapper mapper;</span><br><span class="line">    private final InfluxDB db;</span><br><span class="line"></span><br><span class="line">    @Autowired</span><br><span class="line">    public InfluxDbHolder(InfluxDB db) &#123;</span><br><span class="line">        this.db = db;</span><br><span class="line">        this.mapper = new InfluxDBResultMapper();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public InfluxDBResultMapper getMapper() &#123;</span><br><span class="line">        return mapper;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public InfluxDB getDb() &#123;</span><br><span class="line">        return db;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>entity：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">@Data</span><br><span class="line">@Measurement(name = &quot;oracledb_physical_iops&quot;)</span><br><span class="line">public class DbIOps &#123;</span><br><span class="line">    @Column(name = &quot;time&quot;)</span><br><span class="line">    @JsonDeserialize(using = InstantJacksonDeserialize.class)</span><br><span class="line">    @JsonSerialize(using = InstantJacksonSerializer.class)</span><br><span class="line">    private Instant time;</span><br><span class="line"></span><br><span class="line">    @Column(name = &quot;type&quot;, tag = true)</span><br><span class="line">    private String type;</span><br><span class="line"></span><br><span class="line">    @Column(name = &quot;counter&quot;)</span><br><span class="line">    private Integer counter;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">@Data</span><br><span class="line">public class InfluxdbCriteria &#123;</span><br><span class="line">    private Integer during;</span><br><span class="line">    private Integer groupTime;</span><br><span class="line">    private Integer offset;</span><br><span class="line"></span><br><span class="line">    public void validate() &#123;</span><br><span class="line">        if (during == null) &#123;</span><br><span class="line">            during = 1;</span><br><span class="line">        &#125;</span><br><span class="line">        if (groupTime == null) &#123;</span><br><span class="line">            groupTime = 10;</span><br><span class="line">        &#125;</span><br><span class="line">        if (offset == null) &#123;</span><br><span class="line">            offset = 0;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>service：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">public Map&lt;Instant, List&lt;DbIOps&gt;&gt; getDatabaseIOps(String dbId, InfluxdbCriteria databaseCriteria) &#123;</span><br><span class="line">    databaseCriteria.validate();</span><br><span class="line">    Integer during = databaseCriteria.getDuring();</span><br><span class="line">    Integer groupTime = databaseCriteria.getGroupTime();</span><br><span class="line">    Integer offset = databaseCriteria.getOffset();</span><br><span class="line">    String sql = &quot;SELECT first(counter) as counter &quot; +</span><br><span class="line">                    &quot;FROM oracledb_physical_iops &quot; +</span><br><span class="line">                        &quot;WHERE id=&apos;&quot;+ dbId + &quot;&apos; AND time &gt; now() - &quot; + during + &quot;h &quot; +</span><br><span class="line">                            &quot;group by type, time(&quot;+ groupTime + &quot;m, &quot; + offset + &quot;s)&quot;;</span><br><span class="line">    Query query = new Query(sql, &quot;telegraf&quot;);</span><br><span class="line">    QueryResult result = holder.getDb().query(query);</span><br><span class="line">    List&lt;DbIOps&gt; dbIOpsList = holder.getMapper().toPOJO(result, DbIOps.class);</span><br><span class="line">    Map&lt;Instant, List&lt;DbIOps&gt;&gt; map = dbIOpsList.stream().collect(Collectors.groupingBy(DbIOps::getTime));</span><br><span class="line"></span><br><span class="line">    //对时间排序</span><br><span class="line">    Map&lt;Instant, List&lt;DbIOps&gt;&gt; sortMap = new TreeMap&lt;&gt;((Instant instant1, Instant instant2) -&gt; instant1.compareTo(instant2));</span><br><span class="line">    sortMap.putAll(map);</span><br><span class="line"></span><br><span class="line">    return sortMap;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>controller：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@GetMapping(&quot;/databaseIOps/&#123;dbId&#125;&quot;)</span><br><span class="line">public ResponseEntity getDatabaseIOps(@PathVariable String dbId, InfluxdbCriteria databaseCriteria) &#123;</span><br><span class="line">    return ResponseEntity.ok(databaseService.getDatabaseIOps(dbId, databaseCriteria));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="angular"><a href="#angular" class="headerlink" title="angular"></a>angular</h4><p>service：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 查询数据库IOpsmetrics</span><br><span class="line"> */</span><br><span class="line">getDatabaseIOps(dbId: string, during: number): Observable&lt;any&gt; &#123;</span><br><span class="line">    // during: 最近during小时</span><br><span class="line">    const params = DateUtils.getInfluxdbParams(during);</span><br><span class="line"></span><br><span class="line">    return this.http.get&lt;any&gt;(`databaseIOps/$&#123;dbId&#125;`, &#123;</span><br><span class="line">        params: &#123;</span><br><span class="line">            during: String(during),</span><br><span class="line">            groupTime: String(params.groupTime),</span><br><span class="line">            offset: String(params.offset)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;).pipe(</span><br><span class="line">        retry(1),</span><br><span class="line">        catchError(this.handleError.bind(this))</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>utils：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">export class DateUtils &#123;</span><br><span class="line">    public static getInfluxdbParams(during: number): any &#123;</span><br><span class="line">        let groupTime = 10;</span><br><span class="line">        let offset = 0;</span><br><span class="line">        if (during === 1) &#123;</span><br><span class="line">            groupTime = 5;</span><br><span class="line">            offset = (moment().minutes() % 5) * 60 - 30;</span><br><span class="line">        &#125; else if (during === 3) &#123;</span><br><span class="line">            groupTime = 15;</span><br><span class="line">            offset = (moment().minutes() % 15) * 60 - 30;</span><br><span class="line">        &#125; else if (during === 12) &#123;</span><br><span class="line">            groupTime = 60;</span><br><span class="line">            offset = (moment().minutes() % 60) * 60 - 30;</span><br><span class="line">        &#125;</span><br><span class="line">        return &#123;groupTime: groupTime, offset: offset&#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2019/03/28/influxdb_query/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a class="link-unstyled" href="/2019/03/28/oracle账号/">
+                            oracle账号
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2019-03-28T12:03:26+08:00">
+	
+		    3月 28, 2019
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <p>用户名：<a href="mailto:541509124@qq.com" target="_blank" rel="noopener">541509124@qq.com</a><br>密码：LR4ever.1314</p>
+<p>参考：<br><a href="https://blog.csdn.net/dengxt/article/details/81536099" target="_blank" rel="noopener">https://blog.csdn.net/dengxt/article/details/81536099</a></p>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2019/03/28/oracle账号/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a class="link-unstyled" href="/2019/03/28/influxdb/">
+                            influxdb issues
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2019-03-28T12:03:05+08:00">
+	
+		    3月 28, 2019
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <h3 id="org-influxdb-InfluxDBIOException-java-net-SocketTimeoutException-timeout"><a href="#org-influxdb-InfluxDBIOException-java-net-SocketTimeoutException-timeout" class="headerlink" title="org.influxdb.InfluxDBIOException: java.net.SocketTimeoutException: timeout"></a>org.influxdb.InfluxDBIOException: java.net.SocketTimeoutException: timeout</h3><p>使用influxdb的java客户端连接influxdb：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">InfluxDB influxDB = InfluxDBFactory.connect(&quot;http://localhost:8086&quot;);</span><br></pre></td></tr></table></figure></p>
+<p>报错：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Exception in thread &quot;main&quot; org.influxdb.InfluxDBIOException: java.net.SocketTimeoutException: timeout</span><br><span class="line">	at org.influxdb.impl.InfluxDBImpl.execute(InfluxDBImpl.java:800)</span><br><span class="line">	at org.influxdb.impl.InfluxDBImpl.write(InfluxDBImpl.java:455)</span><br></pre></td></tr></table></figure></p>
+<p>更改OKHttpClient的默认超时：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">OkHttpClient.Builder client = new OkHttpClient.Builder()</span><br><span class="line">        .connectTimeout(1, TimeUnit.MINUTES)</span><br><span class="line">        .readTimeout(1, TimeUnit.MINUTES)</span><br><span class="line">        .writeTimeout(2, TimeUnit.MINUTES)</span><br><span class="line">        .retryOnConnectionFailure(true);</span><br><span class="line">InfluxDB influxDB = InfluxDBFactory.connect(&quot;http://localhost:8086&quot;, client);</span><br></pre></td></tr></table></figure></p>
+<p>参考：<br><a href="https://github.com/influxdata/influxdb-java" target="_blank" rel="noopener">https://github.com/influxdata/influxdb-java</a><br><a href="https://stackoverflow.com/questions/50922473/influxdbioexception-java-net-sockettimeoutexception-timeout" target="_blank" rel="noopener">https://stackoverflow.com/questions/50922473/influxdbioexception-java-net-sockettimeoutexception-timeout</a></p>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2019/03/28/influxdb/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
                         <a class="link-unstyled" href="/2019/03/28/Chrome中启用Flash/">
                             Chrome中启用Flash
                         </a>
@@ -549,268 +810,6 @@
         
     </article>
     
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2019/03/14/Java常用操作/">
-                            Java常用操作
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-03-14T19:05:08+08:00">
-	
-		    3月 14, 2019
-    	
-    </time>
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-content">
-                    <h3 id="java对Map进行排序"><a href="#java对Map进行排序" class="headerlink" title="java对Map进行排序"></a>java对Map进行排序</h3><h4 id="根据key排序"><a href="#根据key排序" class="headerlink" title="根据key排序"></a>根据key排序</h4><p>jdk8:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// map为待排序的Map</span><br><span class="line">Map&lt;String, String&gt; sortMap = new TreeMap&lt;&gt;((String s1, String s2) -&gt; s1.compareTo(s2));</span><br><span class="line">sortMap.putAll(map);</span><br><span class="line"></span><br><span class="line">return sortMap;</span><br></pre></td></tr></table></figure></p>
-<p>参考：<br><a href="https://blog.csdn.net/weixin_41415986/article/details/82781618" target="_blank" rel="noopener">https://blog.csdn.net/weixin_41415986/article/details/82781618</a></p>
-<h3 id="快速生成Map"><a href="#快速生成Map" class="headerlink" title="快速生成Map"></a>快速生成Map</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">private Map&lt;Integer, String&gt; newsEventMap = new HashMap&lt;Integer, String&gt;()&#123;&#123;</span><br><span class="line">  put(&quot;k1&quot;, &quot;v1&quot;);</span><br><span class="line">  put(&quot;k2&quot;, &quot;v2&quot;);</span><br><span class="line">&#125;&#125;;</span><br></pre></td></tr></table></figure>
-<p>参考：<br><a href="https://blog.csdn.net/molingduzun123/article/details/50634637/" target="_blank" rel="noopener">https://blog.csdn.net/molingduzun123/article/details/50634637/</a></p>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2019/03/14/Java常用操作/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2019/03/14/go-oracle/">
-                            pkg-config --cflags oci8, Package oci8 was not found in the pkg-config search path.
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-03-14T19:05:08+08:00">
-	
-		    3月 14, 2019
-    	
-    </time>
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-content">
-                    <h6 id="在linux下可以正常运行oracledb-exporter，在windows64下启动时报错"><a href="#在linux下可以正常运行oracledb-exporter，在windows64下启动时报错" class="headerlink" title="在linux下可以正常运行oracledb_exporter，在windows64下启动时报错"></a>在linux下可以正常运行<a href="https://github.com/iamseth/oracledb_exporter" target="_blank" rel="noopener">oracledb_exporter</a>，在windows64下启动时报错</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pkg-config --cflags oci8</span><br><span class="line">Package oci8 was not found in the pkg-config search path.</span><br></pre></td></tr></table></figure>
-<h6 id="因为linux中已经安装了oracle客户端，所以怀疑可能是windows下没有导致的。"><a href="#因为linux中已经安装了oracle客户端，所以怀疑可能是windows下没有导致的。" class="headerlink" title="因为linux中已经安装了oracle客户端，所以怀疑可能是windows下没有导致的。"></a>因为linux中已经安装了oracle客户端，所以怀疑可能是windows下没有导致的。</h6><h2 id="1-go-oci8"><a href="#1-go-oci8" class="headerlink" title="1.go-oci8"></a>1.go-oci8</h2><ul>
-<li>地址：<a href="https://github.com/wendal/go-oci8" target="_blank" rel="noopener">https://github.com/wendal/go-oci8</a></li>
-<li>它是 <a href="https://github.com/mattn/go-oci8" target="_blank" rel="noopener">https://github.com/mattn/go-oci8</a> 的分支，增加了windows下中文的安装说明及相关文件。</li>
-<li>从oracledb_exporter的代码中可以看到引用的是go-oci8<br><code>_ &quot;github.com/mattn/go-oci8&quot;</code>,所以需要安装windows的oracle连接。</li>
-</ul>
-<h2 id="2-安装oci"><a href="#2-安装oci" class="headerlink" title="2.安装oci"></a>2.安装oci</h2><ul>
-<li>地址：<a href="https://www.oracle.com/technetwork/database/database-technologies/instant-client/downloads/index.html" target="_blank" rel="noopener">https://www.oracle.com/technetwork/database/database-technologies/instant-client/downloads/index.html</a></li>
-<li>我的安装目录为：F:\instantclient_18 _3</li>
-</ul>
-<h2 id="3-安装oci-sdk"><a href="#3-安装oci-sdk" class="headerlink" title="3.安装oci-sdk"></a>3.安装oci-sdk</h2><ul>
-<li>地址：同上。</li>
-<li>我的安装目录为F:\instantclient_18 _3\sdk</li>
-</ul>
-<h2 id="4-安装MinGW"><a href="#4-安装MinGW" class="headerlink" title="4.安装MinGW"></a>4.安装MinGW</h2><ul>
-<li>地址：<a href="https://sourceforge.net/projects/mingw-w64/files/" target="_blank" rel="noopener">https://sourceforge.net/projects/mingw-w64/files/</a></li>
-<li>我的安装目录为F:\mingw-w64</li>
-<li>配置环境变量：在系统变量path中追加 F:\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\bin</li>
-</ul>
-<h2 id="5-下载go-oci8驱动"><a href="#5-下载go-oci8驱动" class="headerlink" title="5.下载go-oci8驱动"></a>5.下载go-oci8驱动</h2><ul>
-<li>地址：<a href="https://github.com/wendal/go-oci8" target="_blank" rel="noopener">https://github.com/wendal/go-oci8</a></li>
-<li>运行命令 go get github.com/wendal/go-oci8 (报错先不管)</li>
-<li>复制GOPATH目下的\src\github.com\wendal\go-oci8\windows\pkg-config.exe到到mingw的安装目录mingw64\bin下。</li>
-<li>复制GOPATH目下的\src\github.com\wendal\go-oci8\windows\oci8.pc到到mingw的安装目录mingw64\lib\pkg-config的下。</li>
-<li>修改oci8.pc<blockquote>
-<p>#Package Information for pkg-config<br>prefix=F:/instantclient_18_3<br>exec_prefix=F:/instantclient_18_3<br>libdir=${exec_prefix}<br>includedir=${prefix}/sdk/include/</p>
-<p>Name: OCI<br>Description: Oracle database engine<br>Version: 18.3<br>Libs: -L${libdir} -loci<br>Libs.private:<br>Cflags: -I${includedir}</p>
-</blockquote>
-</li>
-</ul>
-<h2 id="6-环境变量配置"><a href="#6-环境变量配置" class="headerlink" title="6.环境变量配置"></a>6.环境变量配置</h2><ul>
-<li>PATH=原有PATH;F:\instantclient_18_3;</li>
-<li>PKG_CONFIG_PATH=F:\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\lib\pkg-config</li>
-</ul>
-<h5 id="启动报错"><a href="#启动报错" class="headerlink" title="启动报错"></a>启动报错</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">F:\GOENV\src\github.com\wendal\go-oci8\oci8.go:119: cannot use (**_Ctype_struct_OCIServer)(unsafe.Pointer(&amp;conn.svc)) (type **_Ctype_struct_OCIServer) as type **_Ctype_struct_OCISvcCtx in argument to func literal</span><br><span class="line">F:\GOENV\src\github.com\wendal\go-oci8\oci8.go:136: cannot use (*_Ctype_struct_OCIServer)(c.svc) (type *_Ctype_struct_OCIServer) as type *_Ctype_struct_OCISvcCtx in argument to func literal</span><br><span class="line">F:\GOENV\src\github.com\wendal\go-oci8\oci8.go:263: cannot use (*_Ctype_struct_OCIServer)(s.c.svc) (type *_Ctype_struct_OCIServer) as type *_Ctype_struct_OCISvcCtx in argument to func literal</span><br><span class="line">F:\GOENV\src\github.com\wendal\go-oci8\oci8.go:383: cannot use (*_Ctype_struct_OCIServer)(s.c.svc) (type *_Ctype_struct_OCIServer) as type *_Ctype_struct_OCISvcCtx in argument to func literal</span><br></pre></td></tr></table></figure>
-<h5 id="替换GOPATH目下的-src-github-com-wendal-go-oci8里四处OCIServer为OCISvcCtx。"><a href="#替换GOPATH目下的-src-github-com-wendal-go-oci8里四处OCIServer为OCISvcCtx。" class="headerlink" title="替换GOPATH目下的\src\github.com\wendal\go-oci8里四处OCIServer为OCISvcCtx。"></a>替换GOPATH目下的\src\github.com\wendal\go-oci8里四处OCIServer为OCISvcCtx。</h5><p>参考：<br><a href="https://www.cnblogs.com/ghj1976/p/3437250.html" target="_blank" rel="noopener">https://www.cnblogs.com/ghj1976/p/3437250.html</a><br><a href="https://blog.csdn.net/wq57885/article/details/82841792" target="_blank" rel="noopener">https://blog.csdn.net/wq57885/article/details/82841792</a></p>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2019/03/14/go-oracle/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2019/03/14/golang判断当前主机是物理机还是虚拟机/">
-                            golang判断当前主机是物理机还是虚拟机
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-03-14T19:05:08+08:00">
-	
-		    3月 14, 2019
-    	
-    </time>
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-content">
-                    <p>windows下命令行获取：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wmic path Win32_ComputerSystem get Model</span><br></pre></td></tr></table></figure></p>
-<p>linux下命令行获取：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dmidecode | egrep -i &apos;system-product-name|product|domU&apos;</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">func isVirtualMachine() (bool, error) &#123;</span><br><span class="line">	model := &quot;&quot;</span><br><span class="line">	var cmd *exec.Cmd</span><br><span class="line"></span><br><span class="line">	if runtime.GOOS == &quot;windows&quot; &#123;</span><br><span class="line">		cmd = exec.Command(&quot;cmd&quot;, &quot;/C&quot;, &quot;wmic path Win32_ComputerSystem get Model&quot;)</span><br><span class="line">	&#125; else &#123; // linux</span><br><span class="line">		cmd = exec.Command(&quot;/bin/bash&quot;, &quot;-c&quot;, &quot;dmidecode | egrep -i &apos;system-product-name|product|domU&apos;&quot;)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	stdout, err := cmd.Output()</span><br><span class="line"></span><br><span class="line">	if err != nil &#123;</span><br><span class="line">		return false, err</span><br><span class="line">	&#125;</span><br><span class="line">	model = string(stdout)</span><br><span class="line"></span><br><span class="line">	if strings.Contains(model, &quot;VirtualBox&quot;) || strings.Contains(model, &quot;Virtual Machine&quot;) || strings.Contains(model, &quot;VMware Virtual Platform&quot;) ||</span><br><span class="line">		strings.Contains(model, &quot;KVM&quot;) || strings.Contains(model, &quot;Bochs&quot;) || strings.Contains(model, &quot;HVM domU&quot;) &#123;</span><br><span class="line">		return true, nil</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	return false, nil</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>参考：<br><a href="https://unix.stackexchange.com/questions/89714/easy-way-to-determine-virtualization-technology" target="_blank" rel="noopener">https://unix.stackexchange.com/questions/89714/easy-way-to-determine-virtualization-technology</a><br><a href="https://blog.csdn.net/yangzhenping/article/details/49996765?utm_source=blogxgwz1" target="_blank" rel="noopener">https://blog.csdn.net/yangzhenping/article/details/49996765?utm_source=blogxgwz1</a><br><a href="https://blog.csdn.net/greless/article/details/71107767" target="_blank" rel="noopener">https://blog.csdn.net/greless/article/details/71107767</a><br><a href="https://stackoverflow.com/questions/34229486/how-to-execute-a-linux-built-in-command-in-golang" target="_blank" rel="noopener">https://stackoverflow.com/questions/34229486/how-to-execute-a-linux-built-in-command-in-golang</a><br><a href="https://stackoverflow.com/questions/6182369/exec-a-shell-command-in-go" target="_blank" rel="noopener">https://stackoverflow.com/questions/6182369/exec-a-shell-command-in-go</a><br><a href="https://stackoverflow.com/questions/13008255/how-to-execute-a-simple-windows-command-in-golang" target="_blank" rel="noopener">https://stackoverflow.com/questions/13008255/how-to-execute-a-simple-windows-command-in-golang</a></p>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2019/03/14/golang判断当前主机是物理机还是虚拟机/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2019/03/14/centos7/">
-                            centos7知识点
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-03-14T19:05:08+08:00">
-	
-		    3月 14, 2019
-    	
-    </time>
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-content">
-                    <h3 id="操作系统主机名修改"><a href="#操作系统主机名修改" class="headerlink" title="操作系统主机名修改"></a>操作系统主机名修改</h3><p>centos6:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#hostname //查看主机名</span><br><span class="line">#hostname newhostname //在当前会话修改主机名为newhostname，重启后失效</span><br><span class="line"></span><br><span class="line">#vim /etc/sysconfig/network //修改其中的HOSTNAME=newhostname，重启后依旧生效</span><br></pre></td></tr></table></figure></p>
-<p>centos7：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#hostname //查看主机名</span><br><span class="line"></span><br><span class="line">#vim /etc/hostname //直接修改其中的主机名，重启后依旧生效</span><br></pre></td></tr></table></figure></p>
-<h3 id="时区操作"><a href="#时区操作" class="headerlink" title="时区操作"></a>时区操作</h3><p>centos6:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">date // 查看时间</span><br><span class="line">date -R //查看时区</span><br><span class="line">cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime // 修改时区为东京时区</span><br></pre></td></tr></table></figure></p>
-<p>centos7:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">timedatectl // 查看时间、时区。。。</span><br><span class="line">timedatectl set-timezone Asia/Tokyo // 修改时区为东京时区</span><br><span class="line">timedatectl set-local-rtc 1 //设置rtc时间与local时间相同</span><br></pre></td></tr></table></figure></p>
-<h3 id="centos7-ip操作"><a href="#centos7-ip操作" class="headerlink" title="centos7 ip操作"></a>centos7 ip操作</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ip addr // 查看ip地址信息</span><br><span class="line">ip a add 192.168.8.149/24 dev eth0:2  // 添加网卡ip</span><br><span class="line">ip a del 192.168.8.149/24 dev eth0:2  // 删除网卡ip</span><br><span class="line">ip link set dev eth0 down // 将接口设备关闭</span><br><span class="line">ip link set dev eth0 up // 将接口设备启用</span><br></pre></td></tr></table></figure>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2019/03/14/centos7/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2019/03/14/angular发送带参数的delete请求/">
-                            angular2中如何在发送delete请求时携带参数
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-03-14T19:05:08+08:00">
-	
-		    3月 14, 2019
-    	
-    </time>
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-content">
-                    <p>前端angular:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 根据ids删除资源分组</span><br><span class="line"> */</span><br><span class="line">deleteResourceGroupByIds(ids: string[]) &#123;</span><br><span class="line">    return this.http.request(&apos;DELETE&apos;, this.API + &apos;/resourceGroup&apos;, &#123;</span><br><span class="line">        body: ids</span><br><span class="line">    &#125;).pipe(</span><br><span class="line">        retry(1),</span><br><span class="line">        catchError(this.handleError.bind(this))</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>后台springboot:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@DeleteMapping(&quot;/resourceGroup&quot;)</span><br><span class="line">public void deleteResourceGroupByIds(@RequestBody String[] ids) &#123;</span><br><span class="line">    resourceGroupService.deleteResourceGroupByIds(ids);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>参考：<br><a href="https://stackoverflow.com/questions/38819336/body-of-http-delete-request-in-angular2" target="_blank" rel="noopener">https://stackoverflow.com/questions/38819336/body-of-http-delete-request-in-angular2</a></p>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2019/03/14/angular发送带参数的delete请求/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
     <div class="pagination-bar">
     <ul class="pagination">
         
@@ -829,7 +828,7 @@
             </a>
           </li>
         
-        <li class="pagination-number">第 3 页 共 4 页</li>
+        <li class="pagination-number">第 3 页 共 5 页</li>
     </ul>
 </div>
 
