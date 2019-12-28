@@ -165,6 +165,114 @@
             <div class="postShorten-header">
                 <h1 class="postShorten-title">
                     
+                        <a class="link-unstyled" href="/2019/12/28/googel_map集成/">
+                            Google Map集成
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2019-12-28T23:01:54+08:00">
+	
+		    12月 28, 2019
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <h3 id="Get-an-API-Key"><a href="#Get-an-API-Key" class="headerlink" title="Get an API Key"></a>Get an API Key</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">参考：</span><br><span class="line">https://developers.google.cn/maps/documentation/javascript/get-api-key</span><br></pre></td></tr></table></figure>
+<h3 id="Demo"><a href="#Demo" class="headerlink" title="Demo"></a>Demo</h3><p>googleMap.html:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">  &lt;head&gt;</span><br><span class="line">    &lt;title&gt;Simple Map&lt;/title&gt;</span><br><span class="line">    &lt;meta name=&quot;viewport&quot; content=&quot;initial-scale=1.0&quot;&gt;</span><br><span class="line">    &lt;meta charset=&quot;utf-8&quot;&gt;</span><br><span class="line">    &lt;style&gt;</span><br><span class="line">      #map &#123;</span><br><span class="line">        height: 100%;</span><br><span class="line">      &#125;</span><br><span class="line">      html, body &#123;</span><br><span class="line">        height: 100%;</span><br><span class="line">        margin: 0;</span><br><span class="line">        padding: 0;</span><br><span class="line">      &#125;</span><br><span class="line">    &lt;/style&gt;</span><br><span class="line">  &lt;/head&gt;</span><br><span class="line">  &lt;body&gt;</span><br><span class="line">    &lt;div id=&quot;map&quot;&gt;&lt;/div&gt;</span><br><span class="line">    &lt;script&gt;</span><br><span class="line">      var map;</span><br><span class="line">      function initMap() &#123;</span><br><span class="line">        map = new google.maps.Map(document.getElementById(&apos;map&apos;), &#123;</span><br><span class="line">          center: &#123;lat: -34.397, lng: 150.644&#125;,</span><br><span class="line">          zoom: 8</span><br><span class="line">        &#125;);</span><br><span class="line">      &#125;</span><br><span class="line">    &lt;/script&gt;</span><br><span class="line">    &lt;!-- 将YOUR_API_KEY替换成可用的API Key --&gt;</span><br><span class="line">    &lt;script src=&quot;https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&amp;callback=initMap&quot;</span><br><span class="line">    async defer&gt;&lt;/script&gt;</span><br><span class="line">  &lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure></p>
+<h3 id="Vue集成Google-Map"><a href="#Vue集成Google-Map" class="headerlink" title="Vue集成Google Map"></a>Vue集成Google Map</h3><h4 id="Get-an-API-Key-1"><a href="#Get-an-API-Key-1" class="headerlink" title="Get an API Key"></a>Get an API Key</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">参考上述操作</span><br></pre></td></tr></table></figure>
+<h4 id="Typescript版本集成"><a href="#Typescript版本集成" class="headerlink" title="Typescript版本集成"></a>Typescript版本集成</h4><h5 id="1-安装依赖"><a href="#1-安装依赖" class="headerlink" title="1.安装依赖"></a>1.安装依赖</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install vue2-google-maps</span><br></pre></td></tr></table></figure>
+<h5 id="2-googleMap-ts代码"><a href="#2-googleMap-ts代码" class="headerlink" title="2.googleMap.ts代码"></a>2.googleMap.ts代码</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">import Vue from &apos;vue&apos;</span><br><span class="line">import * as VueGoogleMaps from &apos;vue2-google-maps&apos;</span><br><span class="line"></span><br><span class="line">Vue.use(VueGoogleMaps, &#123;</span><br><span class="line">  load: &#123;</span><br><span class="line">    key: &apos;YOUR_API_TOKEN&apos;,// 替换成可用的API Key</span><br><span class="line">    libraries: &apos;places&apos;,</span><br><span class="line">  &#125;,</span><br><span class="line">  installComponents: true</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>错误：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Could not find a declaration file for module &apos;vue2-google-maps&apos;.</span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
+<p>解决：<br>创建vue2-google-maps.d.ts,并添加以下内容<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">declare module &apos;vue2-google-maps&apos; &#123;</span><br><span class="line"></span><br><span class="line">  //如果Vue.use报错则加入以下两行</span><br><span class="line">  import &#123; PluginFunction &#125; from &quot;vue&quot;;</span><br><span class="line">  export const install: PluginFunction&lt;&#123;&#125;&gt;;</span><br><span class="line"></span><br><span class="line">  // 将下列url返回的内容添加在这里</span><br><span class="line">  // https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/master/types/googlemaps/index.d.ts</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>参考：<a href="https://github.com/xkjyeah/vue-google-maps/issues/560" target="_blank" rel="noopener">https://github.com/xkjyeah/vue-google-maps/issues/560</a></p>
+<h5 id="3-googleMap-html"><a href="#3-googleMap-html" class="headerlink" title="3.googleMap.html"></a>3.googleMap.html</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;GmapMap</span><br><span class="line">  :center=&quot;&#123;lat:10, lng:10&#125;&quot;</span><br><span class="line">  :zoom=&quot;7&quot;</span><br><span class="line">  map-type-id=&quot;terrain&quot;</span><br><span class="line">  style=&quot;width: 500px; height: 300px&quot;</span><br><span class="line">&gt;</span><br><span class="line">&lt;/GmapMap&gt;</span><br></pre></td></tr></table></figure>
+<p>错误：如果是单页面应用则不会出现以下错误<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">error .../node_modules/vue2-google-maps/dist/components/infoWindow.vue:3</span><br><span class="line">^</span><br><span class="line"></span><br><span class="line">SyntaxError: Unexpected token &lt;</span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
+<p>解决：需要将ssr相关配置关闭，不同框架修改不同，本人是使用Quasar框架需修改以下配置<br>package.json<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  ...</span><br><span class="line">  &quot;scripts&quot;: &#123;</span><br><span class="line">    &quot;serve&quot;: &quot;quasar dev -m ssr&quot; // 将ssr修改为spa</span><br><span class="line">    ...</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>quasar.conf.js<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">module.exports = function () &#123;</span><br><span class="line">  return &#123;</span><br><span class="line">    ...</span><br><span class="line">    preFetch: true // 修改为false</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="Typescript版本集成-服务端渲染"><a href="#Typescript版本集成-服务端渲染" class="headerlink" title="Typescript版本集成(服务端渲染)"></a>Typescript版本集成(服务端渲染)</h4><h5 id="1-googleMap-ts代码"><a href="#1-googleMap-ts代码" class="headerlink" title="1.googleMap.ts代码"></a>1.googleMap.ts代码</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">mounted() &#123;</span><br><span class="line">  this.loadAMapJS().then(result =&gt; &#123;</span><br><span class="line">    if (result) &#123;</span><br><span class="line">      //刷新地图初始化</span><br><span class="line">      this.initialize();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">loadAMapJS() &#123;</span><br><span class="line">  return new Promise((resolve, reject) =&gt; &#123;</span><br><span class="line">    // 替换成可用的API Key</span><br><span class="line">    this.asyncLoadJs(&apos;https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&apos;)</span><br><span class="line">      .then((result) =&gt; &#123;</span><br><span class="line">        resolve(result)</span><br><span class="line">      &#125;)</span><br><span class="line">      .catch(err =&gt; &#123;</span><br><span class="line">        reject(err)</span><br><span class="line">      &#125;)</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">asyncLoadJs(url: any) &#123;</span><br><span class="line">  return new Promise((resolve, reject) =&gt; &#123;</span><br><span class="line">    const hasLoaded = document.getElementById(&quot;googleMapScript&quot;);</span><br><span class="line">    if (hasLoaded) &#123;</span><br><span class="line">      resolve(true)</span><br><span class="line">      return</span><br><span class="line">    &#125;</span><br><span class="line">    const script = document.createElement(&apos;script&apos;)</span><br><span class="line">    script.type = &apos;text/javascript&apos;</span><br><span class="line">    script.id = &quot;googleMapScript&quot;</span><br><span class="line">    script.src = url</span><br><span class="line">    document.body.appendChild(script)</span><br><span class="line">    script.onload = () =&gt; &#123;</span><br><span class="line">      resolve(true)</span><br><span class="line">    &#125;</span><br><span class="line">    script.onerror = () =&gt; &#123;</span><br><span class="line">      reject(false)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//初始化地圖</span><br><span class="line">initialize() &#123;</span><br><span class="line">  this.centerDot = new google.maps.LatLng(22.2041179884, 113.557519102);</span><br><span class="line">  const options = &#123;</span><br><span class="line">    zoom: 12,</span><br><span class="line">    center: this.centerDot, // 設定地圖中心點</span><br><span class="line">    mapTypeId: google.maps.MapTypeId.ROADMAP // HYBRID,ROADMAP,SATELLITE,TERRAIN</span><br><span class="line">  &#125;;</span><br><span class="line">  this.map = new google.maps.Map(document.getElementById(&quot;map&quot;), options);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>错误：有可能会出现<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Cannot find name &apos;google&apos;</span><br></pre></td></tr></table></figure></p>
+<p>解决：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">declare let google: any;</span><br></pre></td></tr></table></figure></p>
+<h5 id="2-googleMap-html"><a href="#2-googleMap-html" class="headerlink" title="2.googleMap.html"></a>2.googleMap.html</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;div id=&quot;map&quot; style=&quot;height: 600px; width: 1000px;&quot;&gt;&lt;/div&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="界面问题"><a href="#界面问题" class="headerlink" title="界面问题"></a>界面问题</h4><h5 id="1-出现此页面无法正确加载Google地图。的弹窗"><a href="#1-出现此页面无法正确加载Google地图。的弹窗" class="headerlink" title="1.出现此页面无法正确加载Google地图。的弹窗"></a>1.出现此页面无法正确加载Google地图。的弹窗</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">限制密钥</span><br><span class="line">在Google云平台的[应用限制]里我们对密钥使用进行限制，只允许特定的地址使用密钥，这样可以防止我们的配额泄露或被窃取。</span><br></pre></td></tr></table></figure>
+<h5 id="2-出现For-development-purposes-only的覆盖层"><a href="#2-出现For-development-purposes-only的覆盖层" class="headerlink" title="2.出现For development purposes only的覆盖层"></a>2.出现For development purposes only的覆盖层</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">正常使用API Key需要开通结算账户</span><br><span class="line">在Google云平台的[导航菜单]-[结算]中关联结算账户，注意需要信用卡验证身份，支持VISA、运通、JCB、MasterCard，暂不支持银联。</span><br><span class="line">验证身份时会先扣除一美元，验证成功后会返还。</span><br></pre></td></tr></table></figure>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2019/12/28/googel_map集成/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a class="link-unstyled" href="/2019/12/28/树形结构业务模型/">
+                            树形结构业务模型实践
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2019-12-28T23:01:53+08:00">
+	
+		    12月 28, 2019
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <h3 id="数据库表结构"><a href="#数据库表结构" class="headerlink" title="数据库表结构"></a>数据库表结构</h3><p>TREE表：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">ID    P_CODE      CODE          NAME</span><br><span class="line">1      null       001           1级1</span><br><span class="line">2      null       002           1级2</span><br><span class="line">3      null       003           1级3</span><br><span class="line">4      001        001001        2级1</span><br><span class="line">5      002        002001        2级2</span><br><span class="line">6      002        002002        2级3</span><br><span class="line">7      003        003001        2级4</span><br><span class="line">8      003001     003001001     3级1</span><br><span class="line">9      003001001  003001001001  4级1</span><br></pre></td></tr></table></figure></p>
+<h3 id="Mybatis"><a href="#Mybatis" class="headerlink" title="Mybatis"></a>Mybatis</h3><p>treeMapper.xml：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;mapper ...&gt;</span><br><span class="line">  &lt;select id=&quot;list&quot; ...&gt;</span><br><span class="line">    SELECT * FROM TREE</span><br><span class="line">  &lt;/select&gt;</span><br><span class="line">&lt;/mapper&gt;</span><br></pre></td></tr></table></figure></p>
+<h3 id="Java"><a href="#Java" class="headerlink" title="Java"></a>Java</h3><p>Node:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public class Node &#123;</span><br><span class="line">  private Long id;</span><br><span class="line"></span><br><span class="line">  private String pCode;</span><br><span class="line"></span><br><span class="line">  private String code;</span><br><span class="line"></span><br><span class="line">  private String name;</span><br><span class="line"></span><br><span class="line">  private List&lt;Node&gt; children;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>TreeMapper：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public interface TreeMapper &#123;</span><br><span class="line">  List&lt;Node&gt; list();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>TreeService:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">@Service</span><br><span class="line">public class TreeService &#123;</span><br><span class="line"></span><br><span class="line">  @Autowired</span><br><span class="line">  private TreeMapper treeMapper;</span><br><span class="line"></span><br><span class="line">  public List&lt;Node&gt; getTree() &#123;</span><br><span class="line">    List&lt;Node&gt; list = treeMapper.list();</span><br><span class="line">    return getFatherNode(list);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  private List&lt;Node&gt; getFatherNode(List&lt;Node&gt; treesList) &#123;</span><br><span class="line">    List&lt;Node&gt; newTrees = new ArrayList&lt;&gt;();</span><br><span class="line">    for (Node node : treesList) &#123;</span><br><span class="line">      if (StringUtils.isEmpty(node.getPCode())) &#123;//如果pCode为空，则该节点为父节点</span><br><span class="line">        //递归获取父节点下的子节点</span><br><span class="line">        node.setChildren(getChildrenNode(node.getCode(), treesList));</span><br><span class="line">        newTrees.add(node);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return newTrees;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  private List&lt;Node&gt; getChildrenNode(String pCode, List&lt;Node&gt; treesList) &#123;</span><br><span class="line">    List&lt;Node&gt; newTrees = new ArrayList&lt;&gt;();</span><br><span class="line">    for (Node node : treesList) &#123;</span><br><span class="line">      if (StringUtils.isEmpty(node.getPCode())) continue;</span><br><span class="line">      if (node.getPCode().equals(pCode)) &#123;</span><br><span class="line">        //递归获取子节点下的子节点，即设置树控件中的children</span><br><span class="line">        node.setChildren(getChildrenNode(node.getCode(), treesList));</span><br><span class="line">        newTrees.add(node);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return newTrees;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>参考：<a href="https://www.cnblogs.com/WHqingwei/p/5852657.html" target="_blank" rel="noopener">https://www.cnblogs.com/WHqingwei/p/5852657.html</a></p>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2019/12/28/树形结构业务模型/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
                         <a class="link-unstyled" href="/2019/09/16/中介者模式/">
                             中介者模式
                         </a>
@@ -583,112 +691,6 @@
                     
                         <p>
                             <a href="/2019/09/10/享元模式/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2019/09/10/外观模式/">
-                            外观模式
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-09-10T14:35:25+08:00">
-	
-		    9月 10, 2019
-    	
-    </time>
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-content">
-                    <div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/51.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/51.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/52.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/52.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/53.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/53.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/54.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/54.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/55.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/55.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public interface 工商局  &#123;</span><br><span class="line">	void checkName();  //核名</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class 海淀区工商局 implements 工商局 &#123;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void checkName() &#123;</span><br><span class="line">		System.out.println(&quot;检查名字是否有冲突！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public interface 质检局 &#123;</span><br><span class="line">	void  orgCodeCertificate();  //办理组织机构代码证</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">class 海淀质检局 implements 质检局 &#123;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void orgCodeCertificate() &#123;</span><br><span class="line">		System.out.println(&quot;在海淀区质检局办理组织机构代码证！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public interface 银行 &#123;</span><br><span class="line">	void  openAccount();  //开户</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">class 中国工商银行 implements 银行 &#123;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void openAccount() &#123;</span><br><span class="line">		System.out.println(&quot;在中国工商银行开户！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public interface 税务局 &#123;</span><br><span class="line">	void taxCertificate();  //办理税务登记证</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">class 海淀税务局 implements 税务局 &#123;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void taxCertificate() &#123;</span><br><span class="line">		System.out.println(&quot;在海淀税务局办理税务登记证！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 办理注册公司流程的门面对象</span><br><span class="line"> * @author Administrator</span><br><span class="line"> *</span><br><span class="line"> */</span><br><span class="line">public class RegisterFacade &#123;</span><br><span class="line">	public void register()&#123;</span><br><span class="line">		工商局  a = new 海淀区工商局();</span><br><span class="line">		a.checkName();</span><br><span class="line">		质检局 b = new 海淀质检局();</span><br><span class="line">		b.orgCodeCertificate();</span><br><span class="line">		税务局  c  = new 海淀税务局();</span><br><span class="line">		c.taxCertificate();</span><br><span class="line">		银行  d = new 中国工商银行();</span><br><span class="line">		d.openAccount();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public class Client1 &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">//		工商局  a = new 海淀区工商局();</span><br><span class="line">//		a.checkName();</span><br><span class="line">//		质检局 b = new 海淀质检局();</span><br><span class="line">//		b.orgCodeCertificate();</span><br><span class="line">//		税务局  c  = new 海淀税务局();</span><br><span class="line">//		c.taxCertificate();</span><br><span class="line">//		银行  d = new 中国工商银行();</span><br><span class="line">//		d.openAccount();</span><br><span class="line"></span><br><span class="line">		new RegisterFacade().register();</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2019/09/10/外观模式/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2019/09/10/适配器模式/">
-                            适配器模式
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-09-10T14:35:24+08:00">
-	
-		    9月 10, 2019
-    	
-    </time>
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-content">
-                    <div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/26.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/26.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/27.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/27.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/28.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/28.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 被适配的类</span><br><span class="line"> */</span><br><span class="line">public class Adaptee &#123;</span><br><span class="line">	public void request()&#123;</span><br><span class="line">		System.out.println(&quot;可以完成客户请求的需要的功能！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public interface Target &#123;</span><br><span class="line">	void handleReq();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 适配器 (类适配器方式)</span><br><span class="line"> */</span><br><span class="line">public class Adapter extends Adaptee implements Target &#123;</span><br><span class="line">	@Override</span><br><span class="line">	public void handleReq() &#123;</span><br><span class="line">		super.request();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 适配器 (对象适配器方式,使用了组合的方式跟被适配对象整合)</span><br><span class="line"> */</span><br><span class="line">public class Adapter2  implements Target &#123;</span><br><span class="line">	private Adaptee adaptee;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void handleReq() &#123;</span><br><span class="line">		adaptee.request();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public Adapter2(Adaptee adaptee) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.adaptee = adaptee;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 客户端类</span><br><span class="line"> */</span><br><span class="line">public class Client &#123;</span><br><span class="line">	public void test1(Target t)&#123;</span><br><span class="line">		t.handleReq();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		Client  c = new Client();</span><br><span class="line"></span><br><span class="line">		Adaptee a = new Adaptee();</span><br><span class="line"></span><br><span class="line">//		Target t = new Adapter();</span><br><span class="line"></span><br><span class="line">		Target t = new Adapter2(a);</span><br><span class="line"></span><br><span class="line">		c.test1(t);</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/29.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/29.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/30.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/30.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/31.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/31.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2019/09/10/适配器模式/#post-footer" class="postShorten-excerpt_link link">
                                 评论和共享
                             </a>
                         </p>

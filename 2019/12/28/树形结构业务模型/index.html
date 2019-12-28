@@ -1,0 +1,451 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Brotherc">
+    <title>树形结构业务模型实践 - Brotherc</title>
+    <meta name="author" content="Brotherc">
+    
+    
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"数据库表结构TREE表：12345678910ID    P_CODE      CODE          NAME1      null       001           1级12      null       002           1级23      null       003           1级34      001        001001        2级15      002        002001        2级26      002        002002        2级37      003        003001        2级48      003001     003001001     3级19      003001001  003001001001  4级1\nMybatistreeMapper.xml：12345&lt;mapper ...&gt;  &lt;select id=&quot;list&quot; ...&gt;    SELECT * FROM TREE  &lt;/select&gt;&lt;/mapper&gt;\nJavaNode:1234567891011public class Node &#123;  private Long id;  private String pCode;  private String code;  private String name;  private List&lt;Node&gt; children;&#125;\nTreeMapper：123public interface TreeMapper &#123;  List&lt;Node&gt; list();&#125;\nTreeService:123456789101112131415161718192021222324252627282930313233343536@Servicepublic class TreeService &#123;  @Autowired  private TreeMapper treeMapper;  public List&lt;Node&gt; getTree() &#123;    List&lt;Node&gt; list = treeMapper.list();    return getFatherNode(list);  &#125;  private List&lt;Node&gt; getFatherNode(List&lt;Node&gt; treesList) &#123;    List&lt;Node&gt; newTrees = new ArrayList&lt;&gt;();    for (Node node : treesList) &#123;      if (StringUtils.isEmpty(node.getPCode())) &#123;//如果pCode为空，则该节点为父节点        //递归获取父节点下的子节点        node.setChildren(getChildrenNode(node.getCode(), treesList));        newTrees.add(node);      &#125;    &#125;    return newTrees;  &#125;  private List&lt;Node&gt; getChildrenNode(String pCode, List&lt;Node&gt; treesList) &#123;    List&lt;Node&gt; newTrees = new ArrayList&lt;&gt;();    for (Node node : treesList) &#123;      if (StringUtils.isEmpty(node.getPCode())) continue;      if (node.getPCode().equals(pCode)) &#123;        //递归获取子节点下的子节点，即设置树控件中的children        node.setChildren(getChildrenNode(node.getCode(), treesList));        newTrees.add(node);      &#125;    &#125;    return newTrees;  &#125;&#125;\n参考：https://www.cnblogs.com/WHqingwei/p/5852657.html\n","dateCreated":"2019-12-28T23:01:53+08:00","dateModified":"2019-12-28T23:00:01+08:00","datePublished":"2019-12-28T23:01:53+08:00","description":"","headline":"树形结构业务模型实践","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/12/28/树形结构业务模型/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/12/28/树形结构业务模型/","keywords":"java"}</script>
+    <meta name="description" content="数据库表结构TREE表：12345678910ID    P_CODE      CODE          NAME1      null       001           1级12      null       002           1级23      null       003           1级34      001        001001        2级15">
+<meta name="keywords" content="java">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="树形结构业务模型实践">
+<meta property="og:url" content="http://yoursite.com/2019/12/28/树形结构业务模型/index.html">
+<meta property="og:site_name" content="Brotherc">
+<meta property="og:description" content="数据库表结构TREE表：12345678910ID    P_CODE      CODE          NAME1      null       001           1级12      null       002           1级23      null       003           1级34      001        001001        2级15">
+<meta property="og:locale" content="zh-cn">
+<meta property="og:updated_time" content="2019-12-28T15:00:01.812Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="树形结构业务模型实践">
+<meta name="twitter:description" content="数据库表结构TREE表：12345678910ID    P_CODE      CODE          NAME1      null       001           1级12      null       002           1级23      null       003           1级34      001        001001        2级15">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://yoursite.com/assets/images/head.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-c4ozcsklz4kht2pebhp44xorvyverh23toayhn7i6ubrpyedak24hv1v0hyd.min.css">
+    <!--STYLES END-->
+    
+
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/ ">Brotherc</a>
+    </div>
+    
+        
+            <a class="header-right-picture " href="#about">
+        
+        
+            <img class="header-picture" src="/assets/images/head.jpg" alt="作者的图片">
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/#about">
+                    <img class="sidebar-profile-picture" src="/assets/images/head.jpg" alt="作者的图片">
+                </a>
+                <h4 class="sidebar-profile-name">Brotherc</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>java development</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/ " title="首页">
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">首页</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-categories" title="分类">
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">分类</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-tags" title="标签">
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">标签</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link open-algolia-search" href="/all-archives" title="归档">
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">归档</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="#about" title="关于">
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">关于</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://github.com/Brotherc" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="4"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            树形结构业务模型实践
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-12-28T23:01:53+08:00">
+	
+		    12月 28, 2019
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <h3 id="数据库表结构"><a href="#数据库表结构" class="headerlink" title="数据库表结构"></a>数据库表结构</h3><p>TREE表：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">ID    P_CODE      CODE          NAME</span><br><span class="line">1      null       001           1级1</span><br><span class="line">2      null       002           1级2</span><br><span class="line">3      null       003           1级3</span><br><span class="line">4      001        001001        2级1</span><br><span class="line">5      002        002001        2级2</span><br><span class="line">6      002        002002        2级3</span><br><span class="line">7      003        003001        2级4</span><br><span class="line">8      003001     003001001     3级1</span><br><span class="line">9      003001001  003001001001  4级1</span><br></pre></td></tr></table></figure></p>
+<h3 id="Mybatis"><a href="#Mybatis" class="headerlink" title="Mybatis"></a>Mybatis</h3><p>treeMapper.xml：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;mapper ...&gt;</span><br><span class="line">  &lt;select id=&quot;list&quot; ...&gt;</span><br><span class="line">    SELECT * FROM TREE</span><br><span class="line">  &lt;/select&gt;</span><br><span class="line">&lt;/mapper&gt;</span><br></pre></td></tr></table></figure></p>
+<h3 id="Java"><a href="#Java" class="headerlink" title="Java"></a>Java</h3><p>Node:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public class Node &#123;</span><br><span class="line">  private Long id;</span><br><span class="line"></span><br><span class="line">  private String pCode;</span><br><span class="line"></span><br><span class="line">  private String code;</span><br><span class="line"></span><br><span class="line">  private String name;</span><br><span class="line"></span><br><span class="line">  private List&lt;Node&gt; children;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>TreeMapper：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public interface TreeMapper &#123;</span><br><span class="line">  List&lt;Node&gt; list();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>TreeService:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">@Service</span><br><span class="line">public class TreeService &#123;</span><br><span class="line"></span><br><span class="line">  @Autowired</span><br><span class="line">  private TreeMapper treeMapper;</span><br><span class="line"></span><br><span class="line">  public List&lt;Node&gt; getTree() &#123;</span><br><span class="line">    List&lt;Node&gt; list = treeMapper.list();</span><br><span class="line">    return getFatherNode(list);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  private List&lt;Node&gt; getFatherNode(List&lt;Node&gt; treesList) &#123;</span><br><span class="line">    List&lt;Node&gt; newTrees = new ArrayList&lt;&gt;();</span><br><span class="line">    for (Node node : treesList) &#123;</span><br><span class="line">      if (StringUtils.isEmpty(node.getPCode())) &#123;//如果pCode为空，则该节点为父节点</span><br><span class="line">        //递归获取父节点下的子节点</span><br><span class="line">        node.setChildren(getChildrenNode(node.getCode(), treesList));</span><br><span class="line">        newTrees.add(node);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return newTrees;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  private List&lt;Node&gt; getChildrenNode(String pCode, List&lt;Node&gt; treesList) &#123;</span><br><span class="line">    List&lt;Node&gt; newTrees = new ArrayList&lt;&gt;();</span><br><span class="line">    for (Node node : treesList) &#123;</span><br><span class="line">      if (StringUtils.isEmpty(node.getPCode())) continue;</span><br><span class="line">      if (node.getPCode().equals(pCode)) &#123;</span><br><span class="line">        //递归获取子节点下的子节点，即设置树控件中的children</span><br><span class="line">        node.setChildren(getChildrenNode(node.getCode(), treesList));</span><br><span class="line">        newTrees.add(node);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return newTrees;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>参考：<a href="https://www.cnblogs.com/WHqingwei/p/5852657.html" target="_blank" rel="noopener">https://www.cnblogs.com/WHqingwei/p/5852657.html</a></p>
+
+            
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">标签</span><br>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/java/">java</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/12/28/googel_map集成/" data-tooltip="Google Map集成" aria-label="上一篇: Google Map集成">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/09/16/中介者模式/" data-tooltip="中介者模式" aria-label="下一篇: 中介者模式">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/12/28/树形结构业务模型/" title="分享到 Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/12/28/树形结构业务模型/" title="分享到 Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/12/28/树形结构业务模型/" title="分享到 Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 Brotherc. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/12/28/googel_map集成/" data-tooltip="Google Map集成" aria-label="上一篇: Google Map集成">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/09/16/中介者模式/" data-tooltip="中介者模式" aria-label="下一篇: 中介者模式">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/12/28/树形结构业务模型/" title="分享到 Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/12/28/树形结构业务模型/" title="分享到 Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/12/28/树形结构业务模型/" title="分享到 Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/12/28/树形结构业务模型/">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>分享到 Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/12/28/树形结构业务模型/">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/12/28/树形结构业务模型/">
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>分享到 Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/head.jpg" alt="作者的图片">
+        
+            <h4 id="about-card-name">Brotherc</h4>
+        
+            <div id="about-card-bio"><p>java development</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br>
+                <p>java</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br>
+                zhuhai
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-dbd16rvloemmuxdzniplmnxxvwoz24eya9wol0b7vvmlokgqsjivmb8dnscy.min.js"></script>
+<!--SCRIPTS END-->
+
+    
+
+
+
+    </body>
+</html>
