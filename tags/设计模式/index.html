@@ -166,6 +166,383 @@
             <div class="postShorten-header">
                 <h1 class="postShorten-title">
                     
+                        <a class="link-unstyled" href="/2020/01/26/观察者模式/">
+                            观察者模式
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2020-01-26T18:12:46+08:00">
+	
+		    1月 26, 2020
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <p><img src="assets/设计模式/97.jpg" alt="97"><br><img src="assets/设计模式/98.jpg" alt="98"><br><img src="assets/设计模式/99.jpg" alt="99"><br><img src="assets/设计模式/100.jpg" alt="100"><br><img src="assets/设计模式/101.jpg" alt="101"><br><img src="assets/设计模式/102.jpg" alt="102"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public interface Observer &#123;</span><br><span class="line">	void  update(Subject subject);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public class ObserverA implements Observer &#123;</span><br><span class="line">	private int myState;   //myState需要跟目标对象的state值保持一致！</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void update(Subject subject) &#123;</span><br><span class="line">		myState = ((ConcreteSubject)subject).getState();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public int getMyState() &#123;</span><br><span class="line">		return myState;</span><br><span class="line">	&#125;</span><br><span class="line">	public void setMyState(int myState) &#123;</span><br><span class="line">		this.myState = myState;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">public class Subject &#123;</span><br><span class="line">	protected List&lt;Observer&gt; list = new ArrayList&lt;Observer&gt;();</span><br><span class="line"></span><br><span class="line">	public void registerObserver(Observer obs)&#123;</span><br><span class="line">		list.add(obs);</span><br><span class="line">	&#125;</span><br><span class="line">	public void removeObserver(Observer obs)&#123;</span><br><span class="line">		list.add(obs);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	//通知所有的观察者更新状态</span><br><span class="line">	public void notifyAllObservers()&#123;</span><br><span class="line">		for (Observer obs : list) &#123;</span><br><span class="line">			obs.update(this);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public class ConcreteSubject extends Subject &#123;</span><br><span class="line">	private int state;</span><br><span class="line"></span><br><span class="line">	public int getState() &#123;</span><br><span class="line">		return state;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setState(int state) &#123;</span><br><span class="line">		this.state = state;</span><br><span class="line">		//主题对象(目标对象)值发生了变化，请通知所有的观察者</span><br><span class="line">		this.notifyAllObservers();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">public class Client &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		//目标对象</span><br><span class="line">		ConcreteSubject subject = new ConcreteSubject();</span><br><span class="line"></span><br><span class="line">		//创建多个观察者</span><br><span class="line">		ObserverA  obs1 = new ObserverA();</span><br><span class="line">		ObserverA  obs2 = new ObserverA();</span><br><span class="line">		ObserverA  obs3 = new ObserverA();</span><br><span class="line"></span><br><span class="line">		//将这三个观察者添加到subject对象的观察者队伍中</span><br><span class="line">		subject.registerObserver(obs1);</span><br><span class="line">		subject.registerObserver(obs2);</span><br><span class="line">		subject.registerObserver(obs3);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">		//改变subject的状态</span><br><span class="line">		subject.setState(3000);</span><br><span class="line">		System.out.println(&quot;########################&quot;);</span><br><span class="line">		//我们看看，观察者的状态是不是也发生了变化</span><br><span class="line">		System.out.println(obs1.getMyState());</span><br><span class="line">		System.out.println(obs2.getMyState());</span><br><span class="line">		System.out.println(obs3.getMyState());</span><br><span class="line"></span><br><span class="line">		//改变subject的状态</span><br><span class="line">		subject.setState(30);</span><br><span class="line">		System.out.println(&quot;########################&quot;);</span><br><span class="line">		//我们看看，观察者的状态是不是也发生了变化</span><br><span class="line">		System.out.println(obs1.getMyState());</span><br><span class="line">		System.out.println(obs2.getMyState());</span><br><span class="line">		System.out.println(obs3.getMyState());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">import java.util.Observable;</span><br><span class="line">import java.util.Observer;</span><br><span class="line"></span><br><span class="line">public class ObserverA implements Observer &#123;</span><br><span class="line">	private int myState;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void update(Observable o, Object arg) &#123;</span><br><span class="line">		myState = ((ConcreteSubject)o).getState();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public int getMyState() &#123;</span><br><span class="line">		return myState;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setMyState(int myState) &#123;</span><br><span class="line">		this.myState = myState;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">import java.util.Observable;</span><br><span class="line"></span><br><span class="line">//目标对象</span><br><span class="line">public class ConcreteSubject extends Observable &#123;</span><br><span class="line">	private int state;</span><br><span class="line"></span><br><span class="line">	public void set(int s)&#123;</span><br><span class="line">		state = s;  //目标对象的状态发生了改变</span><br><span class="line"></span><br><span class="line">		setChanged();  //表示目标对象已经做了更改</span><br><span class="line">		notifyObservers(state);  //通知所有的观察者</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public int getState() &#123;</span><br><span class="line">		return state;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setState(int state) &#123;</span><br><span class="line">		this.state = state;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">public class Client &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		//创建目标对象Obserable</span><br><span class="line">		ConcreteSubject subject = new ConcreteSubject();</span><br><span class="line"></span><br><span class="line">		//创建观察者</span><br><span class="line">		ObserverA obs1 = new ObserverA();</span><br><span class="line">		ObserverA obs2 = new ObserverA();</span><br><span class="line">		ObserverA obs3 = new ObserverA();</span><br><span class="line"></span><br><span class="line">		//将上面三个观察者对象添加到目标对象subject的观察者容器中</span><br><span class="line">		subject.addObserver(obs1);</span><br><span class="line">		subject.addObserver(obs2);</span><br><span class="line">		subject.addObserver(obs3);</span><br><span class="line"></span><br><span class="line">		//改变subject对象的状态</span><br><span class="line">		subject.set(3000);</span><br><span class="line">		System.out.println(&quot;===============状态修改了！&quot;);</span><br><span class="line">		//观察者的状态发生了变化</span><br><span class="line">		System.out.println(obs1.getMyState());</span><br><span class="line">		System.out.println(obs2.getMyState());</span><br><span class="line">		System.out.println(obs3.getMyState());</span><br><span class="line"></span><br><span class="line">		subject.set(600);</span><br><span class="line">		System.out.println(&quot;===============状态修改了！&quot;);</span><br><span class="line">		//观察者的状态发生了变化</span><br><span class="line">		System.out.println(obs1.getMyState());</span><br><span class="line">		System.out.println(obs2.getMyState());</span><br><span class="line">		System.out.println(obs3.getMyState());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2020/01/26/观察者模式/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a class="link-unstyled" href="/2020/01/26/备忘录模式/">
+                            备忘录模式
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2020-01-26T18:01:33+08:00">
+	
+		    1月 26, 2020
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <p><img src="assets/设计模式/94.jpg" alt="94"><br><img src="assets/设计模式/95.jpg" alt="95"><br><img src="assets/设计模式/96.jpg" alt="96"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 源发器类</span><br><span class="line"> */</span><br><span class="line">public class Emp &#123;</span><br><span class="line">	private String ename;</span><br><span class="line">	private int age;</span><br><span class="line">	private double salary;</span><br><span class="line"></span><br><span class="line">	//进行备忘操作，并返回备忘录对象</span><br><span class="line">	public EmpMemento  memento()&#123;</span><br><span class="line">		return new EmpMemento(this);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	//进行数据恢复，恢复成制定备忘录对象的值</span><br><span class="line">	public void recovery(EmpMemento mmt)&#123;</span><br><span class="line">		this.ename = mmt.getEname();</span><br><span class="line">		this.age = mmt.getAge();</span><br><span class="line">		this.salary = mmt.getSalary();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public Emp(String ename, int age, double salary) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.ename = ename;</span><br><span class="line">		this.age = age;</span><br><span class="line">		this.salary = salary;</span><br><span class="line">	&#125;</span><br><span class="line">	public String getEname() &#123;</span><br><span class="line">		return ename;</span><br><span class="line">	&#125;</span><br><span class="line">	public void setEname(String ename) &#123;</span><br><span class="line">		this.ename = ename;</span><br><span class="line">	&#125;</span><br><span class="line">	public int getAge() &#123;</span><br><span class="line">		return age;</span><br><span class="line">	&#125;</span><br><span class="line">	public void setAge(int age) &#123;</span><br><span class="line">		this.age = age;</span><br><span class="line">	&#125;</span><br><span class="line">	public double getSalary() &#123;</span><br><span class="line">		return salary;</span><br><span class="line">	&#125;</span><br><span class="line">	public void setSalary(double salary) &#123;</span><br><span class="line">		this.salary = salary;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 备忘录类</span><br><span class="line"> */</span><br><span class="line">public class EmpMemento &#123;</span><br><span class="line">	private String ename;</span><br><span class="line">	private int age;</span><br><span class="line">	private double salary;</span><br><span class="line"></span><br><span class="line">	public EmpMemento(Emp e) &#123;</span><br><span class="line">		this.ename = e.getEname();</span><br><span class="line">		this.age = e.getAge();</span><br><span class="line">		this.salary = e.getSalary();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public String getEname() &#123;</span><br><span class="line">		return ename;</span><br><span class="line">	&#125;</span><br><span class="line">	public void setEname(String ename) &#123;</span><br><span class="line">		this.ename = ename;</span><br><span class="line">	&#125;</span><br><span class="line">	public int getAge() &#123;</span><br><span class="line">		return age;</span><br><span class="line">	&#125;</span><br><span class="line">	public void setAge(int age) &#123;</span><br><span class="line">		this.age = age;</span><br><span class="line">	&#125;</span><br><span class="line">	public double getSalary() &#123;</span><br><span class="line">		return salary;</span><br><span class="line">	&#125;</span><br><span class="line">	public void setSalary(double salary) &#123;</span><br><span class="line">		this.salary = salary;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 负责人类</span><br><span class="line"> * 负责管理备忘录对象</span><br><span class="line"> */</span><br><span class="line">public class CareTaker &#123;</span><br><span class="line">	private EmpMemento memento;</span><br><span class="line">//	private List&lt;EmpMemento&gt; list = new ArrayList&lt;EmpMemento&gt;();</span><br><span class="line"></span><br><span class="line">	public EmpMemento getMemento() &#123;</span><br><span class="line">		return memento;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setMemento(EmpMemento memento) &#123;</span><br><span class="line">		this.memento = memento;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">public class Client &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		CareTaker taker = new CareTaker();</span><br><span class="line">		</span><br><span class="line">		Emp emp = new Emp(&quot;高淇&quot;, 18, 900);</span><br><span class="line">		System.out.println(&quot;第一次打印对象：&quot;+emp.getEname()+&quot;---&quot;+emp.getAge()+&quot;---&quot;+emp.getSalary());</span><br><span class="line"></span><br><span class="line">		taker.setMemento(emp.memento());   //备忘一次</span><br><span class="line"></span><br><span class="line">		emp.setAge(38);</span><br><span class="line">		emp.setEname(&quot;搞起&quot;);</span><br><span class="line">		emp.setSalary(9000);</span><br><span class="line">		System.out.println(&quot;第二次打印对象：&quot;+emp.getEname()+&quot;---&quot;+emp.getAge()+&quot;---&quot;+emp.getSalary());</span><br><span class="line"></span><br><span class="line">		emp.recovery(taker.getMemento()); //恢复到备忘录对象保存的状态</span><br><span class="line"></span><br><span class="line">		System.out.println(&quot;第三次打印对象：&quot;+emp.getEname()+&quot;---&quot;+emp.getAge()+&quot;---&quot;+emp.getSalary());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2020/01/26/备忘录模式/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a class="link-unstyled" href="/2020/01/26/状态模式/">
+                            状态模式
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2020-01-26T17:43:32+08:00">
+	
+		    1月 26, 2020
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <p><img src="assets/设计模式/91.jpg" alt="91"><br><img src="assets/设计模式/92.jpg" alt="92"><br><img src="assets/设计模式/93.jpg" alt="93"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public interface State &#123;</span><br><span class="line">	void handle();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 已预订状态</span><br><span class="line"> */</span><br><span class="line">public class BookedState implements State &#123;</span><br><span class="line">	@Override</span><br><span class="line">	public void handle() &#123;</span><br><span class="line">		System.out.println(&quot;房间已预订！别人不能定！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 已入住状态</span><br><span class="line"> */</span><br><span class="line">public class CheckedInState implements State &#123;</span><br><span class="line">	@Override</span><br><span class="line">	public void handle() &#123;</span><br><span class="line">		System.out.println(&quot;房间已入住！请勿打扰！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 空闲状态</span><br><span class="line"> */</span><br><span class="line">public class FreeState implements State &#123;</span><br><span class="line">	@Override</span><br><span class="line">	public void handle() &#123;</span><br><span class="line">		System.out.println(&quot;房间空闲！！！没人住！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 房间对象</span><br><span class="line"> */</span><br><span class="line">public class HomeContext &#123;</span><br><span class="line">	//如果是银行系统，这个Context类就是账号。根据金额不同，切换不同的状态！</span><br><span class="line">	private State state;</span><br><span class="line"></span><br><span class="line">	public void setState(State s)&#123;</span><br><span class="line">		System.out.println(&quot;修改状态！&quot;);</span><br><span class="line">		state = s;</span><br><span class="line">		state.handle();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public class Client &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		HomeContext ctx = new HomeContext();</span><br><span class="line"></span><br><span class="line">		ctx.setState(new FreeState());</span><br><span class="line">		ctx.setState(new BookedState());</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2020/01/26/状态模式/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a class="link-unstyled" href="/2020/01/26/模板方法模式/">
+                            模板方法模式
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2020-01-26T17:28:29+08:00">
+	
+		    1月 26, 2020
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <p><img src="assets/设计模式/88.jpg" alt="88"><br><img src="assets/设计模式/89.jpg" alt="89"><br><img src="assets/设计模式/90.jpg" alt="90"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public abstract class BankTemplateMethod &#123;</span><br><span class="line">	//具体方法</span><br><span class="line">	public void takeNumber()&#123;</span><br><span class="line">		System.out.println(&quot;取号排队&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public abstract void transact(); //办理具体的业务	//钩子方法</span><br><span class="line"></span><br><span class="line">	public void evaluate()&#123;</span><br><span class="line">		System.out.println(&quot;反馈评分&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public final void process()&#123;	//模板方法！！！</span><br><span class="line">		this.takeNumber();</span><br><span class="line"></span><br><span class="line">		this.transact();</span><br><span class="line"></span><br><span class="line">		this.evaluate();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">class DrawMoney extends BankTemplateMethod &#123;</span><br><span class="line">	@Override</span><br><span class="line">	public void transact() &#123;</span><br><span class="line">		System.out.println(&quot;我要取款！！！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">public class Client &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		BankTemplateMethod btm = new DrawMoney();</span><br><span class="line">		btm.process();</span><br><span class="line"></span><br><span class="line">		//采用匿名内部类</span><br><span class="line">		BankTemplateMethod btm2 = new BankTemplateMethod() &#123;</span><br><span class="line"></span><br><span class="line">			@Override</span><br><span class="line">			public void transact() &#123;</span><br><span class="line">				System.out.println(&quot;我要存钱！&quot;);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;;</span><br><span class="line">		btm2.process();</span><br><span class="line"></span><br><span class="line">		BankTemplateMethod btm3 = new BankTemplateMethod() &#123;</span><br><span class="line">			@Override</span><br><span class="line">			public void transact() &#123;</span><br><span class="line">				System.out.println(&quot;我要理财！我这里有2000万韩币&quot;);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;;</span><br><span class="line"></span><br><span class="line">		btm3.process();</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2020/01/26/模板方法模式/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a class="link-unstyled" href="/2020/01/26/策略模式/">
+                            策略模式
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2020-01-26T17:02:37+08:00">
+	
+		    1月 26, 2020
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <p><img src="assets/设计模式/84.jpg" alt="84"><br><img src="assets/设计模式/85.jpg" alt="85"><br><img src="assets/设计模式/86.jpg" alt="86"><br><img src="assets/设计模式/87.jpg" alt="87"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 实现起来比较容易，符合一般开发人员的思路</span><br><span class="line"> * 假如，类型特别多，算法比较复杂时，整个条件语句的代码就变得很长，难于维护。</span><br><span class="line"> * 如果有新增类型，就需要频繁的修改此处的代码！</span><br><span class="line"> * 不符合开闭原则！</span><br><span class="line"> *</span><br><span class="line"> */</span><br><span class="line">public class TestStrategy &#123;</span><br><span class="line">	public double getPrice(String type, double price) &#123;</span><br><span class="line">		if (type.equals(&quot;普通客户小批量&quot;)) &#123;</span><br><span class="line">			System.out.println(&quot;不打折,原价&quot;);</span><br><span class="line">			return price;</span><br><span class="line">		&#125; else if (type.equals(&quot;普通客户大批量&quot;)) &#123;</span><br><span class="line">			System.out.println(&quot;打九折&quot;);</span><br><span class="line">			return price * 0.9;</span><br><span class="line">		&#125; else if (type.equals(&quot;老客户小批量&quot;)) &#123;</span><br><span class="line">			System.out.println(&quot;打八五折&quot;);</span><br><span class="line">			return price * 0.85;</span><br><span class="line">		&#125; else if (type.equals(&quot;老客户大批量&quot;)) &#123;</span><br><span class="line">			System.out.println(&quot;打八折&quot;);</span><br><span class="line">			return price * 0.8;</span><br><span class="line">		&#125;</span><br><span class="line">		return price;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public interface Strategy &#123;</span><br><span class="line">	public double getPrice(double  standardPrice);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public class OldCustomerFewStrategy implements Strategy &#123;</span><br><span class="line">	@Override</span><br><span class="line">	public double getPrice(double standardPrice) &#123;</span><br><span class="line">		System.out.println(&quot;打八五折&quot;);</span><br><span class="line">		return standardPrice*0.85;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public class OldCustomerManyStrategy implements Strategy &#123;</span><br><span class="line">	@Override</span><br><span class="line">	public double getPrice(double standardPrice) &#123;</span><br><span class="line">		System.out.println(&quot;打八折&quot;);</span><br><span class="line">		return standardPrice*0.8;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public class NewCustomerFewStrategy implements Strategy &#123;</span><br><span class="line">	@Override</span><br><span class="line">	public double getPrice(double standardPrice) &#123;</span><br><span class="line">		System.out.println(&quot;不打折，原价&quot;);</span><br><span class="line">		return standardPrice;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public class NewCustomerManyStrategy implements Strategy &#123;</span><br><span class="line">	@Override</span><br><span class="line">	public double getPrice(double standardPrice) &#123;</span><br><span class="line">		System.out.println(&quot;打九折&quot;);</span><br><span class="line">		return standardPrice*0.9;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 负责和具体的策略类交互</span><br><span class="line"> * 这样的话，具体的算法和直接的客户端调用分离了，使得算法可以独立于客户端独立的变化。</span><br><span class="line"> * 如果使用spring的依赖注入功能，还可以通过配置文件，动态的注入不同策略对象，动态的切换不同的算法.</span><br><span class="line"> *</span><br><span class="line"> */</span><br><span class="line">public class Context &#123;</span><br><span class="line">	private Strategy strategy;	//当前采用的算法对象</span><br><span class="line"></span><br><span class="line">	//可以通过构造器来注入</span><br><span class="line">	public Context(Strategy strategy) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.strategy = strategy;</span><br><span class="line">	&#125;</span><br><span class="line">	//可以通过set方法来注入</span><br><span class="line">	public void setStrategy(Strategy strategy) &#123;</span><br><span class="line">		this.strategy = strategy;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void pringPrice(double s)&#123;</span><br><span class="line">		System.out.println(&quot;您该报价：&quot;+strategy.getPrice(s));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public class Client &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		Strategy s1 = new OldCustomerManyStrategy();</span><br><span class="line">		Context ctx = new Context(s1);</span><br><span class="line">		ctx.pringPrice(998);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2020/01/26/策略模式/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a class="link-unstyled" href="/2020/01/26/访问者模式/">
+                            访问者模式
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2020-01-26T16:58:53+08:00">
+	
+		    1月 26, 2020
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <p><img src="assets/设计模式/83.jpg" alt="83"></p>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2020/01/26/访问者模式/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a class="link-unstyled" href="/2020/01/26/解释器模式/">
+                            解释器模式
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2020-01-26T16:47:46+08:00">
+	
+		    1月 26, 2020
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <p><img src="assets/设计模式/81.jpg" alt="81"><br><img src="assets/设计模式/82.jpg" alt="82"></p>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2020/01/26/解释器模式/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a class="link-unstyled" href="/2020/01/26/命令模式/">
+                            命令模式
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2020-01-26T16:27:53+08:00">
+	
+		    1月 26, 2020
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <p><img src="assets/设计模式/77.jpg" alt="77"><br><img src="assets/设计模式/78.jpg" alt="78"><br><img src="assets/设计模式/79.jpg" alt="79"><br><img src="assets/设计模式/80.jpg" alt="80"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 真正的命令的执行者</span><br><span class="line"> */</span><br><span class="line">public class Receiver &#123;</span><br><span class="line">	public void action()&#123;</span><br><span class="line">		System.out.println(&quot;Receiver.action()&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">public interface Command &#123;</span><br><span class="line">	/**</span><br><span class="line">	 * 这个方法是一个返回结果为空的方法。</span><br><span class="line">	 * 实际项目中，可以根据需求设计多个不同的方法</span><br><span class="line">	 */</span><br><span class="line">	void execute();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class ConcreteCommand implements Command &#123;</span><br><span class="line">	private Receiver receiver;	//命令的真正的执行者</span><br><span class="line"></span><br><span class="line">	public ConcreteCommand(Receiver receiver) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.receiver = receiver;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void execute() &#123;</span><br><span class="line">		//命令真正执行前或后，执行相关的处理！</span><br><span class="line">		receiver.action();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">//调用者/发起者</span><br><span class="line">public class Invoke &#123;</span><br><span class="line">	private Command command;   //也可以通过容器List&lt;Command&gt;容纳很多命令对象，进行批处理。数据库底层的事务管理就是类似的结构！</span><br><span class="line"></span><br><span class="line">	public Invoke(Command command) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.command = command;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	//业务方法 ，用于调用命令类的方法</span><br><span class="line">	public void call()&#123;</span><br><span class="line">		command.execute();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public class Client &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		Command c = new ConcreteCommand(new Receiver());</span><br><span class="line">		Invoke i = new Invoke(c);</span><br><span class="line">		i.call();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2020/01/26/命令模式/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
                         <a class="link-unstyled" href="/2019/09/16/中介者模式/">
                             中介者模式
                         </a>
@@ -261,418 +638,6 @@
         
     </article>
     
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2019/09/11/责任链模式/">
-                            责任链模式
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-09-11T18:25:31+08:00">
-	
-		    9月 11, 2019
-    	
-    </time>
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-content">
-                    <div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/62.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/62.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/63.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/63.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/64.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/64.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/65.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/65.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/66.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/66.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/67.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/67.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/68.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/68.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 封装请假的基本信息</span><br><span class="line"> */</span><br><span class="line">public class LeaveRequest &#123;</span><br><span class="line">	private String empName;</span><br><span class="line">	private int leaveDays;</span><br><span class="line">	private String reason;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	public LeaveRequest(String empName, int leaveDays, String reason) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.empName = empName;</span><br><span class="line">		this.leaveDays = leaveDays;</span><br><span class="line">		this.reason = reason;</span><br><span class="line">	&#125;</span><br><span class="line">	public String getEmpName() &#123;</span><br><span class="line">		return empName;</span><br><span class="line">	&#125;</span><br><span class="line">	public void setEmpName(String empName) &#123;</span><br><span class="line">		this.empName = empName;</span><br><span class="line">	&#125;</span><br><span class="line">	public int getLeaveDays() &#123;</span><br><span class="line">		return leaveDays;</span><br><span class="line">	&#125;</span><br><span class="line">	public void setLeaveDays(int leaveDays) &#123;</span><br><span class="line">		this.leaveDays = leaveDays;</span><br><span class="line">	&#125;</span><br><span class="line">	public String getReason() &#123;</span><br><span class="line">		return reason;</span><br><span class="line">	&#125;</span><br><span class="line">	public void setReason(String reason) &#123;</span><br><span class="line">		this.reason = reason;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 抽象类</span><br><span class="line"> */</span><br><span class="line">public abstract class Leader &#123;</span><br><span class="line">	protected String name;</span><br><span class="line">	protected Leader nextLeader; //责任链上的后继对象</span><br><span class="line"></span><br><span class="line">	public Leader(String name) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.name = name;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	//设定责任链上的后继对象</span><br><span class="line">	public void setNextLeader(Leader nextLeader) &#123;</span><br><span class="line">		this.nextLeader = nextLeader;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	/**</span><br><span class="line">	 * 处理请求的核心的业务方法</span><br><span class="line">	 * @param request</span><br><span class="line">	 */</span><br><span class="line">	public abstract void handleRequest(LeaveRequest request);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 总经理</span><br><span class="line"> */</span><br><span class="line">public class GeneralManager extends Leader &#123;</span><br><span class="line"></span><br><span class="line">	public GeneralManager(String name) &#123;</span><br><span class="line">		super(name);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void handleRequest(LeaveRequest request) &#123;</span><br><span class="line">		if(request.getLeaveDays()&lt;30)&#123;</span><br><span class="line">			System.out.println(&quot;员工：&quot;+request.getEmpName()+&quot;请假，天数：&quot;+request.getLeaveDays()+&quot;,理由：&quot;+request.getReason());</span><br><span class="line">			System.out.println(&quot;总经理：&quot;+this.name+&quot;,审批通过！&quot;);</span><br><span class="line">		&#125;else&#123;</span><br><span class="line">			System.out.println(&quot;莫非&quot;+request.getEmpName()+&quot;想辞职，居然请假&quot;+request.getLeaveDays()+&quot;天！&quot;);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 经理</span><br><span class="line"> */</span><br><span class="line">public class Manager extends Leader &#123;</span><br><span class="line"></span><br><span class="line">	public Manager(String name) &#123;</span><br><span class="line">		super(name);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void handleRequest(LeaveRequest request) &#123;</span><br><span class="line">		if(request.getLeaveDays()&lt;10)&#123;</span><br><span class="line">			System.out.println(&quot;员工：&quot;+request.getEmpName()+&quot;请假，天数：&quot;+request.getLeaveDays()+&quot;,理由：&quot;+request.getReason());</span><br><span class="line">			System.out.println(&quot;经理：&quot;+this.name+&quot;,审批通过！&quot;);</span><br><span class="line">		&#125;else&#123;</span><br><span class="line">			if(this.nextLeader!=null)&#123;</span><br><span class="line">				this.nextLeader.handleRequest(request);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"> * 副总经理</span><br><span class="line"> */</span><br><span class="line">public class ViceGeneralManager extends Leader &#123;</span><br><span class="line"></span><br><span class="line">	public ViceGeneralManager(String name) &#123;</span><br><span class="line">		super(name);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void handleRequest(LeaveRequest request) &#123;</span><br><span class="line">		if(request.getLeaveDays()&lt;20)&#123;</span><br><span class="line">			System.out.println(&quot;员工：&quot;+request.getEmpName()+&quot;请假，天数：&quot;+request.getLeaveDays()+&quot;,理由：&quot;+request.getReason());</span><br><span class="line">			System.out.println(&quot;副总经理：&quot;+this.name+&quot;,审批通过！&quot;);</span><br><span class="line">		&#125;else&#123;</span><br><span class="line">			if(this.nextLeader!=null)&#123;</span><br><span class="line">				this.nextLeader.handleRequest(request);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 主任</span><br><span class="line"> */</span><br><span class="line">public class Director extends Leader &#123;</span><br><span class="line"></span><br><span class="line">	public Director(String name) &#123;</span><br><span class="line">		super(name);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void handleRequest(LeaveRequest request) &#123;</span><br><span class="line">		if(request.getLeaveDays()&lt;3)&#123;</span><br><span class="line">			System.out.println(&quot;员工：&quot;+request.getEmpName()+&quot;请假，天数：&quot;+request.getLeaveDays()+&quot;,理由：&quot;+request.getReason());</span><br><span class="line">			System.out.println(&quot;主任：&quot;+this.name+&quot;,审批通过！&quot;);</span><br><span class="line">		&#125;else&#123;</span><br><span class="line">			if(this.nextLeader!=null)&#123;</span><br><span class="line">				this.nextLeader.handleRequest(request);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">public class Client &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		Leader a = new Director(&quot;张三&quot;);</span><br><span class="line">		Leader b = new Manager(&quot;李四&quot;);</span><br><span class="line">		Leader b2 = new ViceGeneralManager(&quot;李小四&quot;);</span><br><span class="line">		Leader c = new GeneralManager(&quot;王五&quot;);</span><br><span class="line">		//组织责任链对象的关系</span><br><span class="line">		a.setNextLeader(b);</span><br><span class="line">		b.setNextLeader(b2);</span><br><span class="line">		b2.setNextLeader(c);</span><br><span class="line"></span><br><span class="line">		//开始请假操作</span><br><span class="line">		LeaveRequest req1 = new LeaveRequest(&quot;TOM&quot;, 15, &quot;回英国老家探亲！&quot;);</span><br><span class="line">		a.handleRequest(req1);</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2019/09/11/责任链模式/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2019/09/10/组合模式/">
-                            组合模式
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-09-10T14:35:25+08:00">
-	
-		    9月 10, 2019
-    	
-    </time>
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-content">
-                    <div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/40.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/40.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/41.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/41.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/42.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/42.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/43.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/43.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line">//抽象构建</span><br><span class="line">public interface AbstractFile &#123;</span><br><span class="line">	void killVirus();  //杀毒</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">class ImageFile implements AbstractFile &#123;</span><br><span class="line">	private String name;</span><br><span class="line"></span><br><span class="line">	public ImageFile(String name) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.name = name;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void killVirus() &#123;</span><br><span class="line">		System.out.println(&quot;---图像文件：&quot;+name+&quot;,进行查杀！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">class TextFile implements AbstractFile &#123;</span><br><span class="line">	private String name;</span><br><span class="line"></span><br><span class="line">	public TextFile(String name) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.name = name;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void killVirus() &#123;</span><br><span class="line">		System.out.println(&quot;---文本文件：&quot;+name+&quot;,进行查杀！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">class VideoFile implements AbstractFile &#123;</span><br><span class="line">	private String name;</span><br><span class="line"></span><br><span class="line">	public VideoFile(String name) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.name = name;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void killVirus() &#123;</span><br><span class="line">		System.out.println(&quot;---视频文件：&quot;+name+&quot;,进行查杀！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class Folder implements AbstractFile &#123;</span><br><span class="line">	private String name;</span><br><span class="line">	//定义容器，用来存放本容器构建下的子节点</span><br><span class="line">	private List&lt;AbstractFile&gt; list = new ArrayList&lt;AbstractFile&gt;();</span><br><span class="line"></span><br><span class="line">	public Folder(String name) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.name = name;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void add(AbstractFile file)&#123;</span><br><span class="line">		list.add(file);</span><br><span class="line">	&#125;</span><br><span class="line">	public void remove(AbstractFile file)&#123;</span><br><span class="line">		list.remove(file);</span><br><span class="line">	&#125;</span><br><span class="line">	public AbstractFile getChild(int index)&#123;</span><br><span class="line">		return list.get(index);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void killVirus() &#123;</span><br><span class="line">		System.out.println(&quot;---文件夹：&quot;+name+&quot;,进行查杀&quot;);</span><br><span class="line"></span><br><span class="line">		for (AbstractFile file : list) &#123;</span><br><span class="line">			file.killVirus();</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">public class Client &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		AbstractFile f2,f3,f4,f5;</span><br><span class="line">		Folder f1 = new Folder(&quot;我的收藏&quot;);</span><br><span class="line"></span><br><span class="line">		f2 = new ImageFile(&quot;老高的大头像.jpg&quot;);</span><br><span class="line">		f3 = new TextFile(&quot;Hello.txt&quot;);</span><br><span class="line">		f1.add(f2);</span><br><span class="line">		f1.add(f3);</span><br><span class="line"></span><br><span class="line">		Folder f11 = new Folder(&quot;电影&quot;);</span><br><span class="line">		f4 = new VideoFile(&quot;笑傲江湖.avi&quot;);</span><br><span class="line">		f5 = new VideoFile(&quot;神雕侠侣.avi&quot;);</span><br><span class="line">		f11.add(f4);</span><br><span class="line">		f11.add(f5);</span><br><span class="line">		f1.add(f11);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">//		f2.killVirus();</span><br><span class="line"></span><br><span class="line">		f1.killVirus();</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2019/09/10/组合模式/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2019/09/10/装饰模式/">
-                            装饰模式
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-09-10T14:35:25+08:00">
-	
-		    9月 10, 2019
-    	
-    </time>
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-content">
-                    <div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/44.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/44.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/45.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/45.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/46.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/46.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/47.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/47.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/48.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/48.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/49.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/49.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/50.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/50.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 抽象构建</span><br><span class="line"> */</span><br><span class="line">public interface ICar &#123;</span><br><span class="line">	void move();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//ConcreteComponent 具体构件角色(真实对象)</span><br><span class="line">class Car implements ICar &#123;</span><br><span class="line">	@Override</span><br><span class="line">	public void move() &#123;</span><br><span class="line">		System.out.println(&quot;陆地上跑！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//Decorator装饰角色</span><br><span class="line">class SuperCar implements ICar &#123;</span><br><span class="line">	protected ICar car;</span><br><span class="line">	public SuperCar(ICar car) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.car = car;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void move() &#123;</span><br><span class="line">		car.move();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//ConcreteDecorator具体装饰角色</span><br><span class="line">class FlyCar extends SuperCar &#123;</span><br><span class="line"></span><br><span class="line">	public FlyCar(ICar car) &#123;</span><br><span class="line">		super(car);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void fly()&#123;</span><br><span class="line">		System.out.println(&quot;天上飞！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void move() &#123;</span><br><span class="line">		super.move();</span><br><span class="line">		fly();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//ConcreteDecorator具体装饰角色</span><br><span class="line">class WaterCar extends SuperCar &#123;</span><br><span class="line"></span><br><span class="line">	public WaterCar(ICar car) &#123;</span><br><span class="line">		super(car);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void swim()&#123;</span><br><span class="line">		System.out.println(&quot;水上游！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void move() &#123;</span><br><span class="line">		super.move();</span><br><span class="line">		swim();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//ConcreteDecorator具体装饰角色</span><br><span class="line">class AICar extends SuperCar &#123;</span><br><span class="line"></span><br><span class="line">	public AICar(ICar car) &#123;</span><br><span class="line">		super(car);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void autoMove()&#123;</span><br><span class="line">		System.out.println(&quot;自动跑！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void move() &#123;</span><br><span class="line">		super.move();</span><br><span class="line">		autoMove();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">public class Client &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		Car car  = new Car();</span><br><span class="line">		car.move();</span><br><span class="line"></span><br><span class="line">		System.out.println(&quot;增加新的功能，飞行----------&quot;);</span><br><span class="line">		FlyCar flycar = new FlyCar(car);</span><br><span class="line">		flycar.move();</span><br><span class="line"></span><br><span class="line">		System.out.println(&quot;增加新的功能，水里游---------&quot;);</span><br><span class="line">		WaterCar  waterCar = new WaterCar(car);</span><br><span class="line">		waterCar.move();</span><br><span class="line"></span><br><span class="line">		System.out.println(&quot;增加两个新的功能，飞行，水里游-------&quot;);</span><br><span class="line">		WaterCar waterCar2 = new WaterCar(new FlyCar(car));</span><br><span class="line">		waterCar2.move();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">//		Reader r = new BufferedReader(new InputStreamReader(new FileInputStream(new File(&quot;d:/a.txt&quot;))));</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2019/09/10/装饰模式/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2019/09/10/原型模式/">
-                            原型模式
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-09-10T14:35:25+08:00">
-	
-		    9月 10, 2019
-    	
-    </time>
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-content">
-                    <div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/24.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/24.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">@Data</span><br><span class="line">public class Sheep implements Cloneable,Serializable &#123;   //1997,英国的克隆羊，多利！</span><br><span class="line">	private String sname;</span><br><span class="line">	private Date birthday;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	protected Object clone() throws CloneNotSupportedException &#123;</span><br><span class="line">		Object obj = super.clone();  //直接调用object对象的clone()方法！</span><br><span class="line">		return obj;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public Sheep(String sname, Date birthday) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.sname = sname;</span><br><span class="line">		this.birthday = birthday;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public Sheep() &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">//测试深复制</span><br><span class="line">public class Sheep2 implements Cloneable &#123;   //1997,英国的克隆羊，多利！</span><br><span class="line">	private String sname;</span><br><span class="line">	private Date birthday;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	protected Object clone() throws CloneNotSupportedException &#123;</span><br><span class="line">		Object obj = super.clone();  //直接调用object对象的clone()方法！</span><br><span class="line"></span><br><span class="line">		//添加如下代码实现深复制(deep Clone)</span><br><span class="line">		Sheep2 s = (Sheep2) obj;</span><br><span class="line">		s.birthday = (Date) this.birthday.clone();  //把属性也进行克隆！</span><br><span class="line"></span><br><span class="line">		return obj;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public Sheep2(String sname, Date birthday) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.sname = sname;</span><br><span class="line">		this.birthday = birthday;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public Sheep2() &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 原型模式(深复制,使用序列化和反序列化的方式实现深复制)</span><br><span class="line"> */</span><br><span class="line">public class Client3 &#123;</span><br><span class="line">	public static void main(String[] args) throws CloneNotSupportedException, Exception &#123;</span><br><span class="line">		Date date = new Date(12312321331L);</span><br><span class="line">		Sheep s1 = new Sheep(&quot;少利&quot;,date);</span><br><span class="line">		System.out.println(s1);</span><br><span class="line">		System.out.println(s1.getSname());</span><br><span class="line">		System.out.println(s1.getBirthday());</span><br><span class="line"></span><br><span class="line">//		使用序列化和反序列化实现深复制</span><br><span class="line">		ByteArrayOutputStream bos = new ByteArrayOutputStream();</span><br><span class="line">		ObjectOutputStream    oos = new ObjectOutputStream(bos);</span><br><span class="line">		oos.writeObject(s1);</span><br><span class="line">		byte[] bytes = bos.toByteArray();</span><br><span class="line"></span><br><span class="line">		ByteArrayInputStream  bis = new ByteArrayInputStream(bytes);</span><br><span class="line">		ObjectInputStream	  ois = new ObjectInputStream(bis);</span><br><span class="line"></span><br><span class="line">		Sheep s2 = (Sheep) ois.readObject();   //克隆好的对象！</span><br><span class="line"></span><br><span class="line">		System.out.println(&quot;修改原型对象的属性值&quot;);</span><br><span class="line">		date.setTime(23432432423L);</span><br><span class="line"></span><br><span class="line">		System.out.println(s1.getBirthday());</span><br><span class="line"></span><br><span class="line">		s2.setSname(&quot;多利&quot;);</span><br><span class="line">		System.out.println(s2);</span><br><span class="line">		System.out.println(s2.getSname());</span><br><span class="line">		System.out.println(s2.getBirthday());</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/25.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/25.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 测试普通new方式创建对象和clone方式创建对象的效率差异！</span><br><span class="line"> * 如果需要短时间创建大量对象，并且new的过程比较耗时。则可以考虑使用原型模式！</span><br><span class="line"> * @author 尚学堂高淇 www.sxt.cn</span><br><span class="line"> *</span><br><span class="line"> */</span><br><span class="line">public class Client4 &#123;</span><br><span class="line"></span><br><span class="line">	public static void testNew(int size)&#123;</span><br><span class="line">		long start = System.currentTimeMillis();</span><br><span class="line">		for(int i=0;i&lt;size;i++)&#123;</span><br><span class="line">			Laptop t = new Laptop();</span><br><span class="line">		&#125;</span><br><span class="line">		long end = System.currentTimeMillis();</span><br><span class="line">		System.out.println(&quot;new的方式创建耗时：&quot;+(end-start));</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public static void testClone(int size) throws CloneNotSupportedException&#123;</span><br><span class="line">		long start = System.currentTimeMillis();</span><br><span class="line">		Laptop t = new Laptop();</span><br><span class="line">		for(int i=0;i&lt;size;i++)&#123;</span><br><span class="line">			Laptop temp = (Laptop) t.clone();</span><br><span class="line">		&#125;</span><br><span class="line">		long end = System.currentTimeMillis();</span><br><span class="line">		System.out.println(&quot;clone的方式创建耗时：&quot;+(end-start));</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public static void main(String[] args) throws Exception &#123;</span><br><span class="line">		testNew(1000);</span><br><span class="line">		testClone(1000);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">class Laptop implements Cloneable &#123;  //笔记本电脑</span><br><span class="line">	public Laptop() &#123;</span><br><span class="line">		try &#123;</span><br><span class="line">			Thread.sleep(10);  //模拟创建对象耗时的过程!</span><br><span class="line">		&#125; catch (InterruptedException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	protected Object clone() throws CloneNotSupportedException &#123;</span><br><span class="line">		Object obj = super.clone();  //直接调用object对象的clone()方法！</span><br><span class="line">		return obj;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2019/09/10/原型模式/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2019/09/10/享元模式/">
-                            享元模式
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-09-10T14:35:25+08:00">
-	
-		    9月 10, 2019
-    	
-    </time>
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-content">
-                    <div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/56.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/56.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/57.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/57.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/58.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/58.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/59.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/59.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/60.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/60.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/61.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/61.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 享元类</span><br><span class="line"> */</span><br><span class="line">public interface ChessFlyWeight &#123;</span><br><span class="line">	void setColor(String c);</span><br><span class="line">	String getColor();</span><br><span class="line">	void display(Coordinate c);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">class ConcreteChess implements ChessFlyWeight &#123;</span><br><span class="line"></span><br><span class="line">	private String color;</span><br><span class="line"></span><br><span class="line">	public ConcreteChess(String color) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.color = color;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void display(Coordinate c) &#123;</span><br><span class="line">		System.out.println(&quot;棋子颜色：&quot;+color);</span><br><span class="line">		System.out.println(&quot;棋子位置：&quot;+c.getX()+&quot;----&quot;+c.getY());</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public String getColor() &#123;</span><br><span class="line">		return color;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void setColor(String c) &#123;</span><br><span class="line">		this.color = c;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 外部状态UnSharedConcreteFlyWeight</span><br><span class="line"> */</span><br><span class="line">public class Coordinate &#123;</span><br><span class="line">	private int x,y;</span><br><span class="line"></span><br><span class="line">	public Coordinate(int x, int y) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.x = x;</span><br><span class="line">		this.y = y;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public int getX() &#123;</span><br><span class="line">		return x;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setX(int x) &#123;</span><br><span class="line">		this.x = x;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public int getY() &#123;</span><br><span class="line">		return y;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setY(int y) &#123;</span><br><span class="line">		this.y = y;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 享元工厂类</span><br><span class="line"> */</span><br><span class="line">public class ChessFlyWeightFactory &#123;</span><br><span class="line">	//享元池</span><br><span class="line">	private static Map&lt;String,ChessFlyWeight&gt; map = new HashMap&lt;String, ChessFlyWeight&gt;();</span><br><span class="line"></span><br><span class="line">	public static ChessFlyWeight  getChess(String color)&#123;</span><br><span class="line"></span><br><span class="line">		if(map.get(color)!=null)&#123;</span><br><span class="line">			return map.get(color);</span><br><span class="line">		&#125;else&#123;</span><br><span class="line">			ChessFlyWeight cfw = new ConcreteChess(color);</span><br><span class="line">			map.put(color, cfw);</span><br><span class="line">			return cfw;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public class Client &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		ChessFlyWeight chess1 = ChessFlyWeightFactory.getChess(&quot;黑色&quot;);</span><br><span class="line">		ChessFlyWeight chess2 = ChessFlyWeightFactory.getChess(&quot;黑色&quot;);</span><br><span class="line">		System.out.println(chess1);</span><br><span class="line">		System.out.println(chess2);</span><br><span class="line"></span><br><span class="line">		System.out.println(&quot;增加外部状态的处理===========&quot;);</span><br><span class="line">		chess1.display(new Coordinate(10, 10));</span><br><span class="line">		chess2.display(new Coordinate(20, 20));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2019/09/10/享元模式/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2019/09/10/外观模式/">
-                            外观模式
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-09-10T14:35:25+08:00">
-	
-		    9月 10, 2019
-    	
-    </time>
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-content">
-                    <div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/51.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/51.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/52.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/52.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/53.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/53.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/54.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/54.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/55.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/55.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public interface 工商局  &#123;</span><br><span class="line">	void checkName();  //核名</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class 海淀区工商局 implements 工商局 &#123;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void checkName() &#123;</span><br><span class="line">		System.out.println(&quot;检查名字是否有冲突！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public interface 质检局 &#123;</span><br><span class="line">	void  orgCodeCertificate();  //办理组织机构代码证</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">class 海淀质检局 implements 质检局 &#123;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void orgCodeCertificate() &#123;</span><br><span class="line">		System.out.println(&quot;在海淀区质检局办理组织机构代码证！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public interface 银行 &#123;</span><br><span class="line">	void  openAccount();  //开户</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">class 中国工商银行 implements 银行 &#123;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void openAccount() &#123;</span><br><span class="line">		System.out.println(&quot;在中国工商银行开户！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public interface 税务局 &#123;</span><br><span class="line">	void taxCertificate();  //办理税务登记证</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">class 海淀税务局 implements 税务局 &#123;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void taxCertificate() &#123;</span><br><span class="line">		System.out.println(&quot;在海淀税务局办理税务登记证！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 办理注册公司流程的门面对象</span><br><span class="line"> * @author Administrator</span><br><span class="line"> *</span><br><span class="line"> */</span><br><span class="line">public class RegisterFacade &#123;</span><br><span class="line">	public void register()&#123;</span><br><span class="line">		工商局  a = new 海淀区工商局();</span><br><span class="line">		a.checkName();</span><br><span class="line">		质检局 b = new 海淀质检局();</span><br><span class="line">		b.orgCodeCertificate();</span><br><span class="line">		税务局  c  = new 海淀税务局();</span><br><span class="line">		c.taxCertificate();</span><br><span class="line">		银行  d = new 中国工商银行();</span><br><span class="line">		d.openAccount();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public class Client1 &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">//		工商局  a = new 海淀区工商局();</span><br><span class="line">//		a.checkName();</span><br><span class="line">//		质检局 b = new 海淀质检局();</span><br><span class="line">//		b.orgCodeCertificate();</span><br><span class="line">//		税务局  c  = new 海淀税务局();</span><br><span class="line">//		c.taxCertificate();</span><br><span class="line">//		银行  d = new 中国工商银行();</span><br><span class="line">//		d.openAccount();</span><br><span class="line"></span><br><span class="line">		new RegisterFacade().register();</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2019/09/10/外观模式/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2019/09/10/适配器模式/">
-                            适配器模式
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-09-10T14:35:24+08:00">
-	
-		    9月 10, 2019
-    	
-    </time>
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-content">
-                    <div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/26.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/26.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/27.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/27.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/28.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/28.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 被适配的类</span><br><span class="line"> */</span><br><span class="line">public class Adaptee &#123;</span><br><span class="line">	public void request()&#123;</span><br><span class="line">		System.out.println(&quot;可以完成客户请求的需要的功能！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public interface Target &#123;</span><br><span class="line">	void handleReq();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 适配器 (类适配器方式)</span><br><span class="line"> */</span><br><span class="line">public class Adapter extends Adaptee implements Target &#123;</span><br><span class="line">	@Override</span><br><span class="line">	public void handleReq() &#123;</span><br><span class="line">		super.request();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 适配器 (对象适配器方式,使用了组合的方式跟被适配对象整合)</span><br><span class="line"> */</span><br><span class="line">public class Adapter2  implements Target &#123;</span><br><span class="line">	private Adaptee adaptee;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void handleReq() &#123;</span><br><span class="line">		adaptee.request();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public Adapter2(Adaptee adaptee) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.adaptee = adaptee;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 客户端类</span><br><span class="line"> */</span><br><span class="line">public class Client &#123;</span><br><span class="line">	public void test1(Target t)&#123;</span><br><span class="line">		t.handleReq();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		Client  c = new Client();</span><br><span class="line"></span><br><span class="line">		Adaptee a = new Adaptee();</span><br><span class="line"></span><br><span class="line">//		Target t = new Adapter();</span><br><span class="line"></span><br><span class="line">		Target t = new Adapter2(a);</span><br><span class="line"></span><br><span class="line">		c.test1(t);</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/29.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/29.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/30.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/30.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/31.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/31.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2019/09/10/适配器模式/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2019/09/10/建造者模式/">
-                            建造者模式
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-09-10T14:35:24+08:00">
-	
-		    9月 10, 2019
-    	
-    </time>
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-content">
-                    <div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/21.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/21.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/22.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/22.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line">public class AirShip &#123;</span><br><span class="line">	private OrbitalModule orbitalModule;  //轨道舱</span><br><span class="line">	private Engine engine; //发动机</span><br><span class="line">	private EscapeTower escapeTower;  //逃逸塔</span><br><span class="line"></span><br><span class="line">	public void launch()&#123;</span><br><span class="line">		System.out.println(&quot;发射！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public OrbitalModule getOrbitalModule() &#123;</span><br><span class="line">		return orbitalModule;</span><br><span class="line">	&#125;</span><br><span class="line">	public void setOrbitalModule(OrbitalModule orbitalModule) &#123;</span><br><span class="line">		this.orbitalModule = orbitalModule;</span><br><span class="line">	&#125;</span><br><span class="line">	public Engine getEngine() &#123;</span><br><span class="line">		return engine;</span><br><span class="line">	&#125;</span><br><span class="line">	public void setEngine(Engine engine) &#123;</span><br><span class="line">		this.engine = engine;</span><br><span class="line">	&#125;</span><br><span class="line">	public EscapeTower getEscapeTower() &#123;</span><br><span class="line">		return escapeTower;</span><br><span class="line">	&#125;</span><br><span class="line">	public void setEscapeTower(EscapeTower escapeTower) &#123;</span><br><span class="line">		this.escapeTower = escapeTower;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class OrbitalModule&#123;</span><br><span class="line">	private String name;</span><br><span class="line"></span><br><span class="line">	public OrbitalModule(String name) &#123;</span><br><span class="line">		this.name = name;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public String getName() &#123;</span><br><span class="line">		return name;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setName(String name) &#123;</span><br><span class="line">		this.name = name;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class Engine &#123;</span><br><span class="line">	private String name;</span><br><span class="line"></span><br><span class="line">	public Engine(String name) &#123;</span><br><span class="line">		this.name = name;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public String getName() &#123;</span><br><span class="line">		return name;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setName(String name) &#123;</span><br><span class="line">		this.name = name;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class EscapeTower&#123;</span><br><span class="line">	private String name;</span><br><span class="line"></span><br><span class="line">	public String getName() &#123;</span><br><span class="line">		return name;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setName(String name) &#123;</span><br><span class="line">		this.name = name;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public EscapeTower(String name) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.name = name;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public interface AirShipBuilder &#123;</span><br><span class="line">	Engine builderEngine();</span><br><span class="line">	OrbitalModule builderOrbitalModule();</span><br><span class="line">	EscapeTower  builderEscapeTower();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">public class SxtAirShipBuilder implements AirShipBuilder &#123;</span><br><span class="line">	//StringBuilder, 以后学习XML解析中，JDOM库中的类：DomBuilder,SaxBuilder</span><br><span class="line">	@Override</span><br><span class="line">	public Engine builderEngine() &#123;</span><br><span class="line">		return new Engine(&quot;构建尚学堂牌发动机！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public EscapeTower builderEscapeTower() &#123;</span><br><span class="line">		return new EscapeTower(&quot;构建逃逸塔&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public OrbitalModule builderOrbitalModule() &#123;</span><br><span class="line">		return new OrbitalModule(&quot;构建轨道舱&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public interface AirShipDirector &#123;</span><br><span class="line"></span><br><span class="line">	/**</span><br><span class="line">	 * 组装飞船对象</span><br><span class="line">	 * @return</span><br><span class="line">	 */</span><br><span class="line">	AirShip   directAirShip();</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">public class SxtAirshipDirector implements AirShipDirector &#123;</span><br><span class="line">	private AirShipBuilder builder;</span><br><span class="line"></span><br><span class="line">	public SxtAirshipDirector(AirShipBuilder builder) &#123;</span><br><span class="line">		this.builder = builder;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public AirShip directAirShip() &#123;</span><br><span class="line">		Engine e = builder.builderEngine();</span><br><span class="line">		OrbitalModule o = builder.builderOrbitalModule();</span><br><span class="line">		EscapeTower et = builder.builderEscapeTower();</span><br><span class="line"></span><br><span class="line">		//装配成飞船对象</span><br><span class="line">		AirShip ship = new AirShip();</span><br><span class="line">		ship.setEngine(e);</span><br><span class="line">		ship.setEscapeTower(et);</span><br><span class="line">		ship.setOrbitalModule(o);</span><br><span class="line"></span><br><span class="line">		return ship;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public class Client &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line"></span><br><span class="line">		AirShipDirector director = new SxtAirshipDirector(new SxtAirShipBuilder());</span><br><span class="line"></span><br><span class="line">		AirShip ship = director.directAirShip();</span><br><span class="line"></span><br><span class="line">		System.out.println(ship.getEngine().getName());</span><br><span class="line"></span><br><span class="line">		ship.launch();</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/23.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/23.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2019/09/10/建造者模式/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
     <div class="pagination-bar">
     <ul class="pagination">
         
@@ -684,7 +649,7 @@
             </a>
           </li>
         
-        <li class="pagination-number">第 1 页 共 2 页</li>
+        <li class="pagination-number">第 1 页 共 3 页</li>
     </ul>
 </div>
 
@@ -693,7 +658,7 @@
 
                 <footer id="footer" class="main-content-wrap">
     <span class="copyrights">
-        Copyrights &copy; 2019 Brotherc. All Rights Reserved.
+        Copyrights &copy; 2020 Brotherc. All Rights Reserved.
     </span>
 </footer>
 
