@@ -1,0 +1,450 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Brotherc">
+    <title>Spring Security技术栈开发企业级认证与授权-开始开发 - Brotherc</title>
+    <meta name="author" content="Brotherc">
+    
+    
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"1.架构介绍security：主模块security-core: 核心业务逻辑（子模块）security-browser: 浏览器安全特定代码（子模块）security-app: app相关特定代码（子模块）security-demo: 样例程序（子模块）1234567891011            security          security-core                ↑          --------------          |            |security-browser  security-app          ↑            ↑          --------------                |          security-demo\nsecurity pom.xml：123456789101112131415161718192021222324252627282930313233343536373839404142434445&lt;properties&gt;  &lt;security.version&gt;1.0.0-SNAPSHOT&lt;/security.version&gt;&lt;/properties&gt;&lt;dependencyManagement&gt;  &lt;!--管理版本、依赖--&gt;  &lt;dependencies&gt;    &lt;dependency&gt;      &lt;groupId&gt;io.spring.platform&lt;/groupId&gt;      &lt;artifactId&gt;platform-bom&lt;/artifactId&gt;      &lt;version&gt;Brussels-SR4&lt;/version&gt;      &lt;type&gt;pom&lt;/type&gt;      &lt;scope&gt;import&lt;/scope&gt;    &lt;/dependency&gt;    &lt;dependency&gt;      &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;      &lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;      &lt;version&gt;Dalston.SR2&lt;/version&gt;      &lt;type&gt;pom&lt;/type&gt;      &lt;scope&gt;import&lt;/scope&gt;    &lt;/dependency&gt;  &lt;/dependencies&gt;&lt;/dependencyManagement&gt;&lt;build&gt;  &lt;plugins&gt;    &lt;plugin&gt;      &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;      &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;      &lt;version&gt;2.3.2&lt;/version&gt;      &lt;configuration&gt;        &lt;source&gt;1.8&lt;/source&gt;        &lt;target&gt;1.8&lt;/target&gt;        &lt;encoding&gt;UTF-8&lt;/encoding&gt;      &lt;/configuration&gt;    &lt;/plugin&gt;  &lt;/plugins&gt;&lt;/build&gt;&lt;modules&gt;  &lt;module&gt;../security-app&lt;/module&gt;  &lt;module&gt;../security-browser&lt;/module&gt;  &lt;module&gt;../security-core&lt;/module&gt;  &lt;module&gt;../security-demo&lt;/module&gt;&lt;/modules&gt;\nsecurity-core pom.xml：12345678910111213141516171819202122232425262728293031323334353637383940414243444546&lt;dependencies&gt;  &lt;dependency&gt;    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;    &lt;artifactId&gt;spring-cloud-starter-oauth2&lt;/artifactId&gt;  &lt;/dependency&gt;  &lt;dependency&gt;    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;    &lt;artifactId&gt;spring-boot-starter-data-redis&lt;/artifactId&gt;  &lt;/dependency&gt;  &lt;dependency&gt;    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;    &lt;artifactId&gt;spring-boot-starter-jdbc&lt;/artifactId&gt;  &lt;/dependency&gt;  &lt;dependency&gt;    &lt;groupId&gt;mysql&lt;/groupId&gt;    &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;  &lt;/dependency&gt;  &lt;dependency&gt;    &lt;groupId&gt;org.springframework.social&lt;/groupId&gt;    &lt;artifactId&gt;spring-social-config&lt;/artifactId&gt;  &lt;/dependency&gt;  &lt;dependency&gt;    &lt;groupId&gt;org.springframework.social&lt;/groupId&gt;    &lt;artifactId&gt;spring-social-core&lt;/artifactId&gt;  &lt;/dependency&gt;  &lt;dependency&gt;    &lt;groupId&gt;org.springframework.social&lt;/groupId&gt;    &lt;artifactId&gt;spring-social-security&lt;/artifactId&gt;  &lt;/dependency&gt;  &lt;dependency&gt;    &lt;groupId&gt;org.springframework.social&lt;/groupId&gt;    &lt;artifactId&gt;spring-social-web&lt;/artifactId&gt;  &lt;/dependency&gt;  &lt;dependency&gt;    &lt;groupId&gt;commons-lang&lt;/groupId&gt;    &lt;artifactId&gt;commons-lang&lt;/artifactId&gt;  &lt;/dependency&gt;  &lt;dependency&gt;    &lt;groupId&gt;commons-collections&lt;/groupId&gt;    &lt;artifactId&gt;commons-collections&lt;/artifactId&gt;  &lt;/dependency&gt;  &lt;dependency&gt;    &lt;groupId&gt;commons-beanutils&lt;/groupId&gt;    &lt;artifactId&gt;commons-beanutils&lt;/artifactId&gt;  &lt;/dependency&gt;&lt;/dependencies&gt;\nsecurity-app pom.xml：1234567&lt;dependencies&gt;  &lt;dependency&gt;    &lt;groupId&gt;com.security&lt;/groupId&gt;    &lt;artifactId&gt;security-core&lt;/artifactId&gt;    &lt;version&gt;$&#123;security.version&#125;&lt;/version&gt;  &lt;/dependency&gt;&lt;/dependencies&gt;\nsecurity-browser pom.xml：123456789101112&lt;dependencies&gt;  &lt;dependency&gt;    &lt;groupId&gt;com.security&lt;/groupId&gt;    &lt;artifactId&gt;security-core&lt;/artifactId&gt;    &lt;version&gt;$&#123;security.version&#125;&lt;/version&gt;  &lt;/dependency&gt;  &lt;dependency&gt;    &lt;groupId&gt;org.springframework.session&lt;/groupId&gt;    &lt;artifactId&gt;spring-session&lt;/artifactId&gt;  &lt;/dependency&gt;&lt;/dependencies&gt;\nsecurity-demo pom.xml：123456789101112&lt;dependencies&gt;  &lt;dependency&gt;    &lt;groupId&gt;com.security&lt;/groupId&gt;    &lt;artifactId&gt;security-browser&lt;/artifactId&gt;    &lt;version&gt;$&#123;security.version&#125;&lt;/version&gt;  &lt;/dependency&gt;  &lt;dependency&gt;    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;    &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;  &lt;/dependency&gt;&lt;/dependencies&gt;\n2.Hello Spring Securitysecurity-demo application.properties：12345678910spring.datasource.driver-class-name = com.mysql.jdbc.Driverspring.datasource.url= jdbc:mysql://127.0.0.1:3306/demo?useUnicode=yes&amp;characterEncoding=UTF-8&amp;useSSL=falsespring.datasource.username = rootspring.datasource.password = 123456spring.session.store-type = none#security.basic.enabled = falseserver.port = 8060\n","dateCreated":"2020-02-01T10:16:02+08:00","dateModified":"2020-02-01T10:13:27+08:00","datePublished":"2020-02-01T10:16:02+08:00","description":"","headline":"Spring Security技术栈开发企业级认证与授权-开始开发","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2020/02/01/Spring Security技术栈开发企业级认证与授权-开始开发/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2020/02/01/Spring Security技术栈开发企业级认证与授权-开始开发/","keywords":"Spring Security"}</script>
+    <meta name="description" content="1.架构介绍security：主模块security-core: 核心业务逻辑（子模块）security-browser: 浏览器安全特定代码（子模块）security-app: app相关特定代码（子模块）security-demo: 样例程序（子模块）1234567891011            security          security-core">
+<meta name="keywords" content="Spring Security">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Spring Security技术栈开发企业级认证与授权-开始开发">
+<meta property="og:url" content="http://yoursite.com/2020/02/01/Spring Security技术栈开发企业级认证与授权-开始开发/index.html">
+<meta property="og:site_name" content="Brotherc">
+<meta property="og:description" content="1.架构介绍security：主模块security-core: 核心业务逻辑（子模块）security-browser: 浏览器安全特定代码（子模块）security-app: app相关特定代码（子模块）security-demo: 样例程序（子模块）1234567891011            security          security-core">
+<meta property="og:locale" content="zh-cn">
+<meta property="og:updated_time" content="2020-02-01T02:13:27.509Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring Security技术栈开发企业级认证与授权-开始开发">
+<meta name="twitter:description" content="1.架构介绍security：主模块security-core: 核心业务逻辑（子模块）security-browser: 浏览器安全特定代码（子模块）security-app: app相关特定代码（子模块）security-demo: 样例程序（子模块）1234567891011            security          security-core">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://yoursite.com/assets/images/head.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-c4ozcsklz4kht2pebhp44xorvyverh23toayhn7i6ubrpyedak24hv1v0hyd.min.css">
+    <!--STYLES END-->
+    
+
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/ ">Brotherc</a>
+    </div>
+    
+        
+            <a class="header-right-picture " href="#about">
+        
+        
+            <img class="header-picture" src="/assets/images/head.jpg" alt="作者的图片">
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/#about">
+                    <img class="sidebar-profile-picture" src="/assets/images/head.jpg" alt="作者的图片">
+                </a>
+                <h4 class="sidebar-profile-name">Brotherc</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>java development</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/ " title="首页">
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">首页</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-categories" title="分类">
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">分类</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-tags" title="标签">
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">标签</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link open-algolia-search" href="/all-archives" title="归档">
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">归档</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="#about" title="关于">
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">关于</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://github.com/Brotherc" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="4"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            Spring Security技术栈开发企业级认证与授权-开始开发
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2020-02-01T10:16:02+08:00">
+	
+		    2月 01, 2020
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <h2 id="1-架构介绍"><a href="#1-架构介绍" class="headerlink" title="1.架构介绍"></a>1.架构介绍</h2><p>security：主模块<br>security-core: 核心业务逻辑（子模块）<br>security-browser: 浏览器安全特定代码（子模块）<br>security-app: app相关特定代码（子模块）<br>security-demo: 样例程序（子模块）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">            security</span><br><span class="line"></span><br><span class="line">          security-core</span><br><span class="line">                ↑</span><br><span class="line">          --------------</span><br><span class="line">          |            |</span><br><span class="line">security-browser  security-app</span><br><span class="line">          ↑            ↑</span><br><span class="line">          --------------</span><br><span class="line">                |</span><br><span class="line">          security-demo</span><br></pre></td></tr></table></figure></p>
+<p>security pom.xml：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">&lt;properties&gt;</span><br><span class="line">  &lt;security.version&gt;1.0.0-SNAPSHOT&lt;/security.version&gt;</span><br><span class="line">&lt;/properties&gt;</span><br><span class="line"></span><br><span class="line">&lt;dependencyManagement&gt;</span><br><span class="line">  &lt;!--管理版本、依赖--&gt;</span><br><span class="line">  &lt;dependencies&gt;</span><br><span class="line">    &lt;dependency&gt;</span><br><span class="line">      &lt;groupId&gt;io.spring.platform&lt;/groupId&gt;</span><br><span class="line">      &lt;artifactId&gt;platform-bom&lt;/artifactId&gt;</span><br><span class="line">      &lt;version&gt;Brussels-SR4&lt;/version&gt;</span><br><span class="line">      &lt;type&gt;pom&lt;/type&gt;</span><br><span class="line">      &lt;scope&gt;import&lt;/scope&gt;</span><br><span class="line">    &lt;/dependency&gt;</span><br><span class="line">    &lt;dependency&gt;</span><br><span class="line">      &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;</span><br><span class="line">      &lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;</span><br><span class="line">      &lt;version&gt;Dalston.SR2&lt;/version&gt;</span><br><span class="line">      &lt;type&gt;pom&lt;/type&gt;</span><br><span class="line">      &lt;scope&gt;import&lt;/scope&gt;</span><br><span class="line">    &lt;/dependency&gt;</span><br><span class="line">  &lt;/dependencies&gt;</span><br><span class="line">&lt;/dependencyManagement&gt;</span><br><span class="line"></span><br><span class="line">&lt;build&gt;</span><br><span class="line">  &lt;plugins&gt;</span><br><span class="line">    &lt;plugin&gt;</span><br><span class="line">      &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;</span><br><span class="line">      &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;</span><br><span class="line">      &lt;version&gt;2.3.2&lt;/version&gt;</span><br><span class="line">      &lt;configuration&gt;</span><br><span class="line">        &lt;source&gt;1.8&lt;/source&gt;</span><br><span class="line">        &lt;target&gt;1.8&lt;/target&gt;</span><br><span class="line">        &lt;encoding&gt;UTF-8&lt;/encoding&gt;</span><br><span class="line">      &lt;/configuration&gt;</span><br><span class="line">    &lt;/plugin&gt;</span><br><span class="line">  &lt;/plugins&gt;</span><br><span class="line">&lt;/build&gt;</span><br><span class="line"></span><br><span class="line">&lt;modules&gt;</span><br><span class="line">  &lt;module&gt;../security-app&lt;/module&gt;</span><br><span class="line">  &lt;module&gt;../security-browser&lt;/module&gt;</span><br><span class="line">  &lt;module&gt;../security-core&lt;/module&gt;</span><br><span class="line">  &lt;module&gt;../security-demo&lt;/module&gt;</span><br><span class="line">&lt;/modules&gt;</span><br></pre></td></tr></table></figure></p>
+<p>security-core pom.xml：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependencies&gt;</span><br><span class="line">  &lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-cloud-starter-oauth2&lt;/artifactId&gt;</span><br><span class="line">  &lt;/dependency&gt;</span><br><span class="line">  &lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-boot-starter-data-redis&lt;/artifactId&gt;</span><br><span class="line">  &lt;/dependency&gt;</span><br><span class="line">  &lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-boot-starter-jdbc&lt;/artifactId&gt;</span><br><span class="line">  &lt;/dependency&gt;</span><br><span class="line">  &lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;mysql&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;</span><br><span class="line">  &lt;/dependency&gt;</span><br><span class="line">  &lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.social&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-social-config&lt;/artifactId&gt;</span><br><span class="line">  &lt;/dependency&gt;</span><br><span class="line">  &lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.social&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-social-core&lt;/artifactId&gt;</span><br><span class="line">  &lt;/dependency&gt;</span><br><span class="line">  &lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.social&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-social-security&lt;/artifactId&gt;</span><br><span class="line">  &lt;/dependency&gt;</span><br><span class="line">  &lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.social&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-social-web&lt;/artifactId&gt;</span><br><span class="line">  &lt;/dependency&gt;</span><br><span class="line">  &lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;commons-lang&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;commons-lang&lt;/artifactId&gt;</span><br><span class="line">  &lt;/dependency&gt;</span><br><span class="line">  &lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;commons-collections&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;commons-collections&lt;/artifactId&gt;</span><br><span class="line">  &lt;/dependency&gt;</span><br><span class="line">  &lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;commons-beanutils&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;commons-beanutils&lt;/artifactId&gt;</span><br><span class="line">  &lt;/dependency&gt;</span><br><span class="line">&lt;/dependencies&gt;</span><br></pre></td></tr></table></figure></p>
+<p>security-app pom.xml：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependencies&gt;</span><br><span class="line">  &lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.security&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;security-core&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;$&#123;security.version&#125;&lt;/version&gt;</span><br><span class="line">  &lt;/dependency&gt;</span><br><span class="line">&lt;/dependencies&gt;</span><br></pre></td></tr></table></figure></p>
+<p>security-browser pom.xml：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependencies&gt;</span><br><span class="line">  &lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.security&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;security-core&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;$&#123;security.version&#125;&lt;/version&gt;</span><br><span class="line">  &lt;/dependency&gt;</span><br><span class="line"></span><br><span class="line">  &lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.session&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-session&lt;/artifactId&gt;</span><br><span class="line">  &lt;/dependency&gt;</span><br><span class="line">&lt;/dependencies&gt;</span><br></pre></td></tr></table></figure></p>
+<p>security-demo pom.xml：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependencies&gt;</span><br><span class="line">  &lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.security&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;security-browser&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;$&#123;security.version&#125;&lt;/version&gt;</span><br><span class="line">  &lt;/dependency&gt;</span><br><span class="line"></span><br><span class="line">  &lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;</span><br><span class="line">  &lt;/dependency&gt;</span><br><span class="line">&lt;/dependencies&gt;</span><br></pre></td></tr></table></figure></p>
+<h2 id="2-Hello-Spring-Security"><a href="#2-Hello-Spring-Security" class="headerlink" title="2.Hello Spring Security"></a>2.Hello Spring Security</h2><p>security-demo application.properties：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">spring.datasource.driver-class-name = com.mysql.jdbc.Driver</span><br><span class="line">spring.datasource.url= jdbc:mysql://127.0.0.1:3306/demo?useUnicode=yes&amp;characterEncoding=UTF-8&amp;useSSL=false</span><br><span class="line">spring.datasource.username = root</span><br><span class="line">spring.datasource.password = 123456</span><br><span class="line"></span><br><span class="line">spring.session.store-type = none</span><br><span class="line"></span><br><span class="line">#security.basic.enabled = false</span><br><span class="line"></span><br><span class="line">server.port = 8060</span><br></pre></td></tr></table></figure></p>
+
+            
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">标签</span><br>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/Spring-Security/">Spring Security</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/01/26/观察者模式/" data-tooltip="观察者模式" aria-label="下一篇: 观察者模式">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/02/01/Spring Security技术栈开发企业级认证与授权-开始开发/" title="分享到 Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/02/01/Spring Security技术栈开发企业级认证与授权-开始开发/" title="分享到 Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/02/01/Spring Security技术栈开发企业级认证与授权-开始开发/" title="分享到 Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2020 Brotherc. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/01/26/观察者模式/" data-tooltip="观察者模式" aria-label="下一篇: 观察者模式">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/02/01/Spring Security技术栈开发企业级认证与授权-开始开发/" title="分享到 Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/02/01/Spring Security技术栈开发企业级认证与授权-开始开发/" title="分享到 Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/02/01/Spring Security技术栈开发企业级认证与授权-开始开发/" title="分享到 Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/02/01/Spring Security技术栈开发企业级认证与授权-开始开发/">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>分享到 Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/02/01/Spring Security技术栈开发企业级认证与授权-开始开发/">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/02/01/Spring Security技术栈开发企业级认证与授权-开始开发/">
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>分享到 Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/head.jpg" alt="作者的图片">
+        
+            <h4 id="about-card-name">Brotherc</h4>
+        
+            <div id="about-card-bio"><p>java development</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br>
+                <p>java</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br>
+                zhuhai
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-dbd16rvloemmuxdzniplmnxxvwoz24eya9wol0b7vvmlokgqsjivmb8dnscy.min.js"></script>
+<!--SCRIPTS END-->
+
+    
+
+
+
+    </body>
+</html>
