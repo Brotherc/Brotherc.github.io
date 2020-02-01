@@ -166,6 +166,53 @@
             <div class="postShorten-header">
                 <h1 class="postShorten-title">
                     
+                        <a class="link-unstyled" href="/2019/05/24/spring常用操作/">
+                            spring常用操作
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2019-05-24T17:18:45+08:00">
+	
+		    5月 24, 2019
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <h3 id="初始化bean时，普通成员变量获取不到-Value注解的变量值"><a href="#初始化bean时，普通成员变量获取不到-Value注解的变量值" class="headerlink" title="初始化bean时，普通成员变量获取不到@Value注解的变量值"></a>初始化bean时，普通成员变量获取不到@Value注解的变量值</h3><p>问题：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public class Xxx &#123;</span><br><span class="line">    @Value(&quot;$&#123;value&#125;&quot;)</span><br><span class="line">    private String value;</span><br><span class="line"></span><br><span class="line">    private Map&lt;String, String&gt; map = new HashMap&lt;String, String&gt;()&#123;&#123;</span><br><span class="line">         put(&quot;key&quot;, value);// value取不到值</span><br><span class="line">    &#125;&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>修改：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public class Xxx &#123;</span><br><span class="line">    @Value(&quot;$&#123;value&#125;&quot;)</span><br><span class="line">    private String value;</span><br><span class="line">    private Map&lt;String, String&gt; map;</span><br><span class="line"></span><br><span class="line">    @PostConstruct</span><br><span class="line">    private void init()&#123;</span><br><span class="line">      map = new HashMap&lt;String, String&gt;()&#123;&#123;</span><br><span class="line">           put(&quot;key&quot;, value);</span><br><span class="line">      &#125;&#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>参考：<br><a href="https://blog.csdn.net/zlp1992/article/details/78346420" target="_blank" rel="noopener">https://blog.csdn.net/zlp1992/article/details/78346420</a></p>
+<h3 id="springboot-yaml文件数组表示"><a href="#springboot-yaml文件数组表示" class="headerlink" title="springboot yaml文件数组表示"></a>springboot yaml文件数组表示</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">array: item1, item2, item3, item4, item5</span><br></pre></td></tr></table></figure>
+<p>参考：<br><a href="https://stackoverflow.com/questions/26699385/spring-boot-yaml-configuration-for-a-list-of-strings" target="_blank" rel="noopener">https://stackoverflow.com/questions/26699385/spring-boot-yaml-configuration-for-a-list-of-strings</a></p>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2019/05/24/spring常用操作/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
                         <a class="link-unstyled" href="/2019/05/24/docker/">
                             docker基础
                         </a>
@@ -635,52 +682,6 @@
                     
                         <p>
                             <a href="/2019/03/28/oracle账号/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2019/03/28/influxdb/">
-                            influxdb issues
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-03-28T12:03:05+08:00">
-	
-		    3月 28, 2019
-    	
-    </time>
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-content">
-                    <h3 id="org-influxdb-InfluxDBIOException-java-net-SocketTimeoutException-timeout"><a href="#org-influxdb-InfluxDBIOException-java-net-SocketTimeoutException-timeout" class="headerlink" title="org.influxdb.InfluxDBIOException: java.net.SocketTimeoutException: timeout"></a>org.influxdb.InfluxDBIOException: java.net.SocketTimeoutException: timeout</h3><p>使用influxdb的java客户端连接influxdb：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">InfluxDB influxDB = InfluxDBFactory.connect(&quot;http://localhost:8086&quot;);</span><br></pre></td></tr></table></figure></p>
-<p>报错：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Exception in thread &quot;main&quot; org.influxdb.InfluxDBIOException: java.net.SocketTimeoutException: timeout</span><br><span class="line">	at org.influxdb.impl.InfluxDBImpl.execute(InfluxDBImpl.java:800)</span><br><span class="line">	at org.influxdb.impl.InfluxDBImpl.write(InfluxDBImpl.java:455)</span><br></pre></td></tr></table></figure></p>
-<p>更改OKHttpClient的默认超时：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">OkHttpClient.Builder client = new OkHttpClient.Builder()</span><br><span class="line">        .connectTimeout(1, TimeUnit.MINUTES)</span><br><span class="line">        .readTimeout(1, TimeUnit.MINUTES)</span><br><span class="line">        .writeTimeout(2, TimeUnit.MINUTES)</span><br><span class="line">        .retryOnConnectionFailure(true);</span><br><span class="line">InfluxDB influxDB = InfluxDBFactory.connect(&quot;http://localhost:8086&quot;, client);</span><br></pre></td></tr></table></figure></p>
-<p>参考：<br><a href="https://github.com/influxdata/influxdb-java" target="_blank" rel="noopener">https://github.com/influxdata/influxdb-java</a><br><a href="https://stackoverflow.com/questions/50922473/influxdbioexception-java-net-sockettimeoutexception-timeout" target="_blank" rel="noopener">https://stackoverflow.com/questions/50922473/influxdbioexception-java-net-sockettimeoutexception-timeout</a></p>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2019/03/28/influxdb/#post-footer" class="postShorten-excerpt_link link">
                                 评论和共享
                             </a>
                         </p>
