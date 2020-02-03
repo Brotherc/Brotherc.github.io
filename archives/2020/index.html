@@ -166,6 +166,72 @@
             <div class="postShorten-header">
                 <h1 class="postShorten-title">
                     
+                        <a class="link-unstyled" href="/2020/02/03/Spring Security技术栈开发企业级认证与授权-认证流程源码级详解/">
+                            Spring Security技术栈开发企业级认证与授权-认证流程源码级详解
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2020-02-03T12:53:36+08:00">
+	
+		    2月 03, 2020
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <h2 id="1-认证处理流程说明"><a href="#1-认证处理流程说明" class="headerlink" title="1.认证处理流程说明"></a>1.认证处理流程说明</h2><p><img src="assets/Spring Security技术栈开发企业级认证与授权/21.jpg" alt="21"></p>
+<p><img src="assets/Spring Security技术栈开发企业级认证与授权/22.png" alt="22"><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);</span><br></pre></td></tr></table></figure></p>
+<p>获取请求中携带的用户名和密码，然后拿用户名和密码构建了一个UsernamePasswordAuthenticationToken这样一个对象。</p>
+<p><img src="assets/Spring Security技术栈开发企业级认证与授权/23.png" alt="22"><br><img src="assets/Spring Security技术栈开发企业级认证与授权/24.png" alt="24"><br>该对象是Authentication接口的实现，该接口实际上封装了我们的认证信息。<br>通过该类构造函数发现，会先调用父类的构造函数设置空的权限，设置用户名和密码到本地变量上。<br>设置当前传进去的身份信息还没经过认证。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">this.setDetails(request, authRequest);</span><br></pre></td></tr></table></figure>
+<p>会把请求的一些信息设到authRequest中，包括当前发请求的机器的ip，session等。</p>
+<p><img src="assets/Spring Security技术栈开发企业级认证与授权/25.png" alt="25"><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">Class&lt;? extends Authentication&gt; toTest = authentication.getClass();</span><br><span class="line">AuthenticationException lastException = null;</span><br><span class="line">Authentication result = null;</span><br><span class="line">boolean debug = logger.isDebugEnabled();</span><br><span class="line">Iterator var6 = this.getProviders().iterator();</span><br><span class="line"></span><br><span class="line">while(var6.hasNext()) &#123;</span><br><span class="line">    AuthenticationProvider provider = (AuthenticationProvider)var6.next();</span><br><span class="line">    if (provider.supports(toTest)) &#123;</span><br><span class="line">        if (debug) &#123;</span><br><span class="line">            logger.debug(&quot;Authentication attempt using &quot; + provider.getClass().getName());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        try &#123;</span><br><span class="line">            result = provider.authenticate(authentication);</span><br><span class="line">            if (result != null) &#123;</span><br><span class="line">                this.copyDetails(authentication, result);</span><br><span class="line">                break;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; catch (AccountStatusException var11) &#123;</span><br><span class="line">            this.prepareException(var11, authentication);</span><br><span class="line">            throw var11;</span><br><span class="line">        &#125; catch (InternalAuthenticationServiceException var12) &#123;</span><br><span class="line">            this.prepareException(var12, authentication);</span><br><span class="line">            throw var12;</span><br><span class="line">        &#125; catch (AuthenticationException var13) &#123;</span><br><span class="line">            lastException = var13;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>AuthenticationManager用来管理下面的AuthenticationProvider。<br>真正的检验逻辑是写在AuthenticationProvider中，不同的登录方式的认证逻辑是不一样的。<br>用户名密码登录，校验的是用户名密码。如果是第三方登录，这时候是不用验密码的。<br>spring提供了两个provider，AuthenticationManager负责把所有的provider收集起来，然后收到请求的时候去循环它们，挨个去问你当前这个provider支不支持我这种登录方式。<br>即调用supports方法，判断支不支持我传进来的这个Authentication类型。<br>比如当前拿到的是UsernamePasswordAuthenticationToken，比如第三方的登录传的就是SocialAuthenticationToken。<br>根据传进来的Authentication类型会挑出其中一个provider来进行校验处理。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">result = provider.authenticate(authentication);</span><br></pre></td></tr></table></figure>
+<p>如果支持的话，往下走，真正去执行校验逻辑。</p>
+<p><img src="assets/Spring Security技术栈开发企业级认证与授权/26.png" alt="26"><br><img src="assets/Spring Security技术栈开发企业级认证与授权/27.png" alt="27"></p>
+<p>authentication的主要校验逻辑是写在抽象类里面的，首先调用retrieveUser,获取到UserDetails对象。<br><img src="assets/Spring Security技术栈开发企业级认证与授权/28.png" alt="28"><br>Dao实现了retrieveUser接口，在实现方法里，调用了我们提供的UserDetailsService实现，通过loadUserByUsername查到我们的用户信息<br>并包装成UserDetails。如果拿不到，则抛出异常。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">this.preAuthenticationChecks.check(user);</span><br></pre></td></tr></table></figure></p>
+<p>如果拿到了用户信息，会做预检查。<br><img src="assets/Spring Security技术栈开发企业级认证与授权/29.png" alt="29"><br>UserDetalis这个接口有4个方法来判断用户是否可用。锁定，过期等校验。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">this.additionalAuthenticationChecks(user, (UsernamePasswordAuthenticationToken)authentication);</span><br></pre></td></tr></table></figure></p>
+<p>做完预检查后，会做附加检查。在Dao中有具体实现。<br><img src="assets/Spring Security技术栈开发企业级认证与授权/30.png" alt="30"><br>用passwordEncoder校验当前的密码是否匹配。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">this.postAuthenticationChecks.check(user);</span><br></pre></td></tr></table></figure></p>
+<p>做完前面两步检查之后，还有一个后检查。也是UserDetails中的校验。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">return this.createSuccessAuthentication(principalToReturn, authentication, user);</span><br></pre></td></tr></table></figure>
+<p><img src="assets/Spring Security技术栈开发企业级认证与授权/31.png" alt="31"><br>所有的这些检查都通过之后，那么认为用户认证是成功的，拿获取到的用户信息、au传进来的认证请求信息来创建SuccessAuthentication。</p>
+<p><img src="assets/Spring Security技术栈开发企业级认证与授权/32.png" alt="32"><br>设置权限和认证通过。</p>
+<p><img src="assets/Spring Security技术栈开发企业级认证与授权/33.png" alt="33"><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">this.successfulAuthentication(request, response, chain, authResult);</span><br></pre></td></tr></table></figure></p>
+<p><img src="assets/Spring Security技术栈开发企业级认证与授权/34.png" alt="34"><br>会调我们自己写的成功处理器。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">try &#123;</span><br><span class="line">    authResult = this.attemptAuthentication(request, response);</span><br><span class="line">    if (authResult == null) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    this.sessionStrategy.onAuthentication(authResult, request, response);</span><br><span class="line">&#125; catch (InternalAuthenticationServiceException var8) &#123;</span><br><span class="line">    this.logger.error(&quot;An internal error occurred while trying to authenticate the user.&quot;, var8);</span><br><span class="line">    this.unsuccessfulAuthentication(request, response, var8);</span><br><span class="line">    return;</span><br><span class="line">&#125; catch (AuthenticationException var9) &#123;</span><br><span class="line">    this.unsuccessfulAuthentication(request, response, var9);</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>如果在认证过程中任何一处出了异常，会调用unsuccessfulAuthentication方法，其中会调用我们自己写的失败处理器。</p>
+<h2 id="2-认证结果如何在多个请求之间共享"><a href="#2-认证结果如何在多个请求之间共享" class="headerlink" title="2.认证结果如何在多个请求之间共享"></a>2.认证结果如何在多个请求之间共享</h2><p><img src="assets/Spring Security技术栈开发企业级认证与授权/36.jpg" alt="36"><br><img src="assets/Spring Security技术栈开发企业级认证与授权/35.png" alt="35"><br>在调成功处理器之前，将我们认证成功的Authentication放到SecurityContext，然后放到Holder里面，<br>Holder实际上是ThreadLocal的封装，</p>
+<p><img src="assets/Spring Security技术栈开发企业级认证与授权/37.jpg" alt="37"><br>当请求进来的时候，检查sessionl里是否有SecurityContext，如果有，把SecurityContext从session中拿出来放到线程里，如果没有，则为空，放过，<br>当整个请求响应回来以后，过它的时候，它检查线程，如果线程里面有SecurityContext,就拿出来放到session里，这样不用的请求就可以在session中<br>拿到相同的认证信息。</p>
+<h2 id="3-获取认证用户信息"><a href="#3-获取认证用户信息" class="headerlink" title="3.获取认证用户信息"></a>3.获取认证用户信息</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">@RestController</span><br><span class="line">@RequestMapping(&quot;/user&quot;)</span><br><span class="line">public class UserController &#123;</span><br><span class="line">  @GetMapping(&quot;/me&quot;)</span><br><span class="line">  public Object getCurrentUser(@AuthenticationPrincipal UserDetails user) &#123;</span><br><span class="line">    return user;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  @GetMapping(&quot;/me2&quot;)</span><br><span class="line">  public Object getCurrentUser2(Authentication authentication) &#123;</span><br><span class="line">    return authentication;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2020/02/03/Spring Security技术栈开发企业级认证与授权-认证流程源码级详解/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
                         <a class="link-unstyled" href="/2020/02/01/Spring Security技术栈开发企业级认证与授权-使用Spring MVC开发 RESTful API/">
                             Spring Security技术栈开发企业级认证与授权-使用Spring MVC开发 RESTful API
                         </a>
@@ -604,58 +670,18 @@
         
     </article>
     
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2020/01/26/命令模式/">
-                            命令模式
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2020-01-26T16:27:53+08:00">
-	
-		    1月 26, 2020
-    	
-    </time>
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-content">
-                    <p><img src="assets/设计模式/77.jpg" alt="77"><br><img src="assets/设计模式/78.jpg" alt="78"><br><img src="assets/设计模式/79.jpg" alt="79"><br><img src="assets/设计模式/80.jpg" alt="80"></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 真正的命令的执行者</span><br><span class="line"> */</span><br><span class="line">public class Receiver &#123;</span><br><span class="line">	public void action()&#123;</span><br><span class="line">		System.out.println(&quot;Receiver.action()&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">public interface Command &#123;</span><br><span class="line">	/**</span><br><span class="line">	 * 这个方法是一个返回结果为空的方法。</span><br><span class="line">	 * 实际项目中，可以根据需求设计多个不同的方法</span><br><span class="line">	 */</span><br><span class="line">	void execute();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class ConcreteCommand implements Command &#123;</span><br><span class="line">	private Receiver receiver;	//命令的真正的执行者</span><br><span class="line"></span><br><span class="line">	public ConcreteCommand(Receiver receiver) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.receiver = receiver;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void execute() &#123;</span><br><span class="line">		//命令真正执行前或后，执行相关的处理！</span><br><span class="line">		receiver.action();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">//调用者/发起者</span><br><span class="line">public class Invoke &#123;</span><br><span class="line">	private Command command;   //也可以通过容器List&lt;Command&gt;容纳很多命令对象，进行批处理。数据库底层的事务管理就是类似的结构！</span><br><span class="line"></span><br><span class="line">	public Invoke(Command command) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.command = command;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	//业务方法 ，用于调用命令类的方法</span><br><span class="line">	public void call()&#123;</span><br><span class="line">		command.execute();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public class Client &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		Command c = new ConcreteCommand(new Receiver());</span><br><span class="line">		Invoke i = new Invoke(c);</span><br><span class="line">		i.call();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2020/01/26/命令模式/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
     <div class="pagination-bar">
     <ul class="pagination">
         
         
-        <li class="pagination-number">第 1 页 共 1 页</li>
+          <li class="pagination-next">
+            <a class="btn btn--default btn--small" href="/archives/2020/page/2/">
+              <span>下一页</span>
+              <i class="fa fa-angle-right text-base icon-ml"></i>
+            </a>
+          </li>
+        
+        <li class="pagination-number">第 1 页 共 2 页</li>
     </ul>
 </div>
 
