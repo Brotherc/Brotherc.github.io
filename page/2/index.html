@@ -165,6 +165,49 @@
             <div class="postShorten-header">
                 <h1 class="postShorten-title">
                     
+                        <a class="link-unstyled" href="/2020/01/26/解释器模式/">
+                            解释器模式
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2020-01-26T16:47:46+08:00">
+	
+		    1月 26, 2020
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <p><img src="assets/设计模式/81.jpg" alt="81"><br><img src="assets/设计模式/82.jpg" alt="82"></p>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2020/01/26/解释器模式/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
                         <a class="link-unstyled" href="/2020/01/26/命令模式/">
                             命令模式
                         </a>
@@ -638,54 +681,6 @@
                     
                         <p>
                             <a href="/2019/09/10/装饰模式/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2019/09/10/原型模式/">
-                            原型模式
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-09-10T14:35:25+08:00">
-	
-		    9月 10, 2019
-    	
-    </time>
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-content">
-                    <div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/24.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/24.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">@Data</span><br><span class="line">public class Sheep implements Cloneable,Serializable &#123;   //1997,英国的克隆羊，多利！</span><br><span class="line">	private String sname;</span><br><span class="line">	private Date birthday;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	protected Object clone() throws CloneNotSupportedException &#123;</span><br><span class="line">		Object obj = super.clone();  //直接调用object对象的clone()方法！</span><br><span class="line">		return obj;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public Sheep(String sname, Date birthday) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.sname = sname;</span><br><span class="line">		this.birthday = birthday;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public Sheep() &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">//测试深复制</span><br><span class="line">public class Sheep2 implements Cloneable &#123;   //1997,英国的克隆羊，多利！</span><br><span class="line">	private String sname;</span><br><span class="line">	private Date birthday;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	protected Object clone() throws CloneNotSupportedException &#123;</span><br><span class="line">		Object obj = super.clone();  //直接调用object对象的clone()方法！</span><br><span class="line"></span><br><span class="line">		//添加如下代码实现深复制(deep Clone)</span><br><span class="line">		Sheep2 s = (Sheep2) obj;</span><br><span class="line">		s.birthday = (Date) this.birthday.clone();  //把属性也进行克隆！</span><br><span class="line"></span><br><span class="line">		return obj;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public Sheep2(String sname, Date birthday) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.sname = sname;</span><br><span class="line">		this.birthday = birthday;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public Sheep2() &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 原型模式(深复制,使用序列化和反序列化的方式实现深复制)</span><br><span class="line"> */</span><br><span class="line">public class Client3 &#123;</span><br><span class="line">	public static void main(String[] args) throws CloneNotSupportedException, Exception &#123;</span><br><span class="line">		Date date = new Date(12312321331L);</span><br><span class="line">		Sheep s1 = new Sheep(&quot;少利&quot;,date);</span><br><span class="line">		System.out.println(s1);</span><br><span class="line">		System.out.println(s1.getSname());</span><br><span class="line">		System.out.println(s1.getBirthday());</span><br><span class="line"></span><br><span class="line">//		使用序列化和反序列化实现深复制</span><br><span class="line">		ByteArrayOutputStream bos = new ByteArrayOutputStream();</span><br><span class="line">		ObjectOutputStream    oos = new ObjectOutputStream(bos);</span><br><span class="line">		oos.writeObject(s1);</span><br><span class="line">		byte[] bytes = bos.toByteArray();</span><br><span class="line"></span><br><span class="line">		ByteArrayInputStream  bis = new ByteArrayInputStream(bytes);</span><br><span class="line">		ObjectInputStream	  ois = new ObjectInputStream(bis);</span><br><span class="line"></span><br><span class="line">		Sheep s2 = (Sheep) ois.readObject();   //克隆好的对象！</span><br><span class="line"></span><br><span class="line">		System.out.println(&quot;修改原型对象的属性值&quot;);</span><br><span class="line">		date.setTime(23432432423L);</span><br><span class="line"></span><br><span class="line">		System.out.println(s1.getBirthday());</span><br><span class="line"></span><br><span class="line">		s2.setSname(&quot;多利&quot;);</span><br><span class="line">		System.out.println(s2);</span><br><span class="line">		System.out.println(s2.getSname());</span><br><span class="line">		System.out.println(s2.getBirthday());</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/25.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/25.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 测试普通new方式创建对象和clone方式创建对象的效率差异！</span><br><span class="line"> * 如果需要短时间创建大量对象，并且new的过程比较耗时。则可以考虑使用原型模式！</span><br><span class="line"> * @author 尚学堂高淇 www.sxt.cn</span><br><span class="line"> *</span><br><span class="line"> */</span><br><span class="line">public class Client4 &#123;</span><br><span class="line"></span><br><span class="line">	public static void testNew(int size)&#123;</span><br><span class="line">		long start = System.currentTimeMillis();</span><br><span class="line">		for(int i=0;i&lt;size;i++)&#123;</span><br><span class="line">			Laptop t = new Laptop();</span><br><span class="line">		&#125;</span><br><span class="line">		long end = System.currentTimeMillis();</span><br><span class="line">		System.out.println(&quot;new的方式创建耗时：&quot;+(end-start));</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public static void testClone(int size) throws CloneNotSupportedException&#123;</span><br><span class="line">		long start = System.currentTimeMillis();</span><br><span class="line">		Laptop t = new Laptop();</span><br><span class="line">		for(int i=0;i&lt;size;i++)&#123;</span><br><span class="line">			Laptop temp = (Laptop) t.clone();</span><br><span class="line">		&#125;</span><br><span class="line">		long end = System.currentTimeMillis();</span><br><span class="line">		System.out.println(&quot;clone的方式创建耗时：&quot;+(end-start));</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public static void main(String[] args) throws Exception &#123;</span><br><span class="line">		testNew(1000);</span><br><span class="line">		testClone(1000);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">class Laptop implements Cloneable &#123;  //笔记本电脑</span><br><span class="line">	public Laptop() &#123;</span><br><span class="line">		try &#123;</span><br><span class="line">			Thread.sleep(10);  //模拟创建对象耗时的过程!</span><br><span class="line">		&#125; catch (InterruptedException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	protected Object clone() throws CloneNotSupportedException &#123;</span><br><span class="line">		Object obj = super.clone();  //直接调用object对象的clone()方法！</span><br><span class="line">		return obj;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2019/09/10/原型模式/#post-footer" class="postShorten-excerpt_link link">
                                 评论和共享
                             </a>
                         </p>
