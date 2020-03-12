@@ -6,24 +6,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Brotherc">
-    <title>moment.js常用操作 - Brotherc</title>
+    <title>kapacitor lambda - Brotherc</title>
     <meta name="author" content="Brotherc">
     
     
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"将String转成moment再格式化const date = ‘2019-03-07T21:16:00Z’;moment(date, ‘YYYY-MM-DDTHH:mm:ssZ’).format(‘HH:mm’)\n","dateCreated":"2019-03-14T19:05:08+08:00","dateModified":"2019-03-07T21:17:44+08:00","datePublished":"2019-03-14T19:05:08+08:00","description":"","headline":"moment.js常用操作","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/03/14/momentJs常用操作/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/03/14/momentJs常用操作/","keywords":"moment.js"}</script>
-    <meta name="description" content="将String转成moment再格式化const date = ‘2019-03-07T21:16:00Z’;moment(date, ‘YYYY-MM-DDTHH:mm:ssZ’).format(‘HH:mm’)">
-<meta name="keywords" content="moment.js">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"lambda使用简单使用：123|where(lambda: &quot;tag&quot; == &apos;v1&apos; AND &quot;field&quot; == &apos;v2&apos;)|eval(lambda: (&quot;field1&quot; - &quot;field2&quot;) / &quot;field3&quot; * 100.0)|eval(lambda: float(&quot;field1&quot;) / float(&quot;field2&quot;) * 100.0)\n保留两位小数：1|eval(lambda: float(int(&quot;field&quot; * 100.0)) / 100.0) // 保留两位小数\n整数转成小数：1|eval(lambda:(&quot;field1&quot; + &quot;field2&quot;) / 2.0)\n","dateCreated":"2020-03-12T21:40:28+08:00","dateModified":"2019-09-16T17:40:06+08:00","datePublished":"2020-03-12T21:40:28+08:00","description":"","headline":"kapacitor lambda","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2020/03/12/kapacitor_lambda/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2020/03/12/kapacitor_lambda/","keywords":"kapacitor"}</script>
+    <meta name="description" content="lambda使用简单使用：123|where(lambda: &amp;quot;tag&amp;quot; == &amp;apos;v1&amp;apos; AND &amp;quot;field&amp;quot; == &amp;apos;v2&amp;apos;)|eval(lambda: (&amp;quot;field1&amp;quot; - &amp;quot;field2&amp;quot;) / &amp;quot;field3&amp;quot; * 100.0)|eval(lamb">
+<meta name="keywords" content="kapacitor">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="moment.js常用操作">
-<meta property="og:url" content="http://yoursite.com/2019/03/14/momentJs常用操作/index.html">
+<meta property="og:title" content="kapacitor lambda">
+<meta property="og:url" content="http://yoursite.com/2020/03/12/kapacitor_lambda/index.html">
 <meta property="og:site_name" content="Brotherc">
-<meta property="og:description" content="将String转成moment再格式化const date = ‘2019-03-07T21:16:00Z’;moment(date, ‘YYYY-MM-DDTHH:mm:ssZ’).format(‘HH:mm’)">
+<meta property="og:description" content="lambda使用简单使用：123|where(lambda: &amp;quot;tag&amp;quot; == &amp;apos;v1&amp;apos; AND &amp;quot;field&amp;quot; == &amp;apos;v2&amp;apos;)|eval(lambda: (&amp;quot;field1&amp;quot; - &amp;quot;field2&amp;quot;) / &amp;quot;field3&amp;quot; * 100.0)|eval(lamb">
 <meta property="og:locale" content="zh-cn">
-<meta property="og:updated_time" content="2019-03-07T13:17:44.737Z">
+<meta property="og:updated_time" content="2019-09-16T09:40:06.994Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="moment.js常用操作">
-<meta name="twitter:description" content="将String转成moment再格式化const date = ‘2019-03-07T21:16:00Z’;moment(date, ‘YYYY-MM-DDTHH:mm:ssZ’).format(‘HH:mm’)">
+<meta name="twitter:title" content="kapacitor lambda">
+<meta name="twitter:description" content="lambda使用简单使用：123|where(lambda: &amp;quot;tag&amp;quot; == &amp;apos;v1&amp;apos; AND &amp;quot;field&amp;quot; == &amp;apos;v2&amp;apos;)|eval(lambda: (&amp;quot;field1&amp;quot; - &amp;quot;field2&amp;quot;) / &amp;quot;field3&amp;quot; * 100.0)|eval(lamb">
     
     
         
@@ -168,14 +168,14 @@
         <div class="post-header main-content-wrap text-left">
     
         <h1 class="post-title">
-            moment.js常用操作
+            kapacitor lambda
         </h1>
     
     
         <div class="post-meta">
-    <time datetime="2019-03-14T19:05:08+08:00">
+    <time datetime="2020-03-12T21:40:28+08:00">
 	
-		    3月 14, 2019
+		    3月 12, 2020
     	
     </time>
     
@@ -187,7 +187,9 @@
     
     <div class="post-content markdown">
         <div class="main-content-wrap">
-            <h3 id="将String转成moment再格式化"><a href="#将String转成moment再格式化" class="headerlink" title="将String转成moment再格式化"></a>将String转成moment再格式化</h3><p>const date = ‘2019-03-07T21:16:00Z’;<br>moment(date, ‘YYYY-MM-DDTHH:mm:ssZ’).format(‘HH:mm’)</p>
+            <h3 id="lambda使用"><a href="#lambda使用" class="headerlink" title="lambda使用"></a>lambda使用</h3><p>简单使用：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">|where(lambda: &quot;tag&quot; == &apos;v1&apos; AND &quot;field&quot; == &apos;v2&apos;)</span><br><span class="line">|eval(lambda: (&quot;field1&quot; - &quot;field2&quot;) / &quot;field3&quot; * 100.0)</span><br><span class="line">|eval(lambda: float(&quot;field1&quot;) / float(&quot;field2&quot;) * 100.0)</span><br></pre></td></tr></table></figure></p>
+<p>保留两位小数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">|eval(lambda: float(int(&quot;field&quot; * 100.0)) / 100.0) // 保留两位小数</span><br></pre></td></tr></table></figure></p>
+<p>整数转成小数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">|eval(lambda:(&quot;field1&quot; + &quot;field2&quot;) / 2.0)</span><br></pre></td></tr></table></figure></p>
 
             
 
@@ -198,7 +200,7 @@
             <div class="post-footer-tags">
                 <span class="text-color-light text-small">标签</span><br>
                 
-    <a class="tag tag--primary tag--small t-link" href="/tags/moment-js/">moment.js</a>
+    <a class="tag tag--primary tag--small t-link" href="/tags/kapacitor/">kapacitor</a>
 
             </div>
         
@@ -208,8 +210,7 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/28/Chrome中启用Flash/" data-tooltip="Chrome中启用Flash" aria-label="上一篇: Chrome中启用Flash">
+                    <a class="post-action-btn btn btn--disabled">
                 
                     <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -218,7 +219,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/linux常用指令/" data-tooltip="linux常用指令" aria-label="下一篇: linux常用指令">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/03/12/Java常用操作/" data-tooltip="Java常用操作" aria-label="下一篇: Java常用操作">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right" aria-hidden="true"></i>
@@ -236,7 +237,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/14/momentJs常用操作/" title="分享到 Facebook">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/03/12/kapacitor_lambda/" title="分享到 Facebook">
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
@@ -244,7 +245,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/14/momentJs常用操作/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/03/12/kapacitor_lambda/" title="分享到 Twitter">
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -252,7 +253,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/14/momentJs常用操作/" title="分享到 Google+">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/03/12/kapacitor_lambda/" title="分享到 Google+">
                     <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
             </li>
@@ -294,8 +295,7 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/28/Chrome中启用Flash/" data-tooltip="Chrome中启用Flash" aria-label="上一篇: Chrome中启用Flash">
+                    <a class="post-action-btn btn btn--disabled">
                 
                     <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -304,7 +304,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/03/14/linux常用指令/" data-tooltip="linux常用指令" aria-label="下一篇: linux常用指令">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/03/12/Java常用操作/" data-tooltip="Java常用操作" aria-label="下一篇: Java常用操作">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right" aria-hidden="true"></i>
@@ -322,7 +322,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/14/momentJs常用操作/" title="分享到 Facebook">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/03/12/kapacitor_lambda/" title="分享到 Facebook">
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
@@ -330,7 +330,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/14/momentJs常用操作/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/03/12/kapacitor_lambda/" title="分享到 Twitter">
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -338,7 +338,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/14/momentJs常用操作/" title="分享到 Google+">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/03/12/kapacitor_lambda/" title="分享到 Google+">
                     <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
             </li>
@@ -366,7 +366,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/03/14/momentJs常用操作/">
+                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/03/12/kapacitor_lambda/">
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>分享到 Facebook</span>
                     </a>
                 </li>
@@ -374,7 +374,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/03/14/momentJs常用操作/">
+                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/03/12/kapacitor_lambda/">
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
                     </a>
                 </li>
@@ -382,7 +382,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/03/14/momentJs常用操作/">
+                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/03/12/kapacitor_lambda/">
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>分享到 Google+</span>
                     </a>
                 </li>
