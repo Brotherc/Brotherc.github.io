@@ -213,80 +213,6 @@
             <div class="postShorten-header">
                 <h1 class="postShorten-title">
                     
-                        <a class="link-unstyled" href="/2019/05/24/docker/">
-                            docker基础
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-05-24T17:11:20+08:00">
-	
-		    5月 24, 2019
-    	
-    </time>
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-content">
-                    <h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">sudo yum remove docker \</span><br><span class="line">docker-common \</span><br><span class="line">docker-selinux \</span><br><span class="line">docker-engine</span><br><span class="line"></span><br><span class="line">sudo yum install -y yum-utils \</span><br><span class="line">device-mapper-persistent-data \</span><br><span class="line">lvm2</span><br><span class="line"></span><br><span class="line">sudo yum-config-manager \</span><br><span class="line">--add-repo \</span><br><span class="line">https://download.docker.com/linux/centos/docker-ce.repo</span><br><span class="line"></span><br><span class="line">sudo yum install docker-ce</span><br></pre></td></tr></table></figure>
-<h3 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl start docker</span><br><span class="line">sudo docker version</span><br></pre></td></tr></table></figure>
-<h3 id="helloworld"><a href="#helloworld" class="headerlink" title="helloworld"></a>helloworld</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run hello-world</span><br></pre></td></tr></table></figure>
-<h3 id="镜像"><a href="#镜像" class="headerlink" title="镜像"></a>镜像</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">// 查看进程</span><br><span class="line">ps -ef | grep docker</span><br><span class="line">// 查看镜像</span><br><span class="line">sudo docker image ls</span><br><span class="line">// 拉取镜像</span><br><span class="line">sudo docker pull ubuntu:14.04</span><br><span class="line">// 运行镜像</span><br><span class="line">docker run hello-world</span><br><span class="line">docker run -it centos</span><br><span class="line">// 删除镜像</span><br><span class="line">docker image rm 67759a80360c(镜像ID)</span><br><span class="line">docker image rmi f2a91732366c(镜像ID)</span><br></pre></td></tr></table></figure>
-<h3 id="自己实现helloworld"><a href="#自己实现helloworld" class="headerlink" title="自己实现helloworld"></a>自己实现helloworld</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mkdir hello-world</span><br><span class="line">cd hello-world/</span><br><span class="line">vim hello.c</span><br><span class="line">//hello.c内容忽略</span><br><span class="line">gcc -static hello.c -o hello</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">vim Dockerfile</span><br><span class="line"></span><br><span class="line">FROM scratch</span><br><span class="line">ADD hello /</span><br><span class="line">CMD [&quot;/hello&quot;]</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker build -t brotherc/hello-world .</span><br><span class="line">docker run brotherc/hello-world</span><br></pre></td></tr></table></figure>
-<h3 id="容器"><a href="#容器" class="headerlink" title="容器"></a>容器</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">docker container ls</span><br><span class="line">docker container ls -a</span><br><span class="line">docker container ps -a</span><br><span class="line">docker rm $(docker container ls -f &quot;status-exited&quot; -q)</span><br><span class="line">docker rm $(docker container ls -aq)</span><br><span class="line">docker container rm 846b5efe98d4(容器ID)</span><br><span class="line">docker container rm 84(容器ID前缀)</span><br><span class="line">// 将已有容器提交成新的镜像</span><br><span class="line">Usage: docker commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]] [flags]</span><br><span class="line">docker commit xenodochial_pare(容器名称) brotherc/centos-vim</span><br></pre></td></tr></table></figure>
-<h3 id="Dockerfile"><a href="#Dockerfile" class="headerlink" title="Dockerfile"></a>Dockerfile</h3><h4 id="FROM"><a href="#FROM" class="headerlink" title="FROM"></a>FROM</h4><p>尽量使用官方的image作为base image!<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">FROM scratch #制作base image</span><br><span class="line">FROM centos  #使用base image</span><br><span class="line">FROM ubuntu:14.04</span><br></pre></td></tr></table></figure></p>
-<h4 id="LABEL"><a href="#LABEL" class="headerlink" title="LABEL"></a>LABEL</h4><p>Metadata不可少!<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">LABEL maintainer=&quot;brotherc@136.com&quot;</span><br><span class="line">LABEL version=&quot;1.0&quot;</span><br><span class="line">LABEL description=&quot;This is description&quot;</span><br></pre></td></tr></table></figure></p>
-<h4 id="RUN"><a href="#RUN" class="headerlink" title="RUN"></a>RUN</h4><p>为了美观，复杂的RUN请用反斜杠换行!避免无用分层，合并多条命令成一行!<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">RUN yum update &amp;&amp; yum install -y vim \ #反斜线换行</span><br><span class="line">    python-dev</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RUN apt-get update &amp;&amp; apt-get install -y perl \</span><br><span class="line">    pwgen --no-install-recommends &amp;&amp; rm -rf \</span><br><span class="line">    /var/lib/apt/lists/* #注意清理cache</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RUN /bin/bash -c&apos;source $HOME/.bashrc;echo $HOME&apos;</span><br></pre></td></tr></table></figure>
-<h4 id="WORKDIR"><a href="#WORKDIR" class="headerlink" title="WORKDIR"></a>WORKDIR</h4><p>用WORKDIR，不要用RUN cd!尽量使用绝对目录!<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">WORKDIR /root</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">WORKDIR /test #如果没有会自动创建test目录</span><br><span class="line">WORKDIR demo</span><br><span class="line">RUN pwd       #输出结果应该是 /test/demo</span><br></pre></td></tr></table></figure>
-<h4 id="ADD-and-COPY"><a href="#ADD-and-COPY" class="headerlink" title="ADD and COPY"></a>ADD and COPY</h4><p>大部分情况，COPY优于ADD!ADD除了COPY还有额外功能(解压)!添加远程文件/目录<br>请使用curl或者wget!<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ADD hello /</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ADD test.tar.gz / #添加到根目录并解压</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">WORKDIR /root</span><br><span class="line">ADD hello test/ # /root/test/hello</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">WORKDIR /root</span><br><span class="line">COPY hello test/</span><br></pre></td></tr></table></figure>
-<h4 id="ENV"><a href="#ENV" class="headerlink" title="ENV"></a>ENV</h4><p>尽量使用ENV增加可维护性!<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ENV MYSQL_VERSION 5.6 #设置常量</span><br><span class="line">RUN apt-get install -y mysql-server=&quot;$&#123;MYSQL_VERSION&#125;&quot; \</span><br><span class="line">    &amp;&amp; rm -rf /var/lib/apt/lists/* #引用常量</span><br></pre></td></tr></table></figure></p>
-<h4 id="RUN-vs-CMD-vs-ENTRYPOINT"><a href="#RUN-vs-CMD-vs-ENTRYPOINT" class="headerlink" title="RUN vs CMD vs ENTRYPOINT"></a>RUN vs CMD vs ENTRYPOINT</h4><p>RUN:执行命令并创建新的image layer<br>CMD:设置容器启动后默认执行的命令和参数<br>ENTRYPOINT:设置容器启动时运行的命令</p>
-<h4 id="Shell格式"><a href="#Shell格式" class="headerlink" title="Shell格式"></a>Shell格式</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RUN apt-get install -y vim</span><br><span class="line">CMD echo &quot;hello docker&quot;</span><br><span class="line">ENTRYPOINT echo &quot;hello docker&quot;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">FROM centos</span><br><span class="line">ENV name Docker</span><br><span class="line">ENTRYPOINT echo &quot;hello $name&quot;</span><br></pre></td></tr></table></figure>
-<h4 id="Exec格式"><a href="#Exec格式" class="headerlink" title="Exec格式"></a>Exec格式</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RUN [&quot;apt-get&quot;, &quot;install&quot;, &quot;-y&quot;, &quot;vim&quot;]</span><br><span class="line">CMD [&quot;/bin/echo&quot;, &quot;hello docker&quot;]</span><br><span class="line">ENTRYPOINT [&quot;/bin/echo&quot;, &quot;hello docker&quot;]</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">FROM centos</span><br><span class="line">ENV name Docker</span><br><span class="line">ENTRYPOINT [&quot;/bin/echo&quot;, &quot;hello docker&quot;]</span><br></pre></td></tr></table></figure>
-<h3 id="Dockerfile实践"><a href="#Dockerfile实践" class="headerlink" title="Dockerfile实践"></a>Dockerfile实践</h3><p>Dockerfile:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">FROM centos</span><br><span class="line">ENV name Docker</span><br><span class="line">ENTRYPOINT echo &quot;hello $name&quot;</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker build -t brotherc/centos-entrypoint-shell .</span><br><span class="line">docker run brotherc/centos-entrypoint-shell</span><br><span class="line">hello Docker</span><br></pre></td></tr></table></figure>
-<p>Dockerfile:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">FROM centos</span><br><span class="line">ENV name Docker</span><br><span class="line">ENTRYPOINT [&quot;/bin/bash&quot;, &quot;-c&quot;, &quot;echo hello $name&quot;]</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker build -t brotherc/centos-entrypoint-exec .</span><br><span class="line">docker run brotherc/centos-entrypoint-exec</span><br><span class="line">hello Docker</span><br></pre></td></tr></table></figure>
-<h4 id="CMD"><a href="#CMD" class="headerlink" title="CMD"></a>CMD</h4><p>容器启动时默认执行的命令<br>如果docker run指定了其它命令，CMD命令被忽略<br>如果定义了多个CMD，只有最后一个会执行<br>Dockerfile:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">FROM centos</span><br><span class="line">ENV name Docker</span><br><span class="line">CMD echo &quot;hello $name&quot;</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">docker build -t brotherc/centos-cmd-shell .</span><br><span class="line">docker run brotherc/centos-cmd-shell</span><br><span class="line">hello Docker</span><br><span class="line"></span><br><span class="line">docker run -it brotherc/centos-cmd-shell /bin/bash</span><br><span class="line">无输出</span><br></pre></td></tr></table></figure>
-<h4 id="ENTRYPOINT"><a href="#ENTRYPOINT" class="headerlink" title="ENTRYPOINT"></a>ENTRYPOINT</h4><p>让容器以应用程序或者服务的形式运行<br>不会被忽略，一定会执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker run brotherc/centos-entrypoint-shell</span><br><span class="line">hello Docker</span><br><span class="line"></span><br><span class="line">docker run -it brotherc/centos-entrypoint-shell /bin/bash</span><br><span class="line">hello Docker</span><br></pre></td></tr></table></figure></p>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2019/05/24/docker/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
                         <a class="link-unstyled" href="/2019/04/16/oracle_top/">
                             oracle-monitor-topsql
                         </a>
@@ -683,6 +609,49 @@
                     
                         <p>
                             <a href="/2019/03/28/influxdb/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a class="link-unstyled" href="/2019/03/28/Chrome中启用Flash/">
+                            Chrome中启用Flash
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2019-03-28T12:02:26+08:00">
+	
+		    3月 28, 2019
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <p>参考：<br><a href="https://support.digication.com/hc/en-us/articles/115003963468-Enabling-Flash-for-Google-Chrome-Windows-Macintosh-" target="_blank" rel="noopener">https://support.digication.com/hc/en-us/articles/115003963468-Enabling-Flash-for-Google-Chrome-Windows-Macintosh-</a></p>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2019/03/28/Chrome中启用Flash/#post-footer" class="postShorten-excerpt_link link">
                                 评论和共享
                             </a>
                         </p>
