@@ -1,0 +1,462 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Brotherc">
+    <title>享元模式 - Brotherc</title>
+    <meta name="author" content="Brotherc">
+    
+    
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"\n\n\n\n\n\n123456789101112131415161718192021222324252627282930313233343536/** * 享元类 */public interface ChessFlyWeight &#123;\tvoid setColor(String c);\tString getColor();\tvoid display(Coordinate c);&#125;class ConcreteChess implements ChessFlyWeight &#123;\tprivate String color;\tpublic ConcreteChess(String color) &#123;\t\tsuper();\t\tthis.color = color;\t&#125;\t@Override\tpublic void display(Coordinate c) &#123;\t\tSystem.out.println(&quot;棋子颜色：&quot;+color);\t\tSystem.out.println(&quot;棋子位置：&quot;+c.getX()+&quot;----&quot;+c.getY());\t&#125;\t@Override\tpublic String getColor() &#123;\t\treturn color;\t&#125;\t@Override\tpublic void setColor(String c) &#123;\t\tthis.color = c;\t&#125;&#125;\n1234567891011121314151617181920212223242526272829/** * 外部状态UnSharedConcreteFlyWeight */public class Coordinate &#123;\tprivate int x,y;\tpublic Coordinate(int x, int y) &#123;\t\tsuper();\t\tthis.x = x;\t\tthis.y = y;\t&#125;\tpublic int getX() &#123;\t\treturn x;\t&#125;\tpublic void setX(int x) &#123;\t\tthis.x = x;\t&#125;\tpublic int getY() &#123;\t\treturn y;\t&#125;\tpublic void setY(int y) &#123;\t\tthis.y = y;\t&#125;&#125;\n12345678910111213141516171819/** * 享元工厂类 */public class ChessFlyWeightFactory &#123;\t//享元池\tprivate static Map&lt;String,ChessFlyWeight&gt; map = new HashMap&lt;String, ChessFlyWeight&gt;();\tpublic static ChessFlyWeight  getChess(String color)&#123;\t\tif(map.get(color)!=null)&#123;\t\t\treturn map.get(color);\t\t&#125;else&#123;\t\t\tChessFlyWeight cfw = new ConcreteChess(color);\t\t\tmap.put(color, cfw);\t\t\treturn cfw;\t\t&#125;\t&#125;&#125;\n123456789101112public class Client &#123;\tpublic static void main(String[] args) &#123;\t\tChessFlyWeight chess1 = ChessFlyWeightFactory.getChess(&quot;黑色&quot;);\t\tChessFlyWeight chess2 = ChessFlyWeightFactory.getChess(&quot;黑色&quot;);\t\tSystem.out.println(chess1);\t\tSystem.out.println(chess2);\t\tSystem.out.println(&quot;增加外部状态的处理===========&quot;);\t\tchess1.display(new Coordinate(10, 10));\t\tchess2.display(new Coordinate(20, 20));\t&#125;&#125;\n","dateCreated":"2020-04-04T15:50:56+08:00","dateModified":"2020-04-04T15:28:14+08:00","datePublished":"2020-04-04T15:50:56+08:00","description":"","headline":"享元模式","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2020/04/04/享元模式/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2020/04/04/享元模式/","keywords":"设计模式"}</script>
+    <meta name="description" content="123456789101112131415161718192021222324252627282930313233343536/** * 享元类 */public interface ChessFlyWeight &amp;#123;	void setColor(String c);	String getColor();	void display(Coordinate c);&amp;#125;cla">
+<meta name="keywords" content="设计模式">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="享元模式">
+<meta property="og:url" content="http://yoursite.com/2020/04/04/享元模式/index.html">
+<meta property="og:site_name" content="Brotherc">
+<meta property="og:description" content="123456789101112131415161718192021222324252627282930313233343536/** * 享元类 */public interface ChessFlyWeight &amp;#123;	void setColor(String c);	String getColor();	void display(Coordinate c);&amp;#125;cla">
+<meta property="og:locale" content="zh-cn">
+<meta property="og:image" content="http://yoursite.com/assets/设计模式/56.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/设计模式/57.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/设计模式/58.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/设计模式/59.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/设计模式/60.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/设计模式/61.jpg">
+<meta property="og:updated_time" content="2020-04-04T07:28:14.597Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="享元模式">
+<meta name="twitter:description" content="123456789101112131415161718192021222324252627282930313233343536/** * 享元类 */public interface ChessFlyWeight &amp;#123;	void setColor(String c);	String getColor();	void display(Coordinate c);&amp;#125;cla">
+<meta name="twitter:image" content="http://yoursite.com/assets/设计模式/56.jpg">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://yoursite.com/assets/images/head.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-c4ozcsklz4kht2pebhp44xorvyverh23toayhn7i6ubrpyedak24hv1v0hyd.min.css">
+    <!--STYLES END-->
+    
+
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/ ">Brotherc</a>
+    </div>
+    
+        
+            <a class="header-right-picture " href="#about">
+        
+        
+            <img class="header-picture" src="/assets/images/head.jpg" alt="作者的图片">
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/#about">
+                    <img class="sidebar-profile-picture" src="/assets/images/head.jpg" alt="作者的图片">
+                </a>
+                <h4 class="sidebar-profile-name">Brotherc</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>java development</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/ " title="首页">
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">首页</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-categories" title="分类">
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">分类</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-tags" title="标签">
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">标签</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link open-algolia-search" href="/all-archives" title="归档">
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">归档</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="#about" title="关于">
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">关于</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://github.com/Brotherc" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="4"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            享元模式
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2020-04-04T15:50:56+08:00">
+	
+		    4月 04, 2020
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/56.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/56.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/57.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/57.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/58.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/58.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/59.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/59.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/60.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/60.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/61.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/61.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 享元类</span><br><span class="line"> */</span><br><span class="line">public interface ChessFlyWeight &#123;</span><br><span class="line">	void setColor(String c);</span><br><span class="line">	String getColor();</span><br><span class="line">	void display(Coordinate c);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">class ConcreteChess implements ChessFlyWeight &#123;</span><br><span class="line"></span><br><span class="line">	private String color;</span><br><span class="line"></span><br><span class="line">	public ConcreteChess(String color) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.color = color;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void display(Coordinate c) &#123;</span><br><span class="line">		System.out.println(&quot;棋子颜色：&quot;+color);</span><br><span class="line">		System.out.println(&quot;棋子位置：&quot;+c.getX()+&quot;----&quot;+c.getY());</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public String getColor() &#123;</span><br><span class="line">		return color;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void setColor(String c) &#123;</span><br><span class="line">		this.color = c;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 外部状态UnSharedConcreteFlyWeight</span><br><span class="line"> */</span><br><span class="line">public class Coordinate &#123;</span><br><span class="line">	private int x,y;</span><br><span class="line"></span><br><span class="line">	public Coordinate(int x, int y) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.x = x;</span><br><span class="line">		this.y = y;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public int getX() &#123;</span><br><span class="line">		return x;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setX(int x) &#123;</span><br><span class="line">		this.x = x;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public int getY() &#123;</span><br><span class="line">		return y;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setY(int y) &#123;</span><br><span class="line">		this.y = y;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 享元工厂类</span><br><span class="line"> */</span><br><span class="line">public class ChessFlyWeightFactory &#123;</span><br><span class="line">	//享元池</span><br><span class="line">	private static Map&lt;String,ChessFlyWeight&gt; map = new HashMap&lt;String, ChessFlyWeight&gt;();</span><br><span class="line"></span><br><span class="line">	public static ChessFlyWeight  getChess(String color)&#123;</span><br><span class="line"></span><br><span class="line">		if(map.get(color)!=null)&#123;</span><br><span class="line">			return map.get(color);</span><br><span class="line">		&#125;else&#123;</span><br><span class="line">			ChessFlyWeight cfw = new ConcreteChess(color);</span><br><span class="line">			map.put(color, cfw);</span><br><span class="line">			return cfw;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public class Client &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		ChessFlyWeight chess1 = ChessFlyWeightFactory.getChess(&quot;黑色&quot;);</span><br><span class="line">		ChessFlyWeight chess2 = ChessFlyWeightFactory.getChess(&quot;黑色&quot;);</span><br><span class="line">		System.out.println(chess1);</span><br><span class="line">		System.out.println(chess2);</span><br><span class="line"></span><br><span class="line">		System.out.println(&quot;增加外部状态的处理===========&quot;);</span><br><span class="line">		chess1.display(new Coordinate(10, 10));</span><br><span class="line">		chess2.display(new Coordinate(20, 20));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+            
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">标签</span><br>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/设计模式/">设计模式</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/04/04/外观模式/" data-tooltip="外观模式" aria-label="上一篇: 外观模式">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/04/04/组合模式/" data-tooltip="组合模式" aria-label="下一篇: 组合模式">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/04/04/享元模式/" title="分享到 Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/04/04/享元模式/" title="分享到 Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/04/04/享元模式/" title="分享到 Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2020 Brotherc. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/04/04/外观模式/" data-tooltip="外观模式" aria-label="上一篇: 外观模式">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/04/04/组合模式/" data-tooltip="组合模式" aria-label="下一篇: 组合模式">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/04/04/享元模式/" title="分享到 Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/04/04/享元模式/" title="分享到 Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/04/04/享元模式/" title="分享到 Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/04/04/享元模式/">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>分享到 Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/04/04/享元模式/">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/04/04/享元模式/">
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>分享到 Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/head.jpg" alt="作者的图片">
+        
+            <h4 id="about-card-name">Brotherc</h4>
+        
+            <div id="about-card-bio"><p>java development</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br>
+                <p>java</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br>
+                zhuhai
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-dbd16rvloemmuxdzniplmnxxvwoz24eya9wol0b7vvmlokgqsjivmb8dnscy.min.js"></script>
+<!--SCRIPTS END-->
+
+    
+
+
+
+    </body>
+</html>
