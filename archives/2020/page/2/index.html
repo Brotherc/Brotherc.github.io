@@ -166,6 +166,57 @@
             <div class="postShorten-header">
                 <h1 class="postShorten-title">
                     
+                        <a class="link-unstyled" href="/2020/04/04/状态模式/">
+                            状态模式
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2020-04-04T15:50:56+08:00">
+	
+		    4月 04, 2020
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/91.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/91.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/92.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/92.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/93.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/93.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public interface State &#123;</span><br><span class="line">	void handle();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 已预订状态</span><br><span class="line"> */</span><br><span class="line">public class BookedState implements State &#123;</span><br><span class="line">	@Override</span><br><span class="line">	public void handle() &#123;</span><br><span class="line">		System.out.println(&quot;房间已预订！别人不能定！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 已入住状态</span><br><span class="line"> */</span><br><span class="line">public class CheckedInState implements State &#123;</span><br><span class="line">	@Override</span><br><span class="line">	public void handle() &#123;</span><br><span class="line">		System.out.println(&quot;房间已入住！请勿打扰！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 空闲状态</span><br><span class="line"> */</span><br><span class="line">public class FreeState implements State &#123;</span><br><span class="line">	@Override</span><br><span class="line">	public void handle() &#123;</span><br><span class="line">		System.out.println(&quot;房间空闲！！！没人住！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 房间对象</span><br><span class="line"> */</span><br><span class="line">public class HomeContext &#123;</span><br><span class="line">	//如果是银行系统，这个Context类就是账号。根据金额不同，切换不同的状态！</span><br><span class="line">	private State state;</span><br><span class="line"></span><br><span class="line">	public void setState(State s)&#123;</span><br><span class="line">		System.out.println(&quot;修改状态！&quot;);</span><br><span class="line">		state = s;</span><br><span class="line">		state.handle();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public class Client &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		HomeContext ctx = new HomeContext();</span><br><span class="line"></span><br><span class="line">		ctx.setState(new FreeState());</span><br><span class="line">		ctx.setState(new BookedState());</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2020/04/04/状态模式/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
                         <a class="link-unstyled" href="/2020/04/04/模板方法模式/">
                             模板方法模式
                         </a>
@@ -617,59 +668,6 @@
                     
                         <p>
                             <a href="/2020/04/04/建造者模式/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2020/04/04/适配器模式/">
-                            适配器模式
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2020-04-04T15:50:56+08:00">
-	
-		    4月 04, 2020
-    	
-    </time>
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-content">
-                    <div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/26.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/26.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/27.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/27.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/28.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/28.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 被适配的类</span><br><span class="line"> */</span><br><span class="line">public class Adaptee &#123;</span><br><span class="line">	public void request()&#123;</span><br><span class="line">		System.out.println(&quot;可以完成客户请求的需要的功能！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public interface Target &#123;</span><br><span class="line">	void handleReq();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 适配器 (类适配器方式)</span><br><span class="line"> */</span><br><span class="line">public class Adapter extends Adaptee implements Target &#123;</span><br><span class="line">	@Override</span><br><span class="line">	public void handleReq() &#123;</span><br><span class="line">		super.request();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 适配器 (对象适配器方式,使用了组合的方式跟被适配对象整合)</span><br><span class="line"> */</span><br><span class="line">public class Adapter2  implements Target &#123;</span><br><span class="line">	private Adaptee adaptee;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void handleReq() &#123;</span><br><span class="line">		adaptee.request();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public Adapter2(Adaptee adaptee) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.adaptee = adaptee;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 客户端类</span><br><span class="line"> */</span><br><span class="line">public class Client &#123;</span><br><span class="line">	public void test1(Target t)&#123;</span><br><span class="line">		t.handleReq();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		Client  c = new Client();</span><br><span class="line"></span><br><span class="line">		Adaptee a = new Adaptee();</span><br><span class="line"></span><br><span class="line">//		Target t = new Adapter();</span><br><span class="line"></span><br><span class="line">		Target t = new Adapter2(a);</span><br><span class="line"></span><br><span class="line">		c.test1(t);</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/29.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/29.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/30.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/30.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/31.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/31.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2020/04/04/适配器模式/#post-footer" class="postShorten-excerpt_link link">
                                 评论和共享
                             </a>
                         </p>

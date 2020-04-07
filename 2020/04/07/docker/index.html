@@ -1,0 +1,645 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Brotherc">
+    <title>docker基础 - Brotherc</title>
+    <meta name="author" content="Brotherc">
+    
+    
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n安装1234567891011121314sudo yum remove docker \\docker-common \\docker-selinux \\docker-enginesudo yum install -y yum-utils \\device-mapper-persistent-data \\lvm2sudo yum-config-manager \\--add-repo \\https://download.docker.com/linux/centos/docker-ce.reposudo yum install docker-ce\n启动12sudo systemctl start dockersudo docker version\nhelloworld1sudo docker run hello-world\n镜像\n\n\n123456789101112// 查看进程ps -ef | grep docker// 查看镜像sudo docker image ls// 拉取镜像sudo docker pull ubuntu:14.04// 运行镜像docker run hello-worlddocker run -it centos// 删除镜像docker image rm 67759a80360c(镜像ID)docker image rmi f2a91732366c(镜像ID)\n自己实现helloworld123456789101112mkdir hello-worldcd hello-world/vim hello.c// 内容#include&lt;stdio.h&gt;int main() &#123;  printf(&quot;hello docker\\n&quot;);&#125;gcc -static hello.c -o hello\n123456vim Dockerfile// 内容FROM scratchADD hello /CMD [&quot;/hello&quot;]\n12docker build -t brotherc/hello-world .docker run brotherc/hello-world\n容器\n12345678910docker container lsdocker container ls -adocker container ps -adocker rm $(docker container ls -f &quot;status-exited&quot; -q)docker rm $(docker container ls -aq)docker container rm 846b5efe98d4(容器ID)docker container rm 84(容器ID前缀)// 将已有容器提交成新的镜像Usage: docker commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]] [flags]docker commit xenodochial_pare(容器名称) brotherc/centos-vim\n基于已经存在的container创建一个image1234// 运行一个已安装好vim的centos容器docker run -it centosyum install -y vimexit\n12// 容器名：xenodochial_paredocker commit xenodochial_pare brotherc/centos-vim\n基于Dockerfile创建一个image12345678mkdir docker-centos-vimcd docker-centos-vim/vim DockerfileFROM centosRUN yum install -y vimdocker build -t brotherc/centos-vim-new .\nDockerfileFROM尽量使用官方的image作为base image!123FROM scratch #制作base imageFROM centos  #使用base imageFROM ubuntu:14.04\nLABELMetadata不可少!123LABEL maintainer=&quot;brotherc@136.com&quot;LABEL version=&quot;1.0&quot;LABEL description=&quot;This is description&quot;\nRUN为了美观，复杂的RUN请用反斜杠换行!避免无用分层，合并多条命令成一行!12RUN yum update &amp;&amp; yum install -y vim \\ #反斜线换行    python-dev\n123RUN apt-get update &amp;&amp; apt-get install -y perl \\    pwgen --no-install-recommends &amp;&amp; rm -rf \\    /var/lib/apt/lists/* #注意清理cache\n1RUN /bin/bash -c&apos;source $HOME/.bashrc;echo $HOME&apos;\nWORKDIR设定当前工作目录，类似cd用WORKDIR，不要用RUN cd!尽量使用绝对目录!1WORKDIR /root\n123WORKDIR /test #如果没有会自动创建test目录WORKDIR demoRUN pwd       #输出结果应该是 /test/demo\nADD and COPY将本地文件添加到image里面大部分情况，COPY优于ADD!ADD除了COPY还有额外功能(解压)!添加远程文件/目录请使用curl或者wget!1ADD hello /\n1ADD test.tar.gz / #添加到根目录并解压\n12WORKDIR /rootADD hello test/ # /root/test/hello\n12WORKDIR /rootCOPY hello test/\nENV尽量使用ENV增加可维护性!123ENV MYSQL_VERSION 5.6 #设置常量RUN apt-get install -y mysql-server=&quot;$&#123;MYSQL_VERSION&#125;&quot; \\    &amp;&amp; rm -rf /var/lib/apt/lists/* #引用常量\nRUN vs CMD vs ENTRYPOINTRUN:执行命令并创建新的image layerCMD:设置容器启动后默认执行的命令和参数ENTRYPOINT:设置容器启动时运行的命令\nShell格式123RUN apt-get install -y vimCMD echo &quot;hello docker&quot;ENTRYPOINT echo &quot;hello docker&quot;\n123FROM centosENV name DockerENTRYPOINT echo &quot;hello $name&quot;\nExec格式123RUN [&quot;apt-get&quot;, &quot;install&quot;, &quot;-y&quot;, &quot;vim&quot;]CMD [&quot;/bin/echo&quot;, &quot;hello docker&quot;]ENTRYPOINT [&quot;/bin/echo&quot;, &quot;hello docker&quot;]\n123FROM centosENV name DockerENTRYPOINT [&quot;/bin/echo&quot;, &quot;hello docker&quot;]\nDockerfile实践Dockerfile:123FROM centosENV name DockerENTRYPOINT echo &quot;hello $name&quot;\n123docker build -t brotherc/centos-entrypoint-shell .docker run brotherc/centos-entrypoint-shellhello Docker\nDockerfile:123FROM centosENV name DockerENTRYPOINT [&quot;/bin/bash&quot;, &quot;-c&quot;, &quot;echo hello $name&quot;]\n123docker build -t brotherc/centos-entrypoint-exec .docker run brotherc/centos-entrypoint-exechello Docker\nCMD容器启动时默认执行的命令如果docker run指定了其它命令，CMD命令被忽略如果定义了多个CMD，只有最后一个会执行Dockerfile:123FROM centosENV name DockerCMD echo &quot;hello $name&quot;\n123456docker build -t brotherc/centos-cmd-shell .docker run brotherc/centos-cmd-shellhello Dockerdocker run -it brotherc/centos-cmd-shell /bin/bash无输出\nENTRYPOINT让容器以应用程序或者服务的形式运行不会被忽略，一定会执行12345docker run brotherc/centos-entrypoint-shellhello Dockerdocker run -it brotherc/centos-entrypoint-shell /bin/bashhello Docker\nDocker Network基础网络概念\n\n\n\n\n\n\n\n\n1234sudo docker run -d --name test1 busybox /bin/sh -c &quot;while true; do sleep 3600; done&quot;sudo docker exec -it test1 /bin/ship a\n12sudo docker run -d --name test2 busybox /bin/sh -c &quot;while true; do sleep 3600; done&quot;sudo docker exec test2 ip a\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nDocker的持久化存储和数据共享\n\n\n\n数据持久化：Data Volume\n12//mysql镜像会默认将数据挂载到本地sudo docker run -d --name mysql1 -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysql\n123456sudo docker volume lsDRIVER        VOLUME NAMElocal         e6ee5901156...sudo docker volume inspect e6ee5901156...\n123456sudo docker stop mysql1sudo docker rm mysql1sudo docker volume lsDRIVER        VOLUME NAMElocal         e6ee5901156...\n123456//给volume指定名字sudo docker run -d -v mysql:/var/lib/mysql --name mysql1 -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysqlsudo docker volume lsDRIVER        VOLUME NAMElocal         mysql\n123//让mysql容器使用已存在的volumesudo docker rm -rf mysql1sudo docker run -d -v mysql:/var/lib/mysql --name mysql2 -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysql\n数据持久化：Bind Mouting\nDockerfile:123FROM nginx:latestWORKDIR /usr/share/nginx/htmlCOPY index.html index.html\n12docker build -t brotherc/my-nginx .docker run -d -p 80:80 --name web brotherc/my-nginx\n12345678docker rm -f webdocker run -d -v $(pwd):/usr/share/nginx/html -p 80:80 --name web brotherc/my-nginxdocker exec -it web /bin/bash//在容器中cd /usr/share/nginx/htmltouch test.txtexit//在linux中看到刚刚创建的test.txt文件\n","dateCreated":"2020-04-07T21:37:14+08:00","dateModified":"2020-04-07T20:49:50+08:00","datePublished":"2020-04-07T21:37:14+08:00","description":"","headline":"docker基础","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2020/04/07/docker/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2020/04/07/docker/","keywords":"docker"}</script>
+    <meta name="description" content="安装1234567891011121314sudo yum remove docker \docker-common \docker-selinux \docker-enginesudo yum install -y yum-utils \device-mapper-persistent-data \lvm2sudo yum-config-manager">
+<meta name="keywords" content="docker">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="docker基础">
+<meta property="og:url" content="http://yoursite.com/2020/04/07/docker/index.html">
+<meta property="og:site_name" content="Brotherc">
+<meta property="og:description" content="安装1234567891011121314sudo yum remove docker \docker-common \docker-selinux \docker-enginesudo yum install -y yum-utils \device-mapper-persistent-data \lvm2sudo yum-config-manager">
+<meta property="og:locale" content="zh-cn">
+<meta property="og:image" content="http://yoursite.com/assets/docker/1.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/2.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/3.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/4.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/5.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/6.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/7.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/8.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/9.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/10.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/11.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/12.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/13.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/14.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/15.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/16.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/17.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/18.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/19.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/20.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/21.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/22.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/23.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/24.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/25.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/32.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/33.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/34.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/35.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/36.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/37.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/38.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/39.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/40.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/41.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/42.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/43.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/44.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/45.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/46.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/47.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/48.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/49.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/50.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/51.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/52.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/53.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/54.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/55.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/56.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/57.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/58.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/59.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/60.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/61.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/62.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/63.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/64.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/65.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/66.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/67.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/68.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/69.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/70.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/71.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/72.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/73.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/74.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/75.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/76.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/77.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/26.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/27.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/28.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/29.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/30.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/31.jpg">
+<meta property="og:updated_time" content="2020-04-07T12:49:50.043Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="docker基础">
+<meta name="twitter:description" content="安装1234567891011121314sudo yum remove docker \docker-common \docker-selinux \docker-enginesudo yum install -y yum-utils \device-mapper-persistent-data \lvm2sudo yum-config-manager">
+<meta name="twitter:image" content="http://yoursite.com/assets/docker/1.jpg">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://yoursite.com/assets/images/head.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-c4ozcsklz4kht2pebhp44xorvyverh23toayhn7i6ubrpyedak24hv1v0hyd.min.css">
+    <!--STYLES END-->
+    
+
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/ ">Brotherc</a>
+    </div>
+    
+        
+            <a class="header-right-picture " href="#about">
+        
+        
+            <img class="header-picture" src="/assets/images/head.jpg" alt="作者的图片">
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/#about">
+                    <img class="sidebar-profile-picture" src="/assets/images/head.jpg" alt="作者的图片">
+                </a>
+                <h4 class="sidebar-profile-name">Brotherc</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>java development</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/ " title="首页">
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">首页</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-categories" title="分类">
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">分类</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-tags" title="标签">
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">标签</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link open-algolia-search" href="/all-archives" title="归档">
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">归档</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="#about" title="关于">
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">关于</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://github.com/Brotherc" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="4"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            docker基础
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2020-04-07T21:37:14+08:00">
+	
+		    4月 07, 2020
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/1.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/1.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/2.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/2.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/3.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/3.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/4.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/4.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/5.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/5.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/6.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/6.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/7.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/7.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/8.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/8.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/9.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/9.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/10.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/10.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/11.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/11.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/12.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/12.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/13.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/13.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/14.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/14.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/15.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/15.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/16.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/16.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/17.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/17.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/18.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/18.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/19.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/19.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/20.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/20.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/21.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/21.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">sudo yum remove docker \</span><br><span class="line">docker-common \</span><br><span class="line">docker-selinux \</span><br><span class="line">docker-engine</span><br><span class="line"></span><br><span class="line">sudo yum install -y yum-utils \</span><br><span class="line">device-mapper-persistent-data \</span><br><span class="line">lvm2</span><br><span class="line"></span><br><span class="line">sudo yum-config-manager \</span><br><span class="line">--add-repo \</span><br><span class="line">https://download.docker.com/linux/centos/docker-ce.repo</span><br><span class="line"></span><br><span class="line">sudo yum install docker-ce</span><br></pre></td></tr></table></figure>
+<h3 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl start docker</span><br><span class="line">sudo docker version</span><br></pre></td></tr></table></figure>
+<h3 id="helloworld"><a href="#helloworld" class="headerlink" title="helloworld"></a>helloworld</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run hello-world</span><br></pre></td></tr></table></figure>
+<h3 id="镜像"><a href="#镜像" class="headerlink" title="镜像"></a>镜像</h3><div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/22.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/22.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/23.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/23.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/24.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/24.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">// 查看进程</span><br><span class="line">ps -ef | grep docker</span><br><span class="line">// 查看镜像</span><br><span class="line">sudo docker image ls</span><br><span class="line">// 拉取镜像</span><br><span class="line">sudo docker pull ubuntu:14.04</span><br><span class="line">// 运行镜像</span><br><span class="line">docker run hello-world</span><br><span class="line">docker run -it centos</span><br><span class="line">// 删除镜像</span><br><span class="line">docker image rm 67759a80360c(镜像ID)</span><br><span class="line">docker image rmi f2a91732366c(镜像ID)</span><br></pre></td></tr></table></figure>
+<h3 id="自己实现helloworld"><a href="#自己实现helloworld" class="headerlink" title="自己实现helloworld"></a>自己实现helloworld</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">mkdir hello-world</span><br><span class="line">cd hello-world/</span><br><span class="line">vim hello.c</span><br><span class="line"></span><br><span class="line">// 内容</span><br><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">  printf(&quot;hello docker\n&quot;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">gcc -static hello.c -o hello</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">vim Dockerfile</span><br><span class="line"></span><br><span class="line">// 内容</span><br><span class="line">FROM scratch</span><br><span class="line">ADD hello /</span><br><span class="line">CMD [&quot;/hello&quot;]</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker build -t brotherc/hello-world .</span><br><span class="line">docker run brotherc/hello-world</span><br></pre></td></tr></table></figure>
+<h3 id="容器"><a href="#容器" class="headerlink" title="容器"></a>容器</h3><div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/25.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/25.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">docker container ls</span><br><span class="line">docker container ls -a</span><br><span class="line">docker container ps -a</span><br><span class="line">docker rm $(docker container ls -f &quot;status-exited&quot; -q)</span><br><span class="line">docker rm $(docker container ls -aq)</span><br><span class="line">docker container rm 846b5efe98d4(容器ID)</span><br><span class="line">docker container rm 84(容器ID前缀)</span><br><span class="line">// 将已有容器提交成新的镜像</span><br><span class="line">Usage: docker commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]] [flags]</span><br><span class="line">docker commit xenodochial_pare(容器名称) brotherc/centos-vim</span><br></pre></td></tr></table></figure>
+<h3 id="基于已经存在的container创建一个image"><a href="#基于已经存在的container创建一个image" class="headerlink" title="基于已经存在的container创建一个image"></a>基于已经存在的container创建一个image</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 运行一个已安装好vim的centos容器</span><br><span class="line">docker run -it centos</span><br><span class="line">yum install -y vim</span><br><span class="line">exit</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 容器名：xenodochial_pare</span><br><span class="line">docker commit xenodochial_pare brotherc/centos-vim</span><br></pre></td></tr></table></figure>
+<h3 id="基于Dockerfile创建一个image"><a href="#基于Dockerfile创建一个image" class="headerlink" title="基于Dockerfile创建一个image"></a>基于Dockerfile创建一个image</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mkdir docker-centos-vim</span><br><span class="line">cd docker-centos-vim/</span><br><span class="line">vim Dockerfile</span><br><span class="line"></span><br><span class="line">FROM centos</span><br><span class="line">RUN yum install -y vim</span><br><span class="line"></span><br><span class="line">docker build -t brotherc/centos-vim-new .</span><br></pre></td></tr></table></figure>
+<h3 id="Dockerfile"><a href="#Dockerfile" class="headerlink" title="Dockerfile"></a>Dockerfile</h3><h4 id="FROM"><a href="#FROM" class="headerlink" title="FROM"></a>FROM</h4><p>尽量使用官方的image作为base image!<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">FROM scratch #制作base image</span><br><span class="line">FROM centos  #使用base image</span><br><span class="line">FROM ubuntu:14.04</span><br></pre></td></tr></table></figure></p>
+<h4 id="LABEL"><a href="#LABEL" class="headerlink" title="LABEL"></a>LABEL</h4><p>Metadata不可少!<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">LABEL maintainer=&quot;brotherc@136.com&quot;</span><br><span class="line">LABEL version=&quot;1.0&quot;</span><br><span class="line">LABEL description=&quot;This is description&quot;</span><br></pre></td></tr></table></figure></p>
+<h4 id="RUN"><a href="#RUN" class="headerlink" title="RUN"></a>RUN</h4><p>为了美观，复杂的RUN请用反斜杠换行!避免无用分层，合并多条命令成一行!<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">RUN yum update &amp;&amp; yum install -y vim \ #反斜线换行</span><br><span class="line">    python-dev</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RUN apt-get update &amp;&amp; apt-get install -y perl \</span><br><span class="line">    pwgen --no-install-recommends &amp;&amp; rm -rf \</span><br><span class="line">    /var/lib/apt/lists/* #注意清理cache</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RUN /bin/bash -c&apos;source $HOME/.bashrc;echo $HOME&apos;</span><br></pre></td></tr></table></figure>
+<h4 id="WORKDIR"><a href="#WORKDIR" class="headerlink" title="WORKDIR"></a>WORKDIR</h4><p>设定当前工作目录，类似cd<br>用WORKDIR，不要用RUN cd!尽量使用绝对目录!<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">WORKDIR /root</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">WORKDIR /test #如果没有会自动创建test目录</span><br><span class="line">WORKDIR demo</span><br><span class="line">RUN pwd       #输出结果应该是 /test/demo</span><br></pre></td></tr></table></figure>
+<h4 id="ADD-and-COPY"><a href="#ADD-and-COPY" class="headerlink" title="ADD and COPY"></a>ADD and COPY</h4><p>将本地文件添加到image里面<br>大部分情况，COPY优于ADD!ADD除了COPY还有额外功能(解压)!添加远程文件/目录<br>请使用curl或者wget!<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ADD hello /</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ADD test.tar.gz / #添加到根目录并解压</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">WORKDIR /root</span><br><span class="line">ADD hello test/ # /root/test/hello</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">WORKDIR /root</span><br><span class="line">COPY hello test/</span><br></pre></td></tr></table></figure>
+<h4 id="ENV"><a href="#ENV" class="headerlink" title="ENV"></a>ENV</h4><p>尽量使用ENV增加可维护性!<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ENV MYSQL_VERSION 5.6 #设置常量</span><br><span class="line">RUN apt-get install -y mysql-server=&quot;$&#123;MYSQL_VERSION&#125;&quot; \</span><br><span class="line">    &amp;&amp; rm -rf /var/lib/apt/lists/* #引用常量</span><br></pre></td></tr></table></figure></p>
+<h4 id="RUN-vs-CMD-vs-ENTRYPOINT"><a href="#RUN-vs-CMD-vs-ENTRYPOINT" class="headerlink" title="RUN vs CMD vs ENTRYPOINT"></a>RUN vs CMD vs ENTRYPOINT</h4><p>RUN:执行命令并创建新的image layer<br>CMD:设置容器启动后默认执行的命令和参数<br>ENTRYPOINT:设置容器启动时运行的命令</p>
+<h4 id="Shell格式"><a href="#Shell格式" class="headerlink" title="Shell格式"></a>Shell格式</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RUN apt-get install -y vim</span><br><span class="line">CMD echo &quot;hello docker&quot;</span><br><span class="line">ENTRYPOINT echo &quot;hello docker&quot;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">FROM centos</span><br><span class="line">ENV name Docker</span><br><span class="line">ENTRYPOINT echo &quot;hello $name&quot;</span><br></pre></td></tr></table></figure>
+<h4 id="Exec格式"><a href="#Exec格式" class="headerlink" title="Exec格式"></a>Exec格式</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RUN [&quot;apt-get&quot;, &quot;install&quot;, &quot;-y&quot;, &quot;vim&quot;]</span><br><span class="line">CMD [&quot;/bin/echo&quot;, &quot;hello docker&quot;]</span><br><span class="line">ENTRYPOINT [&quot;/bin/echo&quot;, &quot;hello docker&quot;]</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">FROM centos</span><br><span class="line">ENV name Docker</span><br><span class="line">ENTRYPOINT [&quot;/bin/echo&quot;, &quot;hello docker&quot;]</span><br></pre></td></tr></table></figure>
+<h3 id="Dockerfile实践"><a href="#Dockerfile实践" class="headerlink" title="Dockerfile实践"></a>Dockerfile实践</h3><p>Dockerfile:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">FROM centos</span><br><span class="line">ENV name Docker</span><br><span class="line">ENTRYPOINT echo &quot;hello $name&quot;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker build -t brotherc/centos-entrypoint-shell .</span><br><span class="line">docker run brotherc/centos-entrypoint-shell</span><br><span class="line">hello Docker</span><br></pre></td></tr></table></figure>
+<p>Dockerfile:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">FROM centos</span><br><span class="line">ENV name Docker</span><br><span class="line">ENTRYPOINT [&quot;/bin/bash&quot;, &quot;-c&quot;, &quot;echo hello $name&quot;]</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker build -t brotherc/centos-entrypoint-exec .</span><br><span class="line">docker run brotherc/centos-entrypoint-exec</span><br><span class="line">hello Docker</span><br></pre></td></tr></table></figure>
+<h4 id="CMD"><a href="#CMD" class="headerlink" title="CMD"></a>CMD</h4><p>容器启动时默认执行的命令<br>如果docker run指定了其它命令，CMD命令被忽略<br>如果定义了多个CMD，只有最后一个会执行<br>Dockerfile:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">FROM centos</span><br><span class="line">ENV name Docker</span><br><span class="line">CMD echo &quot;hello $name&quot;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">docker build -t brotherc/centos-cmd-shell .</span><br><span class="line">docker run brotherc/centos-cmd-shell</span><br><span class="line">hello Docker</span><br><span class="line"></span><br><span class="line">docker run -it brotherc/centos-cmd-shell /bin/bash</span><br><span class="line">无输出</span><br></pre></td></tr></table></figure>
+<h4 id="ENTRYPOINT"><a href="#ENTRYPOINT" class="headerlink" title="ENTRYPOINT"></a>ENTRYPOINT</h4><p>让容器以应用程序或者服务的形式运行<br>不会被忽略，一定会执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker run brotherc/centos-entrypoint-shell</span><br><span class="line">hello Docker</span><br><span class="line"></span><br><span class="line">docker run -it brotherc/centos-entrypoint-shell /bin/bash</span><br><span class="line">hello Docker</span><br></pre></td></tr></table></figure></p>
+<h3 id="Docker-Network"><a href="#Docker-Network" class="headerlink" title="Docker Network"></a>Docker Network</h3><h4 id="基础网络概念"><a href="#基础网络概念" class="headerlink" title="基础网络概念"></a>基础网络概念</h4><div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/32.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/32.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/33.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/33.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/34.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/34.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/35.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/35.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/36.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/36.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/37.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/37.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/38.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/38.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/39.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/39.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/40.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/40.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run -d --name test1 busybox /bin/sh -c &quot;while true; do sleep 3600; done&quot;</span><br><span class="line">sudo docker exec -it test1 /bin/sh</span><br><span class="line"></span><br><span class="line">ip a</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run -d --name test2 busybox /bin/sh -c &quot;while true; do sleep 3600; done&quot;</span><br><span class="line">sudo docker exec test2 ip a</span><br></pre></td></tr></table></figure>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/41.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/41.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/42.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/42.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/43.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/43.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/44.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/44.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/45.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/45.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/46.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/46.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/47.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/47.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/48.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/48.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/49.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/49.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/50.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/50.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/51.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/51.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/52.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/52.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/53.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/53.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/54.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/54.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/55.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/55.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/56.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/56.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/57.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/57.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/58.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/58.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/59.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/59.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/60.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/60.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/61.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/61.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/62.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/62.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/63.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/63.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/64.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/64.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/65.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/65.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/66.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/66.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/67.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/67.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/68.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/68.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/69.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/69.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/70.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/70.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/71.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/71.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/72.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/72.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/73.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/73.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/74.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/74.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/75.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/75.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/76.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/76.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/77.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/77.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<h3 id="Docker的持久化存储和数据共享"><a href="#Docker的持久化存储和数据共享" class="headerlink" title="Docker的持久化存储和数据共享"></a>Docker的持久化存储和数据共享</h3><div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/26.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/26.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/27.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/27.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/28.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/28.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/29.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/29.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<h4 id="数据持久化：Data-Volume"><a href="#数据持久化：Data-Volume" class="headerlink" title="数据持久化：Data Volume"></a>数据持久化：Data Volume</h4><div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/30.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/30.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">//mysql镜像会默认将数据挂载到本地</span><br><span class="line">sudo docker run -d --name mysql1 -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysql</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sudo docker volume ls</span><br><span class="line"></span><br><span class="line">DRIVER        VOLUME NAME</span><br><span class="line">local         e6ee5901156...</span><br><span class="line"></span><br><span class="line">sudo docker volume inspect e6ee5901156...</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sudo docker stop mysql1</span><br><span class="line">sudo docker rm mysql1</span><br><span class="line">sudo docker volume ls</span><br><span class="line"></span><br><span class="line">DRIVER        VOLUME NAME</span><br><span class="line">local         e6ee5901156...</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//给volume指定名字</span><br><span class="line">sudo docker run -d -v mysql:/var/lib/mysql --name mysql1 -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysql</span><br><span class="line">sudo docker volume ls</span><br><span class="line"></span><br><span class="line">DRIVER        VOLUME NAME</span><br><span class="line">local         mysql</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">//让mysql容器使用已存在的volume</span><br><span class="line">sudo docker rm -rf mysql1</span><br><span class="line">sudo docker run -d -v mysql:/var/lib/mysql --name mysql2 -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysql</span><br></pre></td></tr></table></figure>
+<h4 id="数据持久化：Bind-Mouting"><a href="#数据持久化：Bind-Mouting" class="headerlink" title="数据持久化：Bind Mouting"></a>数据持久化：Bind Mouting</h4><div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/31.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/31.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<p>Dockerfile:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">FROM nginx:latest</span><br><span class="line">WORKDIR /usr/share/nginx/html</span><br><span class="line">COPY index.html index.html</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker build -t brotherc/my-nginx .</span><br><span class="line">docker run -d -p 80:80 --name web brotherc/my-nginx</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">docker rm -f web</span><br><span class="line">docker run -d -v $(pwd):/usr/share/nginx/html -p 80:80 --name web brotherc/my-nginx</span><br><span class="line">docker exec -it web /bin/bash</span><br><span class="line">//在容器中</span><br><span class="line">cd /usr/share/nginx/html</span><br><span class="line">touch test.txt</span><br><span class="line">exit</span><br><span class="line">//在linux中看到刚刚创建的test.txt文件</span><br></pre></td></tr></table></figure>
+
+            
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">标签</span><br>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/docker/">docker</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/04/07/Spring Security技术栈开发企业级认证与授权-认证流程源码级详解/" data-tooltip="SpringSecurity技术栈开发企业级认证与授权-认证流程源码级详解" aria-label="上一篇: SpringSecurity技术栈开发企业级认证与授权-认证流程源码级详解">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/04/07/网站/" data-tooltip="网站" aria-label="下一篇: 网站">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/04/07/docker/" title="分享到 Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/04/07/docker/" title="分享到 Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/04/07/docker/" title="分享到 Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2020 Brotherc. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/04/07/Spring Security技术栈开发企业级认证与授权-认证流程源码级详解/" data-tooltip="SpringSecurity技术栈开发企业级认证与授权-认证流程源码级详解" aria-label="上一篇: SpringSecurity技术栈开发企业级认证与授权-认证流程源码级详解">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/04/07/网站/" data-tooltip="网站" aria-label="下一篇: 网站">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/04/07/docker/" title="分享到 Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/04/07/docker/" title="分享到 Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/04/07/docker/" title="分享到 Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/04/07/docker/">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>分享到 Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/04/07/docker/">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/04/07/docker/">
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>分享到 Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/head.jpg" alt="作者的图片">
+        
+            <h4 id="about-card-name">Brotherc</h4>
+        
+            <div id="about-card-bio"><p>java development</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br>
+                <p>java</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br>
+                zhuhai
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-dbd16rvloemmuxdzniplmnxxvwoz24eya9wol0b7vvmlokgqsjivmb8dnscy.min.js"></script>
+<!--SCRIPTS END-->
+
+    
+
+
+
+    </body>
+</html>
