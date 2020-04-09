@@ -166,6 +166,50 @@
             <div class="postShorten-header">
                 <h1 class="postShorten-title">
                     
+                        <a class="link-unstyled" href="/2019/05/24/telegraf_volume/">
+                            telegraf file plugin inputs
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2019-05-24T17:20:36+08:00">
+	
+		    5月 24, 2019
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <h5 id="需要使用新增过功能的telegraf"><a href="#需要使用新增过功能的telegraf" class="headerlink" title="需要使用新增过功能的telegraf"></a>需要使用新增过功能的telegraf</h5><p>1.telegraf.conf<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">[global_tags]</span><br><span class="line"></span><br><span class="line">[agent]</span><br><span class="line">  interval = &quot;1h&quot;                #修改成实际的抓取间隔</span><br><span class="line">  round_interval = true</span><br><span class="line">  metric_batch_size = 1000</span><br><span class="line">  metric_buffer_limit = 10000</span><br><span class="line">  collection_jitter = &quot;0s&quot;</span><br><span class="line">  flush_interval = &quot;20s&quot;</span><br><span class="line">  flush_jitter = &quot;0s&quot;</span><br><span class="line">  precision = &quot;&quot;</span><br><span class="line">  debug = false</span><br><span class="line">  quiet = false</span><br><span class="line">  hostname = &quot;&quot;</span><br><span class="line">  omit_hostname = false</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">###############################################################################</span><br><span class="line">#                                  OUTPUTS                                    #</span><br><span class="line">###############################################################################</span><br><span class="line">[[outputs.influxdb]]</span><br><span class="line">  urls = [&quot;http://ip:8086&quot;]     #修改成实际的influxdb地址</span><br><span class="line">  database = &quot;volume_monitor&quot;</span><br><span class="line">  skip_database_creation = true</span><br><span class="line">  username = &quot;admin&quot;                        #有权限验证则修改用户名，否则删除该行配置</span><br><span class="line">  password = &quot;admin&quot;                        #有权限验证则修改密码，否则删除该行配置</span><br><span class="line">  namepass=[&quot;volume_*&quot;]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">###############################################################################</span><br><span class="line">#                                  INPUTS                                     #</span><br><span class="line">###############################################################################</span><br><span class="line">[[inputs.filecount]]</span><br><span class="line">  name_prefix=&quot;volume_&quot;</span><br><span class="line">  directories = [&quot;E:\\volume01&quot;]                    #实际抓取的文件目录</span><br><span class="line">  name = &quot;*&quot;</span><br><span class="line">  recursive = true</span><br><span class="line">  regular_only = true</span><br><span class="line">  size = 0</span><br><span class="line">  large_file_size = 4</span><br><span class="line">  mtime = &quot;0s&quot;</span><br></pre></td></tr></table></figure></p>
+<p>2.启动<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">telegraf --config telegraf.conf --input-filter filecount --output-filter influxdb</span><br></pre></td></tr></table></figure></p>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2019/05/24/telegraf_volume/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
                         <a class="link-unstyled" href="/2019/05/24/telegraf_prometheus/">
                             telegraf prometheus plugin inputs
                         </a>
@@ -612,52 +656,6 @@
                     
                         <p>
                             <a href="/2019/03/28/oracle账号/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2019/03/28/influxdb/">
-                            influxdb issues
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-03-28T12:03:05+08:00">
-	
-		    3月 28, 2019
-    	
-    </time>
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-content">
-                    <h3 id="org-influxdb-InfluxDBIOException-java-net-SocketTimeoutException-timeout"><a href="#org-influxdb-InfluxDBIOException-java-net-SocketTimeoutException-timeout" class="headerlink" title="org.influxdb.InfluxDBIOException: java.net.SocketTimeoutException: timeout"></a>org.influxdb.InfluxDBIOException: java.net.SocketTimeoutException: timeout</h3><p>使用influxdb的java客户端连接influxdb：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">InfluxDB influxDB = InfluxDBFactory.connect(&quot;http://localhost:8086&quot;);</span><br></pre></td></tr></table></figure></p>
-<p>报错：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Exception in thread &quot;main&quot; org.influxdb.InfluxDBIOException: java.net.SocketTimeoutException: timeout</span><br><span class="line">	at org.influxdb.impl.InfluxDBImpl.execute(InfluxDBImpl.java:800)</span><br><span class="line">	at org.influxdb.impl.InfluxDBImpl.write(InfluxDBImpl.java:455)</span><br></pre></td></tr></table></figure></p>
-<p>更改OKHttpClient的默认超时：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">OkHttpClient.Builder client = new OkHttpClient.Builder()</span><br><span class="line">        .connectTimeout(1, TimeUnit.MINUTES)</span><br><span class="line">        .readTimeout(1, TimeUnit.MINUTES)</span><br><span class="line">        .writeTimeout(2, TimeUnit.MINUTES)</span><br><span class="line">        .retryOnConnectionFailure(true);</span><br><span class="line">InfluxDB influxDB = InfluxDBFactory.connect(&quot;http://localhost:8086&quot;, client);</span><br></pre></td></tr></table></figure></p>
-<p>参考：<br><a href="https://github.com/influxdata/influxdb-java" target="_blank" rel="noopener">https://github.com/influxdata/influxdb-java</a><br><a href="https://stackoverflow.com/questions/50922473/influxdbioexception-java-net-sockettimeoutexception-timeout" target="_blank" rel="noopener">https://stackoverflow.com/questions/50922473/influxdbioexception-java-net-sockettimeoutexception-timeout</a></p>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2019/03/28/influxdb/#post-footer" class="postShorten-excerpt_link link">
                                 评论和共享
                             </a>
                         </p>
