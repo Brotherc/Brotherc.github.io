@@ -166,6 +166,54 @@
             <div class="postShorten-header">
                 <h1 class="postShorten-title">
                     
+                        <a class="link-unstyled" href="/2020/04/04/迭代器模式/">
+                            迭代器模式
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2020-04-04T15:50:56+08:00">
+	
+		    4月 04, 2020
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/69.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/69.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/70.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/70.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/71.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/71.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> *  自定义的迭代器接口</span><br><span class="line"> */</span><br><span class="line">public interface MyIterator &#123;</span><br><span class="line">	void first();	//将游标指向第一个元素</span><br><span class="line">	void next();	//将游标指向下一个元素</span><br><span class="line">	boolean hasNext();//判断是否存在下一个元素</span><br><span class="line"></span><br><span class="line">	boolean isFirst();</span><br><span class="line">	boolean isLast();</span><br><span class="line"></span><br><span class="line">	Object getCurrentObj();  //获取当前游标指向的对象</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 自定义的聚合类</span><br><span class="line"> */</span><br><span class="line">public class ConcreteMyAggregate &#123;</span><br><span class="line">	private List&lt;Object&gt; list = new ArrayList&lt;Object&gt;();</span><br><span class="line"></span><br><span class="line">	public void addObject(Object obj)&#123;</span><br><span class="line">		this.list.add(obj);</span><br><span class="line">	&#125;</span><br><span class="line">	public void removeObject(Object obj)&#123;</span><br><span class="line">		this.list.remove(obj);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public List&lt;Object&gt; getList() &#123;</span><br><span class="line">		return list;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setList(List&lt;Object&gt; list) &#123;</span><br><span class="line">		this.list = list;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	//获得迭代器</span><br><span class="line">	public MyIterator  createIterator()&#123;</span><br><span class="line">		return new ConcreteIterator();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	//使用内部类定义迭代器，可以直接使用外部类的属性</span><br><span class="line">	private class ConcreteIterator implements MyIterator &#123;</span><br><span class="line"></span><br><span class="line">		private int cursor;  //定义游标用于记录遍历时的位置</span><br><span class="line"></span><br><span class="line">		@Override</span><br><span class="line">		public void first() &#123;</span><br><span class="line">			cursor = 0;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		@Override</span><br><span class="line">		public Object getCurrentObj() &#123;</span><br><span class="line">			return list.get(cursor);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		@Override</span><br><span class="line">		public boolean hasNext() &#123;</span><br><span class="line">			if(cursor&lt;list.size())&#123;</span><br><span class="line">				return true;</span><br><span class="line">			&#125;</span><br><span class="line">			return false;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		@Override</span><br><span class="line">		public boolean isFirst() &#123;</span><br><span class="line">			return cursor==0?true:false;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		@Override</span><br><span class="line">		public boolean isLast() &#123;</span><br><span class="line">			return cursor==(list.size()-1)?true:false;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		@Override</span><br><span class="line">		public void next() &#123;</span><br><span class="line">			if(cursor&lt;list.size())&#123;</span><br><span class="line">				cursor++;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public class Client &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		ConcreteMyAggregate cma = new ConcreteMyAggregate();</span><br><span class="line">		cma.addObject(&quot;aa&quot;);</span><br><span class="line">		cma.addObject(&quot;bb&quot;);</span><br><span class="line">		cma.addObject(&quot;cc&quot;);</span><br><span class="line"></span><br><span class="line">		MyIterator iter = cma.createIterator();</span><br><span class="line">		while(iter.hasNext())&#123;</span><br><span class="line">			System.out.println(iter.getCurrentObj());</span><br><span class="line">			iter.next();</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2020/04/04/迭代器模式/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
                         <a class="link-unstyled" href="/2020/03/12/java8/">
                             jdk1.8新特性
                         </a>
