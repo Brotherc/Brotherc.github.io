@@ -11,12 +11,12 @@
     
     
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n安装1234567891011121314sudo yum remove docker \\docker-common \\docker-selinux \\docker-enginesudo yum install -y yum-utils \\device-mapper-persistent-data \\lvm2sudo yum-config-manager \\--add-repo \\https://download.docker.com/linux/centos/docker-ce.reposudo yum install docker-ce\n启动12sudo systemctl start dockersudo docker version\nhelloworld1sudo docker run hello-world\n镜像\n\n\n123456789101112// 查看进程ps -ef | grep docker// 查看镜像sudo docker image ls// 拉取镜像sudo docker pull ubuntu:14.04// 运行镜像docker run hello-worlddocker run -it centos// 删除镜像docker image rm 67759a80360c(镜像ID)docker image rmi f2a91732366c(镜像ID)\n自己实现helloworld123456789101112mkdir hello-worldcd hello-world/vim hello.c// 内容#include&lt;stdio.h&gt;int main() &#123;  printf(&quot;hello docker\\n&quot;);&#125;gcc -static hello.c -o hello\n123456vim Dockerfile// 内容FROM scratchADD hello /CMD [&quot;/hello&quot;]\n12docker build -t brotherc/hello-world .docker run brotherc/hello-world\n容器\n12345678910docker container lsdocker container ls -adocker container ps -adocker rm $(docker container ls -f &quot;status-exited&quot; -q)docker rm $(docker container ls -aq)docker container rm 846b5efe98d4(容器ID)docker container rm 84(容器ID前缀)// 将已有容器提交成新的镜像Usage: docker commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]] [flags]docker commit xenodochial_pare(容器名称) brotherc/centos-vim\n基于已经存在的container创建一个image1234// 运行一个已安装好vim的centos容器docker run -it centosyum install -y vimexit\n12// 容器名：xenodochial_paredocker commit xenodochial_pare brotherc/centos-vim\n基于Dockerfile创建一个image12345678mkdir docker-centos-vimcd docker-centos-vim/vim DockerfileFROM centosRUN yum install -y vimdocker build -t brotherc/centos-vim-new .\nDockerfileFROM尽量使用官方的image作为base image!123FROM scratch #制作base imageFROM centos  #使用base imageFROM ubuntu:14.04\nLABELMetadata不可少!123LABEL maintainer=&quot;brotherc@136.com&quot;LABEL version=&quot;1.0&quot;LABEL description=&quot;This is description&quot;\nRUN为了美观，复杂的RUN请用反斜杠换行!避免无用分层，合并多条命令成一行!12RUN yum update &amp;&amp; yum install -y vim \\ #反斜线换行    python-dev\n123RUN apt-get update &amp;&amp; apt-get install -y perl \\    pwgen --no-install-recommends &amp;&amp; rm -rf \\    /var/lib/apt/lists/* #注意清理cache\n1RUN /bin/bash -c&apos;source $HOME/.bashrc;echo $HOME&apos;\nWORKDIR设定当前工作目录，类似cd用WORKDIR，不要用RUN cd!尽量使用绝对目录!1WORKDIR /root\n123WORKDIR /test #如果没有会自动创建test目录WORKDIR demoRUN pwd       #输出结果应该是 /test/demo\nADD and COPY将本地文件添加到image里面大部分情况，COPY优于ADD!ADD除了COPY还有额外功能(解压)!添加远程文件/目录请使用curl或者wget!1ADD hello /\n1ADD test.tar.gz / #添加到根目录并解压\n12WORKDIR /rootADD hello test/ # /root/test/hello\n12WORKDIR /rootCOPY hello test/\nENV尽量使用ENV增加可维护性!123ENV MYSQL_VERSION 5.6 #设置常量RUN apt-get install -y mysql-server=&quot;$&#123;MYSQL_VERSION&#125;&quot; \\    &amp;&amp; rm -rf /var/lib/apt/lists/* #引用常量\nRUN vs CMD vs ENTRYPOINTRUN:执行命令并创建新的image layerCMD:设置容器启动后默认执行的命令和参数ENTRYPOINT:设置容器启动时运行的命令\nShell格式123RUN apt-get install -y vimCMD echo &quot;hello docker&quot;ENTRYPOINT echo &quot;hello docker&quot;\n123FROM centosENV name DockerENTRYPOINT echo &quot;hello $name&quot;\nExec格式123RUN [&quot;apt-get&quot;, &quot;install&quot;, &quot;-y&quot;, &quot;vim&quot;]CMD [&quot;/bin/echo&quot;, &quot;hello docker&quot;]ENTRYPOINT [&quot;/bin/echo&quot;, &quot;hello docker&quot;]\n123FROM centosENV name DockerENTRYPOINT [&quot;/bin/echo&quot;, &quot;hello docker&quot;]\nDockerfile实践Dockerfile:123FROM centosENV name DockerENTRYPOINT echo &quot;hello $name&quot;\n123docker build -t brotherc/centos-entrypoint-shell .docker run brotherc/centos-entrypoint-shellhello Docker\nDockerfile:123FROM centosENV name DockerENTRYPOINT [&quot;/bin/bash&quot;, &quot;-c&quot;, &quot;echo hello $name&quot;]\n123docker build -t brotherc/centos-entrypoint-exec .docker run brotherc/centos-entrypoint-exechello Docker\nCMD容器启动时默认执行的命令如果docker run指定了其它命令，CMD命令被忽略如果定义了多个CMD，只有最后一个会执行Dockerfile:123FROM centosENV name DockerCMD echo &quot;hello $name&quot;\n123456docker build -t brotherc/centos-cmd-shell .docker run brotherc/centos-cmd-shellhello Dockerdocker run -it brotherc/centos-cmd-shell /bin/bash无输出\nENTRYPOINT让容器以应用程序或者服务的形式运行不会被忽略，一定会执行12345docker run brotherc/centos-entrypoint-shellhello Dockerdocker run -it brotherc/centos-entrypoint-shell /bin/bashhello Docker\nDocker Network基础网络概念\n\n\n\n\n\n\n\n\n1234sudo docker run -d --name test1 busybox /bin/sh -c &quot;while true; do sleep 3600; done&quot;sudo docker exec -it test1 /bin/ship a\n12sudo docker run -d --name test2 busybox /bin/sh -c &quot;while true; do sleep 3600; done&quot;sudo docker exec test2 ip a\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nDocker的持久化存储和数据共享\n\n\n\n数据持久化：Data Volume\n12//mysql镜像会默认将数据挂载到本地sudo docker run -d --name mysql1 -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysql\n123456sudo docker volume lsDRIVER        VOLUME NAMElocal         e6ee5901156...sudo docker volume inspect e6ee5901156...\n123456sudo docker stop mysql1sudo docker rm mysql1sudo docker volume lsDRIVER        VOLUME NAMElocal         e6ee5901156...\n123456//给volume指定名字sudo docker run -d -v mysql:/var/lib/mysql --name mysql1 -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysqlsudo docker volume lsDRIVER        VOLUME NAMElocal         mysql\n123//让mysql容器使用已存在的volumesudo docker rm -rf mysql1sudo docker run -d -v mysql:/var/lib/mysql --name mysql2 -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysql\n数据持久化：Bind Mouting\nDockerfile:123FROM nginx:latestWORKDIR /usr/share/nginx/htmlCOPY index.html index.html\n12docker build -t brotherc/my-nginx .docker run -d -p 80:80 --name web brotherc/my-nginx\n12345678docker rm -f webdocker run -d -v $(pwd):/usr/share/nginx/html -p 80:80 --name web brotherc/my-nginxdocker exec -it web /bin/bash//在容器中cd /usr/share/nginx/htmltouch test.txtexit//在linux中看到刚刚创建的test.txt文件\n","dateCreated":"2020-04-07T21:37:14+08:00","dateModified":"2020-04-07T20:49:50+08:00","datePublished":"2020-04-07T21:37:14+08:00","description":"","headline":"docker基础","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2020/04/07/docker/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2020/04/07/docker/","keywords":"docker"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n安装1234567891011121314sudo yum remove docker \\docker-common \\docker-selinux \\docker-enginesudo yum install -y yum-utils \\device-mapper-persistent-data \\lvm2sudo yum-config-manager \\--add-repo \\https://download.docker.com/linux/centos/docker-ce.reposudo yum install docker-ce\n启动12sudo systemctl start dockersudo docker version\nhelloworld1sudo docker run hello-world\n镜像\n\n\n123456789101112// 查看进程ps -ef | grep docker// 查看镜像sudo docker image ls// 拉取镜像sudo docker pull ubuntu:14.04// 运行镜像docker run hello-worlddocker run -it centos// 删除镜像docker image rm 67759a80360c(镜像ID)docker image rmi f2a91732366c(镜像ID)\n自己实现helloworld123456789101112mkdir hello-worldcd hello-world/vim hello.c// 内容#include&lt;stdio.h&gt;int main() &#123;  printf(&quot;hello docker\\n&quot;);&#125;gcc -static hello.c -o hello\n123456vim Dockerfile// 内容FROM scratchADD hello /CMD [&quot;/hello&quot;]\n12docker build -t brotherc/hello-world .docker run brotherc/hello-world\n容器\n1234567891011121314docker container lsdocker container ls -adocker container ps -adocker rm $(docker container ls -f &quot;status-exited&quot; -q)docker rm $(docker container ls -aq)docker container rm 846b5efe98d4(容器ID)docker container rm 84(容器ID前缀)// 将已有容器提交成新的镜像Usage: docker commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]] [flags]docker commit xenodochial_pare(容器名称) brotherc/centos-vimdocker stop 容器id或名称docker start 容器id或名称docker inspect 容器id或名称docker logs 容器id或名称\n基于已经存在的container创建一个image1234// 运行一个已安装好vim的centos容器docker run -it centosyum install -y vimexit\n12// 容器名：xenodochial_paredocker commit xenodochial_pare brotherc/centos-vim\n基于Dockerfile创建一个image12345678mkdir docker-centos-vimcd docker-centos-vim/vim DockerfileFROM centosRUN yum install -y vimdocker build -t brotherc/centos-vim-new .\nDockerfileFROM尽量使用官方的image作为base image!123FROM scratch #制作base imageFROM centos  #使用base imageFROM ubuntu:14.04\nLABELMetadata不可少!123LABEL maintainer=&quot;brotherc@136.com&quot;LABEL version=&quot;1.0&quot;LABEL description=&quot;This is description&quot;\nRUN为了美观，复杂的RUN请用反斜杠换行!避免无用分层，合并多条命令成一行!12RUN yum update &amp;&amp; yum install -y vim \\ #反斜线换行    python-dev\n123RUN apt-get update &amp;&amp; apt-get install -y perl \\    pwgen --no-install-recommends &amp;&amp; rm -rf \\    /var/lib/apt/lists/* #注意清理cache\n1RUN /bin/bash -c&apos;source $HOME/.bashrc;echo $HOME&apos;\nWORKDIR设定当前工作目录，类似cd用WORKDIR，不要用RUN cd!尽量使用绝对目录!1WORKDIR /root\n123WORKDIR /test #如果没有会自动创建test目录WORKDIR demoRUN pwd       #输出结果应该是 /test/demo\nADD and COPY将本地文件添加到image里面大部分情况，COPY优于ADD!ADD除了COPY还有额外功能(解压)!添加远程文件/目录请使用curl或者wget!1ADD hello /\n1ADD test.tar.gz / #添加到根目录并解压\n12WORKDIR /rootADD hello test/ # /root/test/hello\n12WORKDIR /rootCOPY hello test/\nENV尽量使用ENV增加可维护性!123ENV MYSQL_VERSION 5.6 #设置常量RUN apt-get install -y mysql-server=&quot;$&#123;MYSQL_VERSION&#125;&quot; \\    &amp;&amp; rm -rf /var/lib/apt/lists/* #引用常量\nRUN vs CMD vs ENTRYPOINTRUN:执行命令并创建新的image layerCMD:设置容器启动后默认执行的命令和参数ENTRYPOINT:设置容器启动时运行的命令\nShell格式123RUN apt-get install -y vimCMD echo &quot;hello docker&quot;ENTRYPOINT echo &quot;hello docker&quot;\n123FROM centosENV name DockerENTRYPOINT echo &quot;hello $name&quot;\nExec格式123RUN [&quot;apt-get&quot;, &quot;install&quot;, &quot;-y&quot;, &quot;vim&quot;]CMD [&quot;/bin/echo&quot;, &quot;hello docker&quot;]ENTRYPOINT [&quot;/bin/echo&quot;, &quot;hello docker&quot;]\n123FROM centosENV name DockerENTRYPOINT [&quot;/bin/echo&quot;, &quot;hello docker&quot;]\nDockerfile实践Dockerfile:123FROM centosENV name DockerENTRYPOINT echo &quot;hello $name&quot;\n123docker build -t brotherc/centos-entrypoint-shell .docker run brotherc/centos-entrypoint-shellhello Docker\nDockerfile:123FROM centosENV name DockerENTRYPOINT [&quot;/bin/bash&quot;, &quot;-c&quot;, &quot;echo hello $name&quot;]\n123docker build -t brotherc/centos-entrypoint-exec .docker run brotherc/centos-entrypoint-exechello Docker\nCMD容器启动时默认执行的命令如果docker run指定了其它命令，CMD命令被忽略如果定义了多个CMD，只有最后一个会执行Dockerfile:123FROM centosENV name DockerCMD echo &quot;hello $name&quot;\n123456docker build -t brotherc/centos-cmd-shell .docker run brotherc/centos-cmd-shellhello Dockerdocker run -it brotherc/centos-cmd-shell /bin/bash无输出\nENTRYPOINT让容器以应用程序或者服务的形式运行不会被忽略，一定会执行12345docker run brotherc/centos-entrypoint-shellhello Dockerdocker run -it brotherc/centos-entrypoint-shell /bin/bashhello Docker\n镜像的发布123docker logindocker push DockerId/镜像名称docker pull DockerId/镜像名称\n分享产生image把我们的账户link到github或bitbucket，在github上面创建一个代码仓库，把我们的dockerfile push上去，这样就做了一个关联。只要我们这个仓库里面有dockerfile，就会自动去克隆获取到这个dockerfile然后dockerhub后台服务器会帮我们去build。这样我们既提供了dockerfile，docker image又是dockerhub后台服务器帮我们build的，这个安全性会有很大的提升。\n私有的registry12docker run -d -p 5000:5000 --restart always --name registry// 访问ip:5000\n/etc/docker/daemon.json:1&#123;&quot;insecure-registries&quot;:[&quot;ip:5000&quot;]&#125;\n/lib/systemd/system/docker.service:1sudo service docker restart\n1234telnet ip:5000docker push ip:5000/镜像名称docker pull ip:5000/镜像名称\nDocker Network基础网络概念\n\n\n\n\n\n\n\n\n1234sudo docker run -d --name test1 busybox /bin/sh -c &quot;while true; do sleep 3600; done&quot;sudo docker exec -it test1 /bin/ship a\n12sudo docker run -d --name test2 busybox /bin/sh -c &quot;while true; do sleep 3600; done&quot;sudo docker exec test2 ip a\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nDocker的持久化存储和数据共享\n\n\n\n数据持久化：Data Volume\n12//mysql镜像会默认将数据挂载到本地sudo docker run -d --name mysql1 -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysql\n123456sudo docker volume lsDRIVER        VOLUME NAMElocal         e6ee5901156...sudo docker volume inspect e6ee5901156...\n123456sudo docker stop mysql1sudo docker rm mysql1sudo docker volume lsDRIVER        VOLUME NAMElocal         e6ee5901156...\n123456//给volume指定名字sudo docker run -d -v mysql:/var/lib/mysql --name mysql1 -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysqlsudo docker volume lsDRIVER        VOLUME NAMElocal         mysql\n123//让mysql容器使用已存在的volumesudo docker rm -rf mysql1sudo docker run -d -v mysql:/var/lib/mysql --name mysql2 -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysql\n数据持久化：Bind Mouting\nDockerfile:123FROM nginx:latestWORKDIR /usr/share/nginx/htmlCOPY index.html index.html\n12docker build -t brotherc/my-nginx .docker run -d -p 80:80 --name web brotherc/my-nginx\n12345678docker rm -f webdocker run -d -v $(pwd):/usr/share/nginx/html -p 80:80 --name web brotherc/my-nginxdocker exec -it web /bin/bash//在容器中cd /usr/share/nginx/htmltouch test.txtexit//在linux中看到刚刚创建的test.txt文件\n","dateCreated":"2020-04-12T12:05:46+08:00","dateModified":"2020-04-12T12:01:02+08:00","datePublished":"2020-04-12T12:05:46+08:00","description":"","headline":"docker基础","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2020/04/12/docker/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2020/04/12/docker/","keywords":"docker"}</script>
     <meta name="description" content="安装1234567891011121314sudo yum remove docker \docker-common \docker-selinux \docker-enginesudo yum install -y yum-utils \device-mapper-persistent-data \lvm2sudo yum-config-manager">
 <meta name="keywords" content="docker">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="docker基础">
-<meta property="og:url" content="http://yoursite.com/2020/04/07/docker/index.html">
+<meta property="og:url" content="http://yoursite.com/2020/04/12/docker/index.html">
 <meta property="og:site_name" content="Brotherc">
 <meta property="og:description" content="安装1234567891011121314sudo yum remove docker \docker-common \docker-selinux \docker-enginesudo yum install -y yum-utils \device-mapper-persistent-data \lvm2sudo yum-config-manager">
 <meta property="og:locale" content="zh-cn">
@@ -45,6 +45,8 @@
 <meta property="og:image" content="http://yoursite.com/assets/docker/23.jpg">
 <meta property="og:image" content="http://yoursite.com/assets/docker/24.jpg">
 <meta property="og:image" content="http://yoursite.com/assets/docker/25.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/78.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/docker/79.jpg">
 <meta property="og:image" content="http://yoursite.com/assets/docker/32.jpg">
 <meta property="og:image" content="http://yoursite.com/assets/docker/33.jpg">
 <meta property="og:image" content="http://yoursite.com/assets/docker/34.jpg">
@@ -97,7 +99,7 @@
 <meta property="og:image" content="http://yoursite.com/assets/docker/29.jpg">
 <meta property="og:image" content="http://yoursite.com/assets/docker/30.jpg">
 <meta property="og:image" content="http://yoursite.com/assets/docker/31.jpg">
-<meta property="og:updated_time" content="2020-04-07T12:49:50.043Z">
+<meta property="og:updated_time" content="2020-04-12T04:01:02.754Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="docker基础">
 <meta name="twitter:description" content="安装1234567891011121314sudo yum remove docker \docker-common \docker-selinux \docker-enginesudo yum install -y yum-utils \device-mapper-persistent-data \lvm2sudo yum-config-manager">
@@ -251,9 +253,9 @@
     
     
         <div class="post-meta">
-    <time datetime="2020-04-07T21:37:14+08:00">
+    <time datetime="2020-04-12T12:05:46+08:00">
 	
-		    4月 07, 2020
+		    4月 12, 2020
     	
     </time>
     
@@ -297,7 +299,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">vim Dockerfile</span><br><span class="line"></span><br><span class="line">// 内容</span><br><span class="line">FROM scratch</span><br><span class="line">ADD hello /</span><br><span class="line">CMD [&quot;/hello&quot;]</span><br></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker build -t brotherc/hello-world .</span><br><span class="line">docker run brotherc/hello-world</span><br></pre></td></tr></table></figure>
 <h3 id="容器"><a href="#容器" class="headerlink" title="容器"></a>容器</h3><div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/25.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/25.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">docker container ls</span><br><span class="line">docker container ls -a</span><br><span class="line">docker container ps -a</span><br><span class="line">docker rm $(docker container ls -f &quot;status-exited&quot; -q)</span><br><span class="line">docker rm $(docker container ls -aq)</span><br><span class="line">docker container rm 846b5efe98d4(容器ID)</span><br><span class="line">docker container rm 84(容器ID前缀)</span><br><span class="line">// 将已有容器提交成新的镜像</span><br><span class="line">Usage: docker commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]] [flags]</span><br><span class="line">docker commit xenodochial_pare(容器名称) brotherc/centos-vim</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">docker container ls</span><br><span class="line">docker container ls -a</span><br><span class="line">docker container ps -a</span><br><span class="line">docker rm $(docker container ls -f &quot;status-exited&quot; -q)</span><br><span class="line">docker rm $(docker container ls -aq)</span><br><span class="line">docker container rm 846b5efe98d4(容器ID)</span><br><span class="line">docker container rm 84(容器ID前缀)</span><br><span class="line">// 将已有容器提交成新的镜像</span><br><span class="line">Usage: docker commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]] [flags]</span><br><span class="line">docker commit xenodochial_pare(容器名称) brotherc/centos-vim</span><br><span class="line">docker stop 容器id或名称</span><br><span class="line">docker start 容器id或名称</span><br><span class="line">docker inspect 容器id或名称</span><br><span class="line">docker logs 容器id或名称</span><br></pre></td></tr></table></figure>
 <h3 id="基于已经存在的container创建一个image"><a href="#基于已经存在的container创建一个image" class="headerlink" title="基于已经存在的container创建一个image"></a>基于已经存在的container创建一个image</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 运行一个已安装好vim的centos容器</span><br><span class="line">docker run -it centos</span><br><span class="line">yum install -y vim</span><br><span class="line">exit</span><br></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 容器名：xenodochial_pare</span><br><span class="line">docker commit xenodochial_pare brotherc/centos-vim</span><br></pre></td></tr></table></figure>
 <h3 id="基于Dockerfile创建一个image"><a href="#基于Dockerfile创建一个image" class="headerlink" title="基于Dockerfile创建一个image"></a>基于Dockerfile创建一个image</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mkdir docker-centos-vim</span><br><span class="line">cd docker-centos-vim/</span><br><span class="line">vim Dockerfile</span><br><span class="line"></span><br><span class="line">FROM centos</span><br><span class="line">RUN yum install -y vim</span><br><span class="line"></span><br><span class="line">docker build -t brotherc/centos-vim-new .</span><br></pre></td></tr></table></figure>
@@ -325,6 +327,12 @@
 <h4 id="CMD"><a href="#CMD" class="headerlink" title="CMD"></a>CMD</h4><p>容器启动时默认执行的命令<br>如果docker run指定了其它命令，CMD命令被忽略<br>如果定义了多个CMD，只有最后一个会执行<br>Dockerfile:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">FROM centos</span><br><span class="line">ENV name Docker</span><br><span class="line">CMD echo &quot;hello $name&quot;</span><br></pre></td></tr></table></figure></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">docker build -t brotherc/centos-cmd-shell .</span><br><span class="line">docker run brotherc/centos-cmd-shell</span><br><span class="line">hello Docker</span><br><span class="line"></span><br><span class="line">docker run -it brotherc/centos-cmd-shell /bin/bash</span><br><span class="line">无输出</span><br></pre></td></tr></table></figure>
 <h4 id="ENTRYPOINT"><a href="#ENTRYPOINT" class="headerlink" title="ENTRYPOINT"></a>ENTRYPOINT</h4><p>让容器以应用程序或者服务的形式运行<br>不会被忽略，一定会执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker run brotherc/centos-entrypoint-shell</span><br><span class="line">hello Docker</span><br><span class="line"></span><br><span class="line">docker run -it brotherc/centos-entrypoint-shell /bin/bash</span><br><span class="line">hello Docker</span><br></pre></td></tr></table></figure></p>
+<h3 id="镜像的发布"><a href="#镜像的发布" class="headerlink" title="镜像的发布"></a>镜像的发布</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker login</span><br><span class="line">docker push DockerId/镜像名称</span><br><span class="line">docker pull DockerId/镜像名称</span><br></pre></td></tr></table></figure>
+<h4 id="分享产生image"><a href="#分享产生image" class="headerlink" title="分享产生image"></a>分享产生image</h4><p>把我们的账户link到github或bitbucket，在github上面创建一个代码仓库，把我们的dockerfile push上去，这样就做了一个关联。<br>只要我们这个仓库里面有dockerfile，就会自动去克隆获取到这个dockerfile然后dockerhub后台服务器会帮我们去build。<br>这样我们既提供了dockerfile，docker image又是dockerhub后台服务器帮我们build的，这个安全性会有很大的提升。<br><div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/78.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/78.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div></p>
+<h4 id="私有的registry"><a href="#私有的registry" class="headerlink" title="私有的registry"></a>私有的registry</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 5000:5000 --restart always --name registry</span><br><span class="line">// 访问ip:5000</span><br></pre></td></tr></table></figure>
+<p>/etc/docker/daemon.json:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;insecure-registries&quot;:[&quot;ip:5000&quot;]&#125;</span><br></pre></td></tr></table></figure></p>
+<p>/lib/systemd/system/docker.service:<br><div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/79.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/79.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service docker restart</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">telnet ip:5000</span><br><span class="line"></span><br><span class="line">docker push ip:5000/镜像名称</span><br><span class="line">docker pull ip:5000/镜像名称</span><br></pre></td></tr></table></figure>
 <h3 id="Docker-Network"><a href="#Docker-Network" class="headerlink" title="Docker Network"></a>Docker Network</h3><h4 id="基础网络概念"><a href="#基础网络概念" class="headerlink" title="基础网络概念"></a>基础网络概念</h4><div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/32.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/32.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
 <div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/33.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/33.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
 <div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/docker/34.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/docker/34.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
@@ -407,8 +415,7 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/04/07/Spring Security技术栈开发企业级认证与授权-认证流程源码级详解/" data-tooltip="SpringSecurity技术栈开发企业级认证与授权-认证流程源码级详解" aria-label="上一篇: SpringSecurity技术栈开发企业级认证与授权-认证流程源码级详解">
+                    <a class="post-action-btn btn btn--disabled">
                 
                     <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -417,7 +424,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/04/07/网站/" data-tooltip="网站" aria-label="下一篇: 网站">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/04/09/网站/" data-tooltip="网站" aria-label="下一篇: 网站">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right" aria-hidden="true"></i>
@@ -427,7 +434,7 @@
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
@@ -435,7 +442,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/04/07/docker/" title="分享到 Facebook">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/04/12/docker/" title="分享到 Facebook">
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
@@ -443,7 +450,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/04/07/docker/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/04/12/docker/" title="分享到 Twitter">
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -451,7 +458,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/04/07/docker/" title="分享到 Google+">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/04/12/docker/" title="分享到 Google+">
                     <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
             </li>
@@ -461,7 +468,7 @@
         
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
             
                 <i class="fa fa-list" aria-hidden="true"></i>
             </a>
@@ -493,8 +500,7 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/04/07/Spring Security技术栈开发企业级认证与授权-认证流程源码级详解/" data-tooltip="SpringSecurity技术栈开发企业级认证与授权-认证流程源码级详解" aria-label="上一篇: SpringSecurity技术栈开发企业级认证与授权-认证流程源码级详解">
+                    <a class="post-action-btn btn btn--disabled">
                 
                     <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -503,7 +509,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/04/07/网站/" data-tooltip="网站" aria-label="下一篇: 网站">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/04/09/网站/" data-tooltip="网站" aria-label="下一篇: 网站">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right" aria-hidden="true"></i>
@@ -513,7 +519,7 @@
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
@@ -521,7 +527,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/04/07/docker/" title="分享到 Facebook">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/04/12/docker/" title="分享到 Facebook">
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
@@ -529,7 +535,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/04/07/docker/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/04/12/docker/" title="分享到 Twitter">
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -537,7 +543,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/04/07/docker/" title="分享到 Google+">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/04/12/docker/" title="分享到 Google+">
                     <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
             </li>
@@ -547,7 +553,7 @@
         
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
             
                 <i class="fa fa-list" aria-hidden="true"></i>
             </a>
@@ -565,7 +571,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/04/07/docker/">
+                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/04/12/docker/">
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>分享到 Facebook</span>
                     </a>
                 </li>
@@ -573,7 +579,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/04/07/docker/">
+                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/04/12/docker/">
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
                     </a>
                 </li>
@@ -581,7 +587,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/04/07/docker/">
+                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/04/12/docker/">
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>分享到 Google+</span>
                     </a>
                 </li>
