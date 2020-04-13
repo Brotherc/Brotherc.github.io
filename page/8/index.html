@@ -165,6 +165,51 @@
             <div class="postShorten-header">
                 <h1 class="postShorten-title">
                     
+                        <a class="link-unstyled" href="/2019/03/14/angular发送带参数的delete请求/">
+                            angular2中如何在发送delete请求时携带参数
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2019-03-14T19:05:08+08:00">
+	
+		    3月 14, 2019
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <p>前端angular:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 根据ids删除资源分组</span><br><span class="line"> */</span><br><span class="line">deleteResourceGroupByIds(ids: string[]) &#123;</span><br><span class="line">    return this.http.request(&apos;DELETE&apos;, this.API + &apos;/resourceGroup&apos;, &#123;</span><br><span class="line">        body: ids</span><br><span class="line">    &#125;).pipe(</span><br><span class="line">        retry(1),</span><br><span class="line">        catchError(this.handleError.bind(this))</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>后台springboot:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@DeleteMapping(&quot;/resourceGroup&quot;)</span><br><span class="line">public void deleteResourceGroupByIds(@RequestBody String[] ids) &#123;</span><br><span class="line">    resourceGroupService.deleteResourceGroupByIds(ids);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>参考：<br><a href="https://stackoverflow.com/questions/38819336/body-of-http-delete-request-in-angular2" target="_blank" rel="noopener">https://stackoverflow.com/questions/38819336/body-of-http-delete-request-in-angular2</a></p>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2019/03/14/angular发送带参数的delete请求/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
                         <a class="link-unstyled" href="/2019/03/14/angular常用操作/">
                             angular常用操作
                         </a>
@@ -269,86 +314,6 @@
                     
                         <p>
                             <a href="/2019/03/14/通过策略模式和工厂模式减少代码中的if else/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2019/03/14/加密类型及其相关算法/">
-                            加密类型及其相关算法
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-03-14T19:05:08+08:00">
-	
-		    3月 14, 2019
-    	
-    </time>
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-content">
-                    <h2 id="一、数据传输安全性"><a href="#一、数据传输安全性" class="headerlink" title="一、数据传输安全性"></a>一、数据传输安全性</h2><h5 id="在TCP-IP层中不涉及安全"><a href="#在TCP-IP层中不涉及安全" class="headerlink" title="在TCP/IP层中不涉及安全"></a>在TCP/IP层中不涉及安全</h5><ul>
-<li>机密性：明文传输（ftp,smtp,talnet）别人一拦截就能看到请求的内容。</li>
-<li>完整性：10颗原子弹（被改成100）所以数据在互联网上传播的时候，<br>不应该也不能够被其他人非法篡改掉当收到的和发送的不一致时拒绝接受这就能保证数据的完整性。</li>
-<li>身份验证：通过有效的手段保证所访问的对象就是我们所要的那个人。</li>
-</ul>
-<h4 id="保证数据的机密性"><a href="#保证数据的机密性" class="headerlink" title="保证数据的机密性"></a>保证数据的机密性</h4><ul>
-<li>plaintext(明文) –&gt; 加密（转换规则）–&gt; ciphertext（密文）</li>
-<li>ciphertext –&gt; 转换规则 –&gt; plaintext</li>
-<li>转换算法：依赖密钥（即使得到了转换规则也没用）</li>
-<li>对称加密：加密和解密使用同一个密钥（有加密算法和解密算法，算法不同，但密钥相同）。<br>好处是计算速度快，在一定程度上解决了机密性问题。坏处是不能解决密钥有效管理的问题。<br>假如a跟b，c,d通信，如果密钥相同，则c只要用密钥就可以看到a发送给b的内容，显然密钥不能相同，<br>那就得维护很多密钥。</li>
-</ul>
-<h4 id="保证数据的完整性"><a href="#保证数据的完整性" class="headerlink" title="保证数据的完整性"></a>保证数据的完整性</h4><ul>
-<li>A：plaintext:footprint –&gt; B<br>B使用同样的加密算法去重复计算这个明文的特征码，并跟A所发过来的特征码进行比较，<br>如果一样，则说明没被篡改。</li>
-<li>单项加密算法：提取数据特征码，追加到数据后面。数据的输入一样：特征码必然相同。</li>
-<li>特点：雪崩效应（输入的微小改变，将其会引起结果的巨大改变）、<br>定长输出（无论原始数据是多长，结果大小都是相同的）、<br>不可逆（无法根据原始特征码还原原来的数据）。</li>
-</ul>
-<h4 id="中间人攻击问题"><a href="#中间人攻击问题" class="headerlink" title="中间人攻击问题"></a>中间人攻击问题</h4><ul>
-<li>E(A)：plaintext2:footprint2 –&gt; B<br>A生成一段数据，并对它计算特征码，E在中间经过的路由时拿到这个明文，并重新修改明文和再计算<br>特征码发给B，还声称自己是A，B拿到数据之后就算使用了数据完整性的算法之后，计算特征码还是<br>一模一样，还认为是A发过来的，所以需要借助额外的机制。</li>
-<li>解决办法：A：plaintext:footprint(加密) –&gt; B B拿到特征码之后通过密钥进行解密，能解密<br>说明数据没有被改过。如果E拿到plaintext并修改为plaintext2，并重新生成特征码，就没办法加密<br>特征码或者加密后就不是A和B之间实现约定的密码。</li>
-</ul>
-<h4 id="A与B之间如何进行密码约定"><a href="#A与B之间如何进行密码约定" class="headerlink" title="A与B之间如何进行密码约定"></a>A与B之间如何进行密码约定</h4><ul>
-<li>假如A与B之间从未通信或从未见过面，如何进行密码约定呢？</li>
-<li>协商生成密码：密码交换（Internet Key Exchange / IKE）,密码交换是不让第三方得到密钥，<br>密码交换需要特殊的互联网协议支撑。比如：Dffie-Hellman协议。</li>
-<li>A和B事先约定两个数p(大素数)，g(生成数)。A生成一个自己知道的x，B生成一个自己知道的y。<br>A将 g^x % p 发送给B，B将g^y % p 发送给A。<br>A拿到之后进行计算 （g^y % p）^x = g^xy % p，<br>B拿到之后进行计算 （g^x % p）^y = g^xy % p。<br>这个相同的结果就是密钥。<br>在互联网上可以看到g、p、g^x % p、g^y % p，但看不到x、y。</li>
-<li>A和B只需要选好几个数，让这些数的计算结果作为密钥来用，使得彼此不用计算密码，只要双方<br>生成密钥的软件一样就可以随时生成密钥。</li>
-</ul>
-<h4 id="身份验证"><a href="#身份验证" class="headerlink" title="身份验证"></a>身份验证</h4><ul>
-<li>之前是A和B一起约定好的密码，所以身份验证没问题。但是密钥是交换生成的，事先之前谁也不知道。<br>E跳出来，截取了数据并篡改，然后与B进行连接通信，还告诉它自己是A。</li>
-<li>解决办法：公钥加密算法（非对称加密算法）</li>
-<li>特点：拥有一对密钥对，分别是公钥（是从私钥中提取出来的）、私钥。用公钥加密的，只能用私钥<br>解密，反之亦然。</li>
-</ul>
-<h4 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h4><ul>
-<li>机密性：用B的公钥加密，B的私钥解密。发送方用对方的公钥加密数据，可以保证数据机密性。</li>
-<li>身份验证：用A的私钥加密，A的公钥加密。发送方用自己的私钥加密数据，可以实现身份验证。</li>
-<li>公钥加密算法很少用来加密数据：速度太慢。</li>
-</ul>
-<h2 id="二、数据传输"><a href="#二、数据传输" class="headerlink" title="二、数据传输"></a>二、数据传输</h2><div class="figure right" style="width:150px;"><a class="fancybox" href="/assets/images/a.jpg" title="A beautiful sunrise" data-caption="A beautiful sunrise" data-fancybox="travel"><img class="fig-img" src="/assets/images/a.jpg" style="width:150px;height:300px;" alt="A beautiful sunrise"></a><span class="caption">A beautiful sunrise</span></div><div style="clear:both;"></div>
-<p>— — — — — — —<br>|&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;|<br>|&emsp;&emsp;&emsp;&emsp;A&emsp;&emsp;&emsp;&ensp;&ensp; |<br>|&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;|<br>|&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;|<br>— — — — — — —</p>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2019/03/14/加密类型及其相关算法/#post-footer" class="postShorten-excerpt_link link">
                                 评论和共享
                             </a>
                         </p>
