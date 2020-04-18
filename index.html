@@ -165,15 +165,15 @@
             <div class="postShorten-header">
                 <h1 class="postShorten-title">
                     
-                        <a class="link-unstyled" href="/2020/04/13/加密类型及其相关算法/">
+                        <a class="link-unstyled" href="/2020/04/18/加密类型及其相关算法/">
                             加密类型及其相关算法
                         </a>
                     
                 </h1>
                 <div class="postShorten-meta">
-    <time datetime="2020-04-13T22:33:13+08:00">
+    <time datetime="2020-04-18T14:50:24+08:00">
 	
-		    4月 13, 2020
+		    4月 18, 2020
     	
     </time>
     
@@ -219,7 +219,31 @@
 <li>公钥加密算法很少用来加密数据：速度太慢。非对称加密的主要作用也就是身份验证。</li>
 </ul>
 <h2 id="二、数据传输"><a href="#二、数据传输" class="headerlink" title="二、数据传输"></a>二、数据传输</h2><div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/加密/数据传输.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/加密/数据传输.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<p>PKI:公钥基础设施(Public Key Infrastructure) 核心就是证书颁发机构(CA)和彼此之间的信任关系</p>
+<p>PKI:公钥基础设施(Public Key Infrastructure) 核心就是CA和彼此之间的信任关系<br>CA:证书颁发机构(Certificate Authority)，CA中还维护了CRL<br>CRL:证书撤销列表，CRL中保存了此前曾经发出去的证书，但仍未过期，只不过已经各种原因被撤销了</p>
+<h2 id="三、TLS-SSL"><a href="#三、TLS-SSL" class="headerlink" title="三、TLS/SSL"></a>三、TLS/SSL</h2><div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/加密/1.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/加密/1.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<h3 id="不同标准下的证书格式是不同的"><a href="#不同标准下的证书格式是不同的" class="headerlink" title="不同标准下的证书格式是不同的"></a>不同标准下的证书格式是不同的</h3><p>比如x509, pkcs12<br>x509: 公钥及其有效期限，证书的合法拥有者，证书该如何被使用，CA的信息，CA签名的校验码<br>TLS/SSL所使用的正是x509的证书，TLS/SSL其实就是一种PKI，PKI的第二种实现OpenGPG</p>
+<h3 id="TLS-SSL-如何实现握手认证、密钥交换"><a href="#TLS-SSL-如何实现握手认证、密钥交换" class="headerlink" title="TLS/SSL 如何实现握手认证、密钥交换"></a>TLS/SSL 如何实现握手认证、密钥交换</h3><div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/加密/2.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/加密/2.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<h2 id="四、加密"><a href="#四、加密" class="headerlink" title="四、加密"></a>四、加密</h2><h3 id="对称加密"><a href="#对称加密" class="headerlink" title="对称加密"></a>对称加密</h3><p>加密解密使用同一个密码</p>
+<ul>
+<li>DES(Data Encrption Standard, 56bit)</li>
+<li>3DES</li>
+<li>AES(Advanced, AES192/AES256/AES512)</li>
+<li>Blowfish</li>
+</ul>
+<h3 id="单向加密"><a href="#单向加密" class="headerlink" title="单向加密"></a>单向加密</h3><ul>
+<li>MD4</li>
+<li>MD5</li>
+<li>SHA1</li>
+<li>SHA192、SHA256、SHA384</li>
+<li>CRC-32</li>
+</ul>
+<h3 id="非对称加密（公钥加密）"><a href="#非对称加密（公钥加密）" class="headerlink" title="非对称加密（公钥加密）"></a>非对称加密（公钥加密）</h3><p>身份认证（数字签名）、数据加密、密钥交换</p>
+<ul>
+<li>RSA(加密、签名)</li>
+<li>DSA(签名)</li>
+<li>ElGamal</li>
+</ul>
+<h3 id="加密实现"><a href="#加密实现" class="headerlink" title="加密实现"></a>加密实现</h3><p>OpenSSL: SSL的开源实现<br>  libcryptc: 通用的加密库<br>  libssl: TLS/SSL的实现<br>    基于会话的、实现了省份认证、数据机密性和会话完整性的TLS/SSL库<br>  openssl: 多用途命令行工具<br>    实现私有证书颁发机构</p>
 
                     
                         
@@ -227,7 +251,7 @@
                     
                     
                         <p>
-                            <a href="/2020/04/13/加密类型及其相关算法/#post-footer" class="postShorten-excerpt_link link">
+                            <a href="/2020/04/18/加密类型及其相关算法/#post-footer" class="postShorten-excerpt_link link">
                                 评论和共享
                             </a>
                         </p>
