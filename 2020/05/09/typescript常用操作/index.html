@@ -11,16 +11,16 @@
     
     
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"保留两位小数12345Math.floor(15.7784514000 * 100) / 100 // 输出结果为 15.77parseInt(7/2) // 丢弃小数部分,保留整数部分const a = 2.461;const b = (parseInt(a * 100) / 100).toFixed(2); // 2.46\n创建Map并赋值1const map = new Map([[2, &apos;foo&apos;], [1, &apos;bar&apos;]]);\n判断Map类型123isMap(obj) &#123;  return obj instanceof Map;&#125;\n删除数组中的某个元素123const arr = [&apos;a&apos;,&apos;b&apos;,&apos;c&apos;,&apos;d&apos;];arr.splice(1,1);console.log(arr); //[&apos;a&apos;,&apos;c&apos;,&apos;d&apos;];\nObject转成Map1const result = new Map(Object.entries(map));\n将Map的key、value转成数组12const values = Array.from(map.values());const keys = Array.from(map.keys());\n求数组最大值12const maxN = Math.max.apply(null,ary);const minN = Math.min.apply(null,ary);\n实现Map的深克隆1234567891011121314151617181920212223export class MapUtils &#123;    public static deepClone(obj) &#123;        if (!obj || true === obj) &#123; // this also handles boolean as true and false            return obj;        &#125;        const objType = typeof(obj);        if (&apos;number&apos; === objType || &apos;string&apos; === objType) &#123; // add your immutables here            return obj;        &#125;        const result = Array.isArray(obj) ? [] : !obj.constructor ? &#123;&#125; : new obj.constructor();        if (obj instanceof Map) &#123;            for (const key of obj.keys()) &#123;                result.set(key, this.deepClone(obj.get(key)));            &#125;        &#125;        for (const key in obj) &#123;            if (obj.hasOwnProperty(key)) &#123;                result[key] = this.deepClone(obj[key]);            &#125;        &#125;        return result;    &#125;&#125;\n参考：https://stackoverflow.com/questions/8206988/clone-copy-a-map-instance/39643085#39643085\n请求的url后面添加时间戳参数或者随机数的参数1234// 添加时间戳...?time=new Date();// 添加随机数...?number=Math.random();\n","dateCreated":"2019-04-04T14:51:07+08:00","dateModified":"2019-05-24T17:21:03+08:00","datePublished":"2019-04-04T14:51:07+08:00","description":"","headline":"typescript常用操作","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/04/04/typescript常用操作/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2019/04/04/typescript常用操作/","keywords":"js"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"保留两位小数12345Math.floor(15.7784514000 * 100) / 100 // 输出结果为 15.77parseInt(7/2) // 丢弃小数部分,保留整数部分const a = 2.461;const b = (parseInt(a * 100) / 100).toFixed(2); // 2.46\n创建Map并赋值1const map = new Map([[2, &apos;foo&apos;], [1, &apos;bar&apos;]]);\n判断Map类型123isMap(obj) &#123;  return obj instanceof Map;&#125;\n删除数组中的某个元素123const arr = [&apos;a&apos;,&apos;b&apos;,&apos;c&apos;,&apos;d&apos;];arr.splice(1,1);console.log(arr); //[&apos;a&apos;,&apos;c&apos;,&apos;d&apos;];\nObject转成Map1const result = new Map(Object.entries(map));\n将Map的key、value转成数组12const values = Array.from(map.values());const keys = Array.from(map.keys());\n求数组最大值12const maxN = Math.max.apply(null,ary);const minN = Math.min.apply(null,ary);\n实现Map的深克隆1234567891011121314151617181920212223export class MapUtils &#123;    public static deepClone(obj) &#123;        if (!obj || true === obj) &#123; // this also handles boolean as true and false            return obj;        &#125;        const objType = typeof(obj);        if (&apos;number&apos; === objType || &apos;string&apos; === objType) &#123; // add your immutables here            return obj;        &#125;        const result = Array.isArray(obj) ? [] : !obj.constructor ? &#123;&#125; : new obj.constructor();        if (obj instanceof Map) &#123;            for (const key of obj.keys()) &#123;                result.set(key, this.deepClone(obj.get(key)));            &#125;        &#125;        for (const key in obj) &#123;            if (obj.hasOwnProperty(key)) &#123;                result[key] = this.deepClone(obj[key]);            &#125;        &#125;        return result;    &#125;&#125;\n参考：https://stackoverflow.com/questions/8206988/clone-copy-a-map-instance/39643085#39643085\n请求的url后面添加时间戳参数或者随机数的参数123456// 添加时间戳...?time=new Date();// 添加随机数...?number=Math.random();//&quot;...?&quot; + Math.floor(Math.random() * 100)\n","dateCreated":"2020-05-09T22:57:45+08:00","dateModified":"2020-05-09T22:57:32+08:00","datePublished":"2020-05-09T22:57:45+08:00","description":"","headline":"typescript常用操作","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2020/05/09/typescript常用操作/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2020/05/09/typescript常用操作/","keywords":"js"}</script>
     <meta name="description" content="保留两位小数12345Math.floor(15.7784514000 * 100) / 100 // 输出结果为 15.77parseInt(7/2) // 丢弃小数部分,保留整数部分const a = 2.461;const b = (parseInt(a * 100) / 100).toFixed(2); // 2.46 创建Map并赋值1const map = new Map([[2, &amp;">
 <meta name="keywords" content="js">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="typescript常用操作">
-<meta property="og:url" content="http://yoursite.com/2019/04/04/typescript常用操作/index.html">
+<meta property="og:url" content="http://yoursite.com/2020/05/09/typescript常用操作/index.html">
 <meta property="og:site_name" content="Brotherc">
 <meta property="og:description" content="保留两位小数12345Math.floor(15.7784514000 * 100) / 100 // 输出结果为 15.77parseInt(7/2) // 丢弃小数部分,保留整数部分const a = 2.461;const b = (parseInt(a * 100) / 100).toFixed(2); // 2.46 创建Map并赋值1const map = new Map([[2, &amp;">
 <meta property="og:locale" content="zh-cn">
-<meta property="og:updated_time" content="2019-05-24T09:21:03.008Z">
+<meta property="og:updated_time" content="2020-05-09T14:57:32.511Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="typescript常用操作">
 <meta name="twitter:description" content="保留两位小数12345Math.floor(15.7784514000 * 100) / 100 // 输出结果为 15.77parseInt(7/2) // 丢弃小数部分,保留整数部分const a = 2.461;const b = (parseInt(a * 100) / 100).toFixed(2); // 2.46 创建Map并赋值1const map = new Map([[2, &amp;">
@@ -173,9 +173,9 @@
     
     
         <div class="post-meta">
-    <time datetime="2019-04-04T14:51:07+08:00">
+    <time datetime="2020-05-09T22:57:45+08:00">
 	
-		    4月 04, 2019
+		    5月 09, 2020
     	
     </time>
     
@@ -196,7 +196,7 @@
 <h3 id="求数组最大值"><a href="#求数组最大值" class="headerlink" title="求数组最大值"></a>求数组最大值</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">const maxN = Math.max.apply(null,ary);</span><br><span class="line">const minN = Math.min.apply(null,ary);</span><br></pre></td></tr></table></figure>
 <h3 id="实现Map的深克隆"><a href="#实现Map的深克隆" class="headerlink" title="实现Map的深克隆"></a>实现Map的深克隆</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">export class MapUtils &#123;</span><br><span class="line">    public static deepClone(obj) &#123;</span><br><span class="line">        if (!obj || true === obj) &#123; // this also handles boolean as true and false</span><br><span class="line">            return obj;</span><br><span class="line">        &#125;</span><br><span class="line">        const objType = typeof(obj);</span><br><span class="line">        if (&apos;number&apos; === objType || &apos;string&apos; === objType) &#123; // add your immutables here</span><br><span class="line">            return obj;</span><br><span class="line">        &#125;</span><br><span class="line">        const result = Array.isArray(obj) ? [] : !obj.constructor ? &#123;&#125; : new obj.constructor();</span><br><span class="line">        if (obj instanceof Map) &#123;</span><br><span class="line">            for (const key of obj.keys()) &#123;</span><br><span class="line">                result.set(key, this.deepClone(obj.get(key)));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        for (const key in obj) &#123;</span><br><span class="line">            if (obj.hasOwnProperty(key)) &#123;</span><br><span class="line">                result[key] = this.deepClone(obj[key]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>参考：<br><a href="https://stackoverflow.com/questions/8206988/clone-copy-a-map-instance/39643085#39643085" target="_blank" rel="noopener">https://stackoverflow.com/questions/8206988/clone-copy-a-map-instance/39643085#39643085</a></p>
-<h3 id="请求的url后面添加时间戳参数或者随机数的参数"><a href="#请求的url后面添加时间戳参数或者随机数的参数" class="headerlink" title="请求的url后面添加时间戳参数或者随机数的参数"></a>请求的url后面添加时间戳参数或者随机数的参数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 添加时间戳</span><br><span class="line">...?time=new Date();</span><br><span class="line">// 添加随机数</span><br><span class="line">...?number=Math.random();</span><br></pre></td></tr></table></figure>
+<h3 id="请求的url后面添加时间戳参数或者随机数的参数"><a href="#请求的url后面添加时间戳参数或者随机数的参数" class="headerlink" title="请求的url后面添加时间戳参数或者随机数的参数"></a>请求的url后面添加时间戳参数或者随机数的参数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// 添加时间戳</span><br><span class="line">...?time=new Date();</span><br><span class="line">// 添加随机数</span><br><span class="line">...?number=Math.random();</span><br><span class="line">//</span><br><span class="line">&quot;...?&quot; + Math.floor(Math.random() * 100)</span><br></pre></td></tr></table></figure>
 
             
 
@@ -218,7 +218,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/04/16/oracle_top/" data-tooltip="oracle-monitor-topsql" aria-label="上一篇: oracle-monitor-topsql">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/06/23/集群无忧-SpringSession原理与坑/" data-tooltip="集群无忧-SpringSession原理与坑" aria-label="上一篇: 集群无忧-SpringSession原理与坑">
                 
                     <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -227,7 +227,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/04/04/world目录，显示“错误！未定义书签/" data-tooltip="world目录，显示“错误！未定义书签”" aria-label="下一篇: world目录，显示“错误！未定义书签”">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/05/05/feign/" data-tooltip="feign接口调用如何获取请求头" aria-label="下一篇: feign接口调用如何获取请求头">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right" aria-hidden="true"></i>
@@ -237,7 +237,7 @@
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
@@ -245,7 +245,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/04/04/typescript常用操作/" title="分享到 Facebook">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/05/09/typescript常用操作/" title="分享到 Facebook">
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
@@ -253,7 +253,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/04/04/typescript常用操作/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/05/09/typescript常用操作/" title="分享到 Twitter">
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -261,7 +261,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/04/04/typescript常用操作/" title="分享到 Google+">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/05/09/typescript常用操作/" title="分享到 Google+">
                     <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
             </li>
@@ -271,7 +271,7 @@
         
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
             
                 <i class="fa fa-list" aria-hidden="true"></i>
             </a>
@@ -304,7 +304,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/04/16/oracle_top/" data-tooltip="oracle-monitor-topsql" aria-label="上一篇: oracle-monitor-topsql">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/06/23/集群无忧-SpringSession原理与坑/" data-tooltip="集群无忧-SpringSession原理与坑" aria-label="上一篇: 集群无忧-SpringSession原理与坑">
                 
                     <i class="fa fa-angle-left" aria-hidden="true"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -313,7 +313,7 @@
             <li class="post-action">
                 
                     
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/04/04/world目录，显示“错误！未定义书签/" data-tooltip="world目录，显示“错误！未定义书签”" aria-label="下一篇: world目录，显示“错误！未定义书签”">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/05/05/feign/" data-tooltip="feign接口调用如何获取请求头" aria-label="下一篇: feign接口调用如何获取请求头">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right" aria-hidden="true"></i>
@@ -323,7 +323,7 @@
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
@@ -331,7 +331,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/04/04/typescript常用操作/" title="分享到 Facebook">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/05/09/typescript常用操作/" title="分享到 Facebook">
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
@@ -339,7 +339,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/04/04/typescript常用操作/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/05/09/typescript常用操作/" title="分享到 Twitter">
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -347,7 +347,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/04/04/typescript常用操作/" title="分享到 Google+">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/05/09/typescript常用操作/" title="分享到 Google+">
                     <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
             </li>
@@ -357,7 +357,7 @@
         
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
             
                 <i class="fa fa-list" aria-hidden="true"></i>
             </a>
@@ -375,7 +375,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/04/04/typescript常用操作/">
+                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/05/09/typescript常用操作/">
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>分享到 Facebook</span>
                     </a>
                 </li>
@@ -383,7 +383,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/04/04/typescript常用操作/">
+                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/05/09/typescript常用操作/">
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
                     </a>
                 </li>
@@ -391,7 +391,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/04/04/typescript常用操作/">
+                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/05/09/typescript常用操作/">
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>分享到 Google+</span>
                     </a>
                 </li>
