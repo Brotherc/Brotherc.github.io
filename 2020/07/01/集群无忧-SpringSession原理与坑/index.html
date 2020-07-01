@@ -11,12 +11,12 @@
     
     
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"\n\n\n\n\n\n\nnginx 80\n\n高并发负载均衡、高可用\n\nsession\n\n跟踪会话信息\n电商网站不登录加入购物车\n登录 — 标志 — session会话 属于哪个用户\n\nip_hash负载算法缺点\n\n单点故障\nIP – 真的能够不变？\n\n\n移动、联通、— 宽带\n移动互联网 — 不同区域ip变化\n\nredis\n\n理解为一个JVM外置的Map\n\n12345&lt;dependency&gt;    &lt;groupId&gt;org.springframework.session&lt;/groupId&gt;    &lt;artifactId&gt;spring-session-data-redis&lt;/artifactId&gt;    &lt;version&gt;$&#123;spring-session-data-redis.version&#125;&lt;/version&gt;&lt;/dependency&gt;\n12345678@EnableRedisHttpSession // 启用redis存储session功能public class Config &#123;    @Bean    public LettuceConnectionFactory connectionFactory() &#123;        // 1.配置一个redis客户端 -- 默认连接 127.0.0.1:6379        return new LettuceConnectionFactory();    &#125;&#125;\n12345public class Initializer extends AbstractHttpSessionApplicationInitializer &#123;    public Initializer() &#123;\t\tsuper(Config.class);    &#125;&#125;\n","dateCreated":"2020-06-23T22:34:18+08:00","dateModified":"2020-06-23T22:33:26+08:00","datePublished":"2020-06-23T22:34:18+08:00","description":"","headline":"集群无忧-SpringSession原理与坑","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2020/06/23/集群无忧-SpringSession原理与坑/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2020/06/23/集群无忧-SpringSession原理与坑/","keywords":"网易云课堂公开课"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"\n\n\n\n\n\n\nnginx 80\n\n高并发负载均衡、高可用\n\nsession\n\n跟踪会话信息\n电商网站不登录加入购物车\n登录 — 标志 — session会话 属于哪个用户\n\nip_hash负载算法缺点\n\n单点故障\nIP – 真的能够不变？\n\n\n移动、联通、— 宽带\n移动互联网 — 不同区域ip变化\n\nredis\n\n理解为一个JVM外置的Map\n\n12345&lt;dependency&gt;    &lt;groupId&gt;org.springframework.session&lt;/groupId&gt;    &lt;artifactId&gt;spring-session-data-redis&lt;/artifactId&gt;    &lt;version&gt;$&#123;spring-session-data-redis.version&#125;&lt;/version&gt;&lt;/dependency&gt;\n12345678@EnableRedisHttpSession // 启用redis存储session功能public class Config &#123;    @Bean    public LettuceConnectionFactory connectionFactory() &#123;        // 1.配置一个redis客户端 -- 默认连接 127.0.0.1:6379        return new LettuceConnectionFactory();    &#125;&#125;\n12345public class Initializer extends AbstractHttpSessionApplicationInitializer &#123;    public Initializer() &#123;\t\tsuper(Config.class);    &#125;&#125;\n\n\n\n\n","dateCreated":"2020-07-01T22:13:23+08:00","dateModified":"2020-07-01T22:13:04+08:00","datePublished":"2020-07-01T22:13:23+08:00","description":"","headline":"集群无忧-SpringSession原理与坑","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2020/07/01/集群无忧-SpringSession原理与坑/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2020/07/01/集群无忧-SpringSession原理与坑/","keywords":"网易云课堂公开课"}</script>
     <meta name="description" content="nginx 80  高并发负载均衡、高可用  session  跟踪会话信息 电商网站不登录加入购物车 登录 — 标志 — session会话 属于哪个用户  ip_hash负载算法缺点  单点故障 IP – 真的能够不变？   移动、联通、— 宽带 移动互联网 — 不同区域ip变化  redis  理解为一个JVM外置的Map  12345&amp;lt;dependency&amp;gt;">
 <meta name="keywords" content="网易云课堂公开课">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="集群无忧-SpringSession原理与坑">
-<meta property="og:url" content="http://yoursite.com/2020/06/23/集群无忧-SpringSession原理与坑/index.html">
+<meta property="og:url" content="http://yoursite.com/2020/07/01/集群无忧-SpringSession原理与坑/index.html">
 <meta property="og:site_name" content="Brotherc">
 <meta property="og:description" content="nginx 80  高并发负载均衡、高可用  session  跟踪会话信息 电商网站不登录加入购物车 登录 — 标志 — session会话 属于哪个用户  ip_hash负载算法缺点  单点故障 IP – 真的能够不变？   移动、联通、— 宽带 移动互联网 — 不同区域ip变化  redis  理解为一个JVM外置的Map  12345&amp;lt;dependency&amp;gt;">
 <meta property="og:locale" content="zh-cn">
@@ -27,7 +27,11 @@
 <meta property="og:image" content="http://yoursite.com/assets/集群无忧-SpringSession原理与坑/5.jpg">
 <meta property="og:image" content="http://yoursite.com/assets/集群无忧-SpringSession原理与坑/6.jpg">
 <meta property="og:image" content="http://yoursite.com/assets/集群无忧-SpringSession原理与坑/7.jpg">
-<meta property="og:updated_time" content="2020-06-23T14:33:26.635Z">
+<meta property="og:image" content="http://yoursite.com/assets/集群无忧-SpringSession原理与坑/8.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/集群无忧-SpringSession原理与坑/9.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/集群无忧-SpringSession原理与坑/10.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/集群无忧-SpringSession原理与坑/11.jpg">
+<meta property="og:updated_time" content="2020-07-01T14:13:04.980Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="集群无忧-SpringSession原理与坑">
 <meta name="twitter:description" content="nginx 80  高并发负载均衡、高可用  session  跟踪会话信息 电商网站不登录加入购物车 登录 — 标志 — session会话 属于哪个用户  ip_hash负载算法缺点  单点故障 IP – 真的能够不变？   移动、联通、— 宽带 移动互联网 — 不同区域ip变化  redis  理解为一个JVM外置的Map  12345&amp;lt;dependency&amp;gt;">
@@ -181,9 +185,9 @@
     
     
         <div class="post-meta">
-    <time datetime="2020-06-23T22:34:18+08:00">
+    <time datetime="2020-07-01T22:13:23+08:00">
 	
-		    6月 23, 2020
+		    7月 01, 2020
     	
     </time>
     
@@ -228,6 +232,10 @@
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.session<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-session-data-redis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;spring-session-data-redis.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@EnableRedisHttpSession</span> <span class="comment">// 启用redis存储session功能</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Config</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> LettuceConnectionFactory <span class="title">connectionFactory</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 1.配置一个redis客户端 -- 默认连接 127.0.0.1:6379</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> LettuceConnectionFactory();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Initializer</span> <span class="keyword">extends</span> <span class="title">AbstractHttpSessionApplicationInitializer</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Initializer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>(Config.class);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/集群无忧-SpringSession原理与坑/8.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/集群无忧-SpringSession原理与坑/8.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/集群无忧-SpringSession原理与坑/9.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/集群无忧-SpringSession原理与坑/9.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/集群无忧-SpringSession原理与坑/10.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/集群无忧-SpringSession原理与坑/10.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/集群无忧-SpringSession原理与坑/11.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/集群无忧-SpringSession原理与坑/11.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
 
             
 
@@ -267,7 +275,7 @@
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
@@ -275,7 +283,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/06/23/集群无忧-SpringSession原理与坑/" title="分享到 Facebook">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/07/01/集群无忧-SpringSession原理与坑/" title="分享到 Facebook">
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
@@ -283,7 +291,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/06/23/集群无忧-SpringSession原理与坑/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/07/01/集群无忧-SpringSession原理与坑/" title="分享到 Twitter">
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -291,7 +299,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/06/23/集群无忧-SpringSession原理与坑/" title="分享到 Google+">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/07/01/集群无忧-SpringSession原理与坑/" title="分享到 Google+">
                     <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
             </li>
@@ -301,7 +309,7 @@
         
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
             
                 <i class="fa fa-list" aria-hidden="true"></i>
             </a>
@@ -352,7 +360,7 @@
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
@@ -360,7 +368,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/06/23/集群无忧-SpringSession原理与坑/" title="分享到 Facebook">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/07/01/集群无忧-SpringSession原理与坑/" title="分享到 Facebook">
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
@@ -368,7 +376,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/06/23/集群无忧-SpringSession原理与坑/" title="分享到 Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/07/01/集群无忧-SpringSession原理与坑/" title="分享到 Twitter">
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -376,7 +384,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/06/23/集群无忧-SpringSession原理与坑/" title="分享到 Google+">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/07/01/集群无忧-SpringSession原理与坑/" title="分享到 Google+">
                     <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
             </li>
@@ -386,7 +394,7 @@
         
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
             
                 <i class="fa fa-list" aria-hidden="true"></i>
             </a>
@@ -404,7 +412,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/06/23/集群无忧-SpringSession原理与坑/">
+                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/07/01/集群无忧-SpringSession原理与坑/">
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>分享到 Facebook</span>
                     </a>
                 </li>
@@ -412,7 +420,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/06/23/集群无忧-SpringSession原理与坑/">
+                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/07/01/集群无忧-SpringSession原理与坑/">
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
                     </a>
                 </li>
@@ -420,7 +428,7 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/06/23/集群无忧-SpringSession原理与坑/">
+                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/07/01/集群无忧-SpringSession原理与坑/">
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>分享到 Google+</span>
                     </a>
                 </li>
