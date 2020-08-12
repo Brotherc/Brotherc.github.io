@@ -166,6 +166,54 @@
             <div class="postShorten-header">
                 <h1 class="postShorten-title">
                     
+                        <a class="link-unstyled" href="/2020/04/04/模板方法模式/">
+                            模板方法模式
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2020-04-04T15:50:56+08:00">
+	
+		    4月 04, 2020
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/88.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/88.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/89.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/89.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/90.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/90.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public abstract class BankTemplateMethod &#123;</span><br><span class="line">	//具体方法</span><br><span class="line">	public void takeNumber()&#123;</span><br><span class="line">		System.out.println(&quot;取号排队&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public abstract void transact(); //办理具体的业务	//钩子方法</span><br><span class="line"></span><br><span class="line">	public void evaluate()&#123;</span><br><span class="line">		System.out.println(&quot;反馈评分&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public final void process()&#123;	//模板方法！！！</span><br><span class="line">		this.takeNumber();</span><br><span class="line"></span><br><span class="line">		this.transact();</span><br><span class="line"></span><br><span class="line">		this.evaluate();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">class DrawMoney extends BankTemplateMethod &#123;</span><br><span class="line">	@Override</span><br><span class="line">	public void transact() &#123;</span><br><span class="line">		System.out.println(&quot;我要取款！！！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">public class Client &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		BankTemplateMethod btm = new DrawMoney();</span><br><span class="line">		btm.process();</span><br><span class="line"></span><br><span class="line">		//采用匿名内部类</span><br><span class="line">		BankTemplateMethod btm2 = new BankTemplateMethod() &#123;</span><br><span class="line"></span><br><span class="line">			@Override</span><br><span class="line">			public void transact() &#123;</span><br><span class="line">				System.out.println(&quot;我要存钱！&quot;);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;;</span><br><span class="line">		btm2.process();</span><br><span class="line"></span><br><span class="line">		BankTemplateMethod btm3 = new BankTemplateMethod() &#123;</span><br><span class="line">			@Override</span><br><span class="line">			public void transact() &#123;</span><br><span class="line">				System.out.println(&quot;我要理财！我这里有2000万韩币&quot;);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;;</span><br><span class="line"></span><br><span class="line">		btm3.process();</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2020/04/04/模板方法模式/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
                         <a class="link-unstyled" href="/2020/04/04/策略模式/">
                             策略模式
                         </a>
@@ -622,59 +670,6 @@
                     
                         <p>
                             <a href="/2020/04/04/适配器模式/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2020/04/04/外观模式/">
-                            外观模式
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2020-04-04T15:50:56+08:00">
-	
-		    4月 04, 2020
-    	
-    </time>
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-content">
-                    <div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/51.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/51.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/52.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/52.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/53.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/53.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/54.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/54.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/55.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/55.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public interface 工商局  &#123;</span><br><span class="line">	void checkName();  //核名</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class 海淀区工商局 implements 工商局 &#123;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void checkName() &#123;</span><br><span class="line">		System.out.println(&quot;检查名字是否有冲突！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public interface 质检局 &#123;</span><br><span class="line">	void  orgCodeCertificate();  //办理组织机构代码证</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">class 海淀质检局 implements 质检局 &#123;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void orgCodeCertificate() &#123;</span><br><span class="line">		System.out.println(&quot;在海淀区质检局办理组织机构代码证！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public interface 银行 &#123;</span><br><span class="line">	void  openAccount();  //开户</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">class 中国工商银行 implements 银行 &#123;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void openAccount() &#123;</span><br><span class="line">		System.out.println(&quot;在中国工商银行开户！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public interface 税务局 &#123;</span><br><span class="line">	void taxCertificate();  //办理税务登记证</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">class 海淀税务局 implements 税务局 &#123;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void taxCertificate() &#123;</span><br><span class="line">		System.out.println(&quot;在海淀税务局办理税务登记证！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 办理注册公司流程的门面对象</span><br><span class="line"> * @author Administrator</span><br><span class="line"> *</span><br><span class="line"> */</span><br><span class="line">public class RegisterFacade &#123;</span><br><span class="line">	public void register()&#123;</span><br><span class="line">		工商局  a = new 海淀区工商局();</span><br><span class="line">		a.checkName();</span><br><span class="line">		质检局 b = new 海淀质检局();</span><br><span class="line">		b.orgCodeCertificate();</span><br><span class="line">		税务局  c  = new 海淀税务局();</span><br><span class="line">		c.taxCertificate();</span><br><span class="line">		银行  d = new 中国工商银行();</span><br><span class="line">		d.openAccount();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public class Client1 &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">//		工商局  a = new 海淀区工商局();</span><br><span class="line">//		a.checkName();</span><br><span class="line">//		质检局 b = new 海淀质检局();</span><br><span class="line">//		b.orgCodeCertificate();</span><br><span class="line">//		税务局  c  = new 海淀税务局();</span><br><span class="line">//		c.taxCertificate();</span><br><span class="line">//		银行  d = new 中国工商银行();</span><br><span class="line">//		d.openAccount();</span><br><span class="line"></span><br><span class="line">		new RegisterFacade().register();</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2020/04/04/外观模式/#post-footer" class="postShorten-excerpt_link link">
                                 评论和共享
                             </a>
                         </p>

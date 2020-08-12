@@ -1,0 +1,494 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Brotherc">
+    <title>原生JDK线程扩展-Guava - Brotherc</title>
+    <meta name="author" content="Brotherc">
+    
+    
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg"},"articleBody":"JDK线程\n\n针对以上串行场景，有什么优化方案\n\n谈谈你对Java线程池的理解\n\n\n\n\n\n\n\n以上方式就是最优解吗？\n\n\n95线  95%请求  300ms\n\n\n\n\n\nGuava对JDK扩展\nGuava实战模拟外部服务1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071/** * @Description: 模拟一个耗时的服务 如：RPC或者HTTP请求 */@Servicepublic class OuterService &#123;    /**     * 用户服务     */    public long userService() &#123;        System.out.println(\"用户服务开始执行\");        try &#123;            //模拟耗时1000ms的用户服务            Thread.sleep(1000);        &#125; catch (InterruptedException e) &#123;            e.printStackTrace();        &#125;        System.out.println(\"用户服务执行结束\");        //假设用户服务返回值=1        return 1;    &#125;    /**     * 订单服务     */    public long orderService() &#123;        System.out.println(\"订单服务开始执行\");        try &#123;            //模拟耗时2000ms的订单服务            Thread.sleep(2000);        &#125; catch (InterruptedException e) &#123;            e.printStackTrace();        &#125;        System.out.println(\"订单服务执行结束\");        //假设订单服务返回值=3        return 3;    &#125;    /**     * 商品服务     */    public long itemService() &#123;        System.out.println(\"商品服务开始执行\");        try &#123;            //模拟耗时3000ms的商品服务            Thread.sleep(3000);            //模拟调用超时或者服务异常            // throw new RuntimeException(\"Oh My God, OrderService Exception!!!\");        &#125; catch (InterruptedException e) &#123;            e.printStackTrace();        &#125;        System.out.println(\"商品服务执行结束\");        //假设商品服务返回值=5        return 5;    &#125;    /**     * 地址服务     */    public long addressService() &#123;        System.out.println(\"地址服务开始执行\");        try &#123;            //模拟耗时5000ms的地址服务            Thread.sleep(5000);        &#125; catch (InterruptedException e) &#123;            e.printStackTrace();        &#125;        System.out.println(\"地址服务执行结束\");        //假设地址服务返回值=7        return 7;    &#125;&#125;\n单线程演示12345678910111213141516171819202122232425262728293031323334/** * @Description: 单线程操作演示 */@RestControllerpublic class SingleThreadDemo &#123;    @Resource    private OuterService outerService;    /**     * 测试代码     */    @RequestMapping(\"/test/single\")    public Map&lt;String, Object&gt; test () &#123;        //开始调用的时间        long start = System.currentTimeMillis();        //同步调用用户服务        long userServiceResult = outerService.userService();        //同步调用订单服务        long orderServiceResult = outerService.orderService();        //同步调用商品服务        long itemServiceResult = outerService.itemService();        //结束调用的时间        long end = System.currentTimeMillis();        String time = \"总调用时间是：\" + (end - start) + \"毫秒\";        //计算结果        long result = userServiceResult + orderServiceResult + itemServiceResult;        //为什么要初始化4个容量的Map        Map&lt;String, Object&gt; resultMap = new HashMap&lt;&gt;(4);        resultMap.put(\"time\", time);        resultMap.put(\"result\", result);        //结果        return resultMap;    &#125;&#125;\nJDK多线程演示123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354/** * @Description: JDK多线程操作演示 */@RestControllerpublic class JdkThreadController &#123;    @Resource    private OuterService outerService;    @RequestMapping(\"/test/jdk\")    public Map&lt;String, Object&gt; execute() throws ExecutionException, InterruptedException &#123;        // 固定大小的线程池 核心线程数和最大线程数=10        ExecutorService executorService = Executors.newFixedThreadPool(10);        // 记录开始时间        Long start = System.currentTimeMillis();        // 异步调用用户服务        Future&lt;Long&gt; userServiceFuture = executorService.submit(new Callable&lt;Long&gt;() &#123;            @Override            public Long call() throws Exception &#123;                return outerService.userService();            &#125;        &#125;);        // 异步调用订单服务        Future&lt;Long&gt; orderServiceFuture = executorService.submit(new Callable&lt;Long&gt;() &#123;            @Override            public Long call() throws Exception &#123;                return outerService.orderService();            &#125;        &#125;);        // 异步调用商品服务        Future&lt;Long&gt; itemServiceFuture = executorService.submit(new Callable&lt;Long&gt;() &#123;            @Override            public Long call() throws Exception &#123;                return outerService.itemService();            &#125;        &#125;);        // 阻塞 等待执行结果        long userServiceResult = userServiceFuture.get();        long orderServiceResult = orderServiceFuture.get();        long itemServiceResult = itemServiceFuture.get();        //结束调用的时间        long end = System.currentTimeMillis();        //计算结果        long result = userServiceResult + orderServiceResult + itemServiceResult;        String time = \"总调用时间是：\" + (end - start) + \"毫秒\";        //为什么要初始化4个容量的Map        Map&lt;String, Object&gt; resultMap = new HashMap&lt;&gt;(4);        resultMap.put(\"time\", time);        resultMap.put(\"result\", result);        //结果        return resultMap;    &#125;&#125;\nGuava特性演示12345678910111213141516171819import com.google.common.util.concurrent.ListeningExecutorService;import com.google.common.util.concurrent.MoreExecutors;import org.springframework.context.annotation.Bean;import org.springframework.stereotype.Component;import java.util.concurrent.Executors;/** * @Description: 公用的线程池 */@Componentpublic class ListeningExecutors &#123;    @Bean    public ListeningExecutorService createListeningExecutorService() &#123;        // 创建线程池        return MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10));    &#125;&#125;\n1234567891011121314151617181920212223242526272829import com.google.common.util.concurrent.FutureCallback;/** * @Description: ListenableFuture回调任务 */public class FutureCallBackTask implements FutureCallback&lt;Object&gt; &#123;    /**     * 成功的回调     * @param result     */    @Override    public void onSuccess(Object result) &#123;        //执行回调函数        System.out.println(\"进入正确的回调函数\");        //得到任务执行的结果        System.out.printf(\"任务执行的结果是：%s%n\", result);    &#125;    /**     * 失败的回调     * @param thrown     */    @Override    public void onFailure(Throwable thrown) &#123;        System.out.println(\"进入错误的回调函数\");        System.out.printf(\"系统出错了，错误原因是：%s%n\", thrown.getMessage());    &#125;&#125;\n123456789101112131415161718192021222324252627/** * @Description: Guava 线程简单测试 */@RestControllerpublic class GuavaThreadController &#123;    @Autowired    private ListeningExecutorService listeningExecutorService;    @RequestMapping(\"/test/guava\")    public void execute() &#123;        // 记录开始时间        Long start = System.currentTimeMillis();        // 一个耗时的任务        ListenableFuture&lt;Boolean&gt; listenableFuture = listeningExecutorService.submit(() -&gt; &#123;            Thread.sleep(5000);            return true;        &#125;);        // 注册回调事件        Futures.addCallback(listenableFuture, new FutureCallBackTask(), listeningExecutorService);        // 记录结束时间        Long end = System.currentTimeMillis();        // 执行时间        System.out.println(\"execute()方法执行结束了，耗时=\" + (end - start) + \"毫秒\");        System.out.println(\"-----------------------华丽的分割线-----------------------\");    &#125;&#125;\n123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100101102103104105106107108109110111112113114115116117118119120121122123124125126127128129130131132133134135136137138139140141142143144145/** * @Description: 高级特性介绍 * &lt;p&gt; * transform：对于ListenableFuture的返回值进行转换。 * &lt;p&gt; * allAsList：对多个ListenableFuture的合并，返回一个当所有Future成功时返回多个Future返回值组成的List对象。 * 注：当其中一个Future失败或者取消的时候，将会进入失败或者取消。 * &lt;p&gt; * successfulAsList：和allAsList相似，唯一差别是对于失败或取消的Future返回值用null代替。不会进入失败或者取消流程。 * &lt;p&gt; * immediateFuture/immediateCancelledFuture： 立即返回一个待返回值的ListenableFuture。 * &lt;p&gt; * makeChecked: 将ListenableFuture 转换成CheckedFuture。CheckedFuture 是一个ListenableFuture 。 * 其中包含了多个版本的get 方法，方法声明抛出检查异常.这样使得创建一个在执行逻辑中可以抛出异常的Future更加容易 * &lt;p&gt; * JdkFutureAdapters.listenInPoolThread(jdkthread): guava同时提供了将JDK Future转换为ListenableFuture的接口函数。 */@RestControllerpublic class SeniorListenableFutureController &#123;    @Autowired    private ListeningExecutorService listeningExecutorService;    @Autowired    private OuterService outerService;    @RequestMapping(\"/test/senior\")    public Map&lt;String, Object&gt; execute() throws ExecutionException, InterruptedException &#123;        long start = System.currentTimeMillis();        // 异步调用用户服务        ListenableFuture&lt;Long&gt; userServiceFuture = listeningExecutorService.submit(new Callable&lt;Long&gt;() &#123;            @Override            public Long call() throws Exception &#123;                return outerService.userService();            &#125;        &#125;);        // 异步调用订单服务        ListenableFuture&lt;Long&gt; orderServiceFuture = listeningExecutorService.submit(new Callable&lt;Long&gt;() &#123;            @Override            public Long call() throws Exception &#123;                return outerService.orderService();            &#125;        &#125;);        // 异步调用商品服务        ListenableFuture&lt;Long&gt; itemServiceFuture = listeningExecutorService.submit(new Callable&lt;Long&gt;() &#123;            @Override            public Long call() throws Exception &#123;                return outerService.itemService();            &#125;        &#125;);        //注册商品服务回调        addCallBack(itemServiceFuture);        // .......        // 对多个ListenableFuture的合并，返回一个当所有Future成功时返回多个Future返回值组成的List对象。        // 注：当其中一个Future失败或者取消的时候，会怎样？        final ListenableFuture&lt;List&lt;Long&gt;&gt; threeServicesFutures = Futures.successfulAsList(userServiceFuture, orderServiceFuture, itemServiceFuture);        //对于多个ListenableFuture的进行转换，返回一个新的ListenableFuture        final ListenableFuture&lt;Long&gt; transform = Futures.transformAsync(threeServicesFutures, new AsyncFunction&lt;List&lt;Long&gt;, Long&gt;() &#123;            /**             * 用给定的输入封装一个特定的ListenableFuture作为输出             *             * @param input 输入的ListenableFuture对象             */            @Override            public ListenableFuture&lt;Long&gt; apply(@Nullable List&lt;Long&gt; input) &#123;                if (input == null || input.isEmpty()) &#123;                    return null;                &#125;                // 这里可以对input进行复杂的处理，返回最终的一个结果                // 比如：对用户服务，订单服务，商品服务的远程调用结果进行封装                long result = 0;                for (Long serviceResult : input) &#123;                    if (serviceResult != null) &#123;                        result += serviceResult;                    &#125;                &#125;                // 立即返回一个带返回值的ListenableFuture                return Futures.immediateFuture(result);            &#125;        &#125;, listeningExecutorService);        // 异步调用地址服务        ListenableFuture&lt;Long&gt; addressServiceFuture = listeningExecutorService.submit(new Callable&lt;Long&gt;() &#123;            @Override            public Long call() throws Exception &#123;                return outerService.addressService();            &#125;        &#125;);        final ListenableFuture&lt;List&lt;Long&gt;&gt; finalFutures = Futures.successfulAsList(transform, addressServiceFuture);        ListenableFuture&lt;Long&gt; finalResult = Futures.transformAsync(finalFutures, new AsyncFunction&lt;List&lt;Long&gt;, Long&gt;() &#123;            @Override            public ListenableFuture&lt;Long&gt; apply(@Nullable List&lt;Long&gt; input) throws Exception &#123;                if (CollectionUtils.isEmpty(input)) &#123;                    return null;                &#125;                // 这里可以对input进行复杂的处理，返回最终的一个结果                long result = 0;                // 比如：对上面的用户服务，订单服务，商品服务的总结果和地址服务再封装                for (Long serviceResult : input) &#123;                    if (serviceResult != null) &#123;                        result += serviceResult;                    &#125;                &#125;                // 立即返回一个带返回值的ListenableFuture                return Futures.immediateFuture(result);            &#125;        &#125;, listeningExecutorService);        // 注册回调事件        addCallBack(finalResult);        long end = System.currentTimeMillis();        String time = \"总调用时间是：\" + (end - start) + \"毫秒\";        //为什么要初始化4个容量的Map        Map&lt;String, Object&gt; resultMap = new HashMap&lt;&gt;(3);        resultMap.put(\"time\", time);        //结果        return resultMap;    &#125;    /**     * 添加回调     * @param listenableFuture     */    private void addCallBack(ListenableFuture&lt;Long&gt; listenableFuture) &#123;        Futures.addCallback(listenableFuture, new FutureCallback&lt;Long&gt;() &#123;            @Override            public void onSuccess(@Nullable Long result) &#123;                System.out.printf(\"服务调用成功,执行结果是%s%n\",result);            &#125;            @Override            public void onFailure(Throwable t) &#123;                System.out.printf(\"服务调用异常%s%n\", t);            &#125;        &#125;, listeningExecutorService);    &#125;&#125;\n1234567891011121314151617181920212223242526272829303132333435363738394041/** * @Description:  JdkFutureAdapters.listenInPoolThread(jdkthread) * * guava同时提供了将JDK Future转换为ListenableFuture的接口函数。 */@RestControllerpublic class JdkFutureAdaptersController &#123;    @Autowired    private ListeningExecutorService listeningExecutorService;    @RequestMapping(\"/test/adapter\")    public void execute() &#123;        // 固定大小的线程池 核心线程数和最大线程数=10        ExecutorService executorService = Executors.newFixedThreadPool(10);        // 记录开始时间        Long start = System.currentTimeMillis();        // 一个耗时的任务        Future&lt;Boolean&gt; future = executorService.submit(new Callable&lt;Boolean&gt;() &#123;            /**             * Computes a result, or throws an exception if unable to do so.             *             * @return computed result             * @throws Exception if unable to compute a result             */            @Override            public Boolean call() throws Exception &#123;                //模拟耗时5s                Thread.sleep(5000);                return true;            &#125;        &#125;);        ListenableFuture listenableFuture = JdkFutureAdapters.listenInPoolThread(future);        Futures.addCallback(listenableFuture, new FutureCallBackTask(), listeningExecutorService);        // 记录结束时间        Long end = System.currentTimeMillis();        // 执行时间        System.out.println(\"线程执行结束了，耗时=\" + (end - start) + \"毫秒\");        System.out.println(\"-----------------------华丽的分割线-----------------------\");    &#125;&#125;\n参考：https://github.com/online-demo/yunxi-guava-thread\n","dateCreated":"2020-08-12T22:05:01+08:00","dateModified":"2020-08-12T22:04:07+08:00","datePublished":"2020-08-12T22:05:01+08:00","description":"","headline":"原生JDK线程扩展-Guava","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2020/08/12/云析学院-原生JDK线程扩展-Guava/"},"publisher":{"@type":"Organization","name":"Brotherc","sameAs":["https://github.com/Brotherc"],"image":"head.jpg","logo":{"@type":"ImageObject","url":"head.jpg"}},"url":"http://yoursite.com/2020/08/12/云析学院-原生JDK线程扩展-Guava/","keywords":"云析学院"}</script>
+    <meta name="description" content="JDK线程  针对以上串行场景，有什么优化方案  谈谈你对Java线程池的理解        以上方式就是最优解吗？   95线  95%请求  300ms      Guava对JDK扩展 Guava实战模拟外部服务1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950">
+<meta name="keywords" content="云析学院">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="原生JDK线程扩展-Guava">
+<meta property="og:url" content="http://yoursite.com/2020/08/12/云析学院-原生JDK线程扩展-Guava/index.html">
+<meta property="og:site_name" content="Brotherc">
+<meta property="og:description" content="JDK线程  针对以上串行场景，有什么优化方案  谈谈你对Java线程池的理解        以上方式就是最优解吗？   95线  95%请求  300ms      Guava对JDK扩展 Guava实战模拟外部服务1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950">
+<meta property="og:locale" content="zh-cn">
+<meta property="og:image" content="http://yoursite.com/assets/云析学院/原生JDK线程扩展-Guava/1.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/云析学院/原生JDK线程扩展-Guava/2.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/云析学院/原生JDK线程扩展-Guava/3.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/云析学院/原生JDK线程扩展-Guava/4.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/云析学院/原生JDK线程扩展-Guava/5.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/云析学院/原生JDK线程扩展-Guava/6.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/云析学院/原生JDK线程扩展-Guava/7.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/云析学院/原生JDK线程扩展-Guava/8.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/云析学院/原生JDK线程扩展-Guava/9.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/云析学院/原生JDK线程扩展-Guava/10.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/云析学院/原生JDK线程扩展-Guava/11.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/云析学院/原生JDK线程扩展-Guava/12.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/云析学院/原生JDK线程扩展-Guava/13.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/云析学院/原生JDK线程扩展-Guava/14.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/云析学院/原生JDK线程扩展-Guava/15.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/云析学院/原生JDK线程扩展-Guava/16.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/云析学院/原生JDK线程扩展-Guava/17.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/云析学院/原生JDK线程扩展-Guava/18.jpg">
+<meta property="og:image" content="http://yoursite.com/assets/云析学院/原生JDK线程扩展-Guava/19.jpg">
+<meta property="og:updated_time" content="2020-08-12T14:04:07.637Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="原生JDK线程扩展-Guava">
+<meta name="twitter:description" content="JDK线程  针对以上串行场景，有什么优化方案  谈谈你对Java线程池的理解        以上方式就是最优解吗？   95线  95%请求  300ms      Guava对JDK扩展 Guava实战模拟外部服务1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950">
+<meta name="twitter:image" content="http://yoursite.com/assets/云析学院/原生JDK线程扩展-Guava/1.jpg">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://yoursite.com/assets/images/head.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-c4ozcsklz4kht2pebhp44xorvyverh23toayhn7i6ubrpyedak24hv1v0hyd.min.css">
+    <!--STYLES END-->
+    
+
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/ ">Brotherc</a>
+    </div>
+    
+        
+            <a class="header-right-picture " href="#about">
+        
+        
+            <img class="header-picture" src="/assets/images/head.jpg" alt="作者的图片">
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/#about">
+                    <img class="sidebar-profile-picture" src="/assets/images/head.jpg" alt="作者的图片">
+                </a>
+                <h4 class="sidebar-profile-name">Brotherc</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>java development</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/ " title="首页">
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">首页</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-categories" title="分类">
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">分类</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-tags" title="标签">
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">标签</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link open-algolia-search" href="/all-archives" title="归档">
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">归档</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="#about" title="关于">
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">关于</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://github.com/Brotherc" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="4"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            原生JDK线程扩展-Guava
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2020-08-12T22:05:01+08:00">
+	
+		    8月 12, 2020
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <h2 id="JDK线程"><a href="#JDK线程" class="headerlink" title="JDK线程"></a>JDK线程</h2><div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/云析学院/原生JDK线程扩展-Guava/1.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/云析学院/原生JDK线程扩展-Guava/1.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<ul>
+<li><strong>针对以上串行场景，有什么优化方案</strong><div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/云析学院/原生JDK线程扩展-Guava/2.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/云析学院/原生JDK线程扩展-Guava/2.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/云析学院/原生JDK线程扩展-Guava/3.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/云析学院/原生JDK线程扩展-Guava/3.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div></li>
+<li><strong>谈谈你对Java线程池的理解</strong><div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/云析学院/原生JDK线程扩展-Guava/4.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/云析学院/原生JDK线程扩展-Guava/4.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/云析学院/原生JDK线程扩展-Guava/5.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/云析学院/原生JDK线程扩展-Guava/5.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/云析学院/原生JDK线程扩展-Guava/6.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/云析学院/原生JDK线程扩展-Guava/6.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/云析学院/原生JDK线程扩展-Guava/7.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/云析学院/原生JDK线程扩展-Guava/7.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/云析学院/原生JDK线程扩展-Guava/8.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/云析学院/原生JDK线程扩展-Guava/8.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/云析学院/原生JDK线程扩展-Guava/9.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/云析学院/原生JDK线程扩展-Guava/9.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/云析学院/原生JDK线程扩展-Guava/10.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/云析学院/原生JDK线程扩展-Guava/10.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/云析学院/原生JDK线程扩展-Guava/11.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/云析学院/原生JDK线程扩展-Guava/11.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div></li>
+<li><strong>以上方式就是最优解吗？</strong><div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/云析学院/原生JDK线程扩展-Guava/12.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/云析学院/原生JDK线程扩展-Guava/12.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/云析学院/原生JDK线程扩展-Guava/13.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/云析学院/原生JDK线程扩展-Guava/13.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/云析学院/原生JDK线程扩展-Guava/14.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/云析学院/原生JDK线程扩展-Guava/14.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div></li>
+<li><strong>95线  95%请求  300ms</strong><div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/云析学院/原生JDK线程扩展-Guava/15.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/云析学院/原生JDK线程扩展-Guava/15.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/云析学院/原生JDK线程扩展-Guava/16.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/云析学院/原生JDK线程扩展-Guava/16.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/云析学院/原生JDK线程扩展-Guava/17.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/云析学院/原生JDK线程扩展-Guava/17.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/云析学院/原生JDK线程扩展-Guava/18.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/云析学院/原生JDK线程扩展-Guava/18.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+</li>
+</ul>
+<h2 id="Guava对JDK扩展"><a href="#Guava对JDK扩展" class="headerlink" title="Guava对JDK扩展"></a>Guava对JDK扩展</h2><div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/云析学院/原生JDK线程扩展-Guava/19.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/云析学院/原生JDK线程扩展-Guava/19.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<h2 id="Guava实战"><a href="#Guava实战" class="headerlink" title="Guava实战"></a>Guava实战</h2><h5 id="模拟外部服务"><a href="#模拟外部服务" class="headerlink" title="模拟外部服务"></a>模拟外部服务</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Description</span>: 模拟一个耗时的服务 如：RPC或者HTTP请求</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OuterService</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 用户服务</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">userService</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"用户服务开始执行"</span>);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">//模拟耗时1000ms的用户服务</span></span><br><span class="line">            Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">"用户服务执行结束"</span>);</span><br><span class="line">        <span class="comment">//假设用户服务返回值=1</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 订单服务</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">orderService</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"订单服务开始执行"</span>);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">//模拟耗时2000ms的订单服务</span></span><br><span class="line">            Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">"订单服务执行结束"</span>);</span><br><span class="line">        <span class="comment">//假设订单服务返回值=3</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">3</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 商品服务</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">itemService</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"商品服务开始执行"</span>);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">//模拟耗时3000ms的商品服务</span></span><br><span class="line">            Thread.sleep(<span class="number">3000</span>);</span><br><span class="line">            <span class="comment">//模拟调用超时或者服务异常</span></span><br><span class="line">            <span class="comment">// throw new RuntimeException("Oh My God, OrderService Exception!!!");</span></span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">"商品服务执行结束"</span>);</span><br><span class="line">        <span class="comment">//假设商品服务返回值=5</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">5</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 地址服务</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">addressService</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"地址服务开始执行"</span>);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">//模拟耗时5000ms的地址服务</span></span><br><span class="line">            Thread.sleep(<span class="number">5000</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">"地址服务执行结束"</span>);</span><br><span class="line">        <span class="comment">//假设地址服务返回值=7</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">7</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="单线程演示"><a href="#单线程演示" class="headerlink" title="单线程演示"></a>单线程演示</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Description</span>: 单线程操作演示</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SingleThreadDemo</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> OuterService outerService;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 测试代码</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"/test/single"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Map&lt;String, Object&gt; <span class="title">test</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">//开始调用的时间</span></span><br><span class="line">        <span class="keyword">long</span> start = System.currentTimeMillis();</span><br><span class="line">        <span class="comment">//同步调用用户服务</span></span><br><span class="line">        <span class="keyword">long</span> userServiceResult = outerService.userService();</span><br><span class="line">        <span class="comment">//同步调用订单服务</span></span><br><span class="line">        <span class="keyword">long</span> orderServiceResult = outerService.orderService();</span><br><span class="line">        <span class="comment">//同步调用商品服务</span></span><br><span class="line">        <span class="keyword">long</span> itemServiceResult = outerService.itemService();</span><br><span class="line">        <span class="comment">//结束调用的时间</span></span><br><span class="line">        <span class="keyword">long</span> end = System.currentTimeMillis();</span><br><span class="line">        String time = <span class="string">"总调用时间是："</span> + (end - start) + <span class="string">"毫秒"</span>;</span><br><span class="line">        <span class="comment">//计算结果</span></span><br><span class="line">        <span class="keyword">long</span> result = userServiceResult + orderServiceResult + itemServiceResult;</span><br><span class="line">        <span class="comment">//为什么要初始化4个容量的Map</span></span><br><span class="line">        Map&lt;String, Object&gt; resultMap = <span class="keyword">new</span> HashMap&lt;&gt;(<span class="number">4</span>);</span><br><span class="line">        resultMap.put(<span class="string">"time"</span>, time);</span><br><span class="line">        resultMap.put(<span class="string">"result"</span>, result);</span><br><span class="line">        <span class="comment">//结果</span></span><br><span class="line">        <span class="keyword">return</span> resultMap;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="JDK多线程演示"><a href="#JDK多线程演示" class="headerlink" title="JDK多线程演示"></a>JDK多线程演示</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Description</span>: JDK多线程操作演示</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JdkThreadController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> OuterService outerService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"/test/jdk"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Map&lt;String, Object&gt; <span class="title">execute</span><span class="params">()</span> <span class="keyword">throws</span> ExecutionException, InterruptedException </span>&#123;</span><br><span class="line">        <span class="comment">// 固定大小的线程池 核心线程数和最大线程数=10</span></span><br><span class="line">        ExecutorService executorService = Executors.newFixedThreadPool(<span class="number">10</span>);</span><br><span class="line">        <span class="comment">// 记录开始时间</span></span><br><span class="line">        Long start = System.currentTimeMillis();</span><br><span class="line">        <span class="comment">// 异步调用用户服务</span></span><br><span class="line">        Future&lt;Long&gt; userServiceFuture = executorService.submit(<span class="keyword">new</span> Callable&lt;Long&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> Long <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> outerService.userService();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="comment">// 异步调用订单服务</span></span><br><span class="line">        Future&lt;Long&gt; orderServiceFuture = executorService.submit(<span class="keyword">new</span> Callable&lt;Long&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> Long <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> outerService.orderService();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="comment">// 异步调用商品服务</span></span><br><span class="line">        Future&lt;Long&gt; itemServiceFuture = executorService.submit(<span class="keyword">new</span> Callable&lt;Long&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> Long <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> outerService.itemService();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="comment">// 阻塞 等待执行结果</span></span><br><span class="line">        <span class="keyword">long</span> userServiceResult = userServiceFuture.get();</span><br><span class="line">        <span class="keyword">long</span> orderServiceResult = orderServiceFuture.get();</span><br><span class="line">        <span class="keyword">long</span> itemServiceResult = itemServiceFuture.get();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//结束调用的时间</span></span><br><span class="line">        <span class="keyword">long</span> end = System.currentTimeMillis();</span><br><span class="line">        <span class="comment">//计算结果</span></span><br><span class="line">        <span class="keyword">long</span> result = userServiceResult + orderServiceResult + itemServiceResult;</span><br><span class="line">        String time = <span class="string">"总调用时间是："</span> + (end - start) + <span class="string">"毫秒"</span>;</span><br><span class="line">        <span class="comment">//为什么要初始化4个容量的Map</span></span><br><span class="line">        Map&lt;String, Object&gt; resultMap = <span class="keyword">new</span> HashMap&lt;&gt;(<span class="number">4</span>);</span><br><span class="line">        resultMap.put(<span class="string">"time"</span>, time);</span><br><span class="line">        resultMap.put(<span class="string">"result"</span>, result);</span><br><span class="line">        <span class="comment">//结果</span></span><br><span class="line">        <span class="keyword">return</span> resultMap;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="Guava特性演示"><a href="#Guava特性演示" class="headerlink" title="Guava特性演示"></a>Guava特性演示</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.google.common.util.concurrent.ListeningExecutorService;</span><br><span class="line"><span class="keyword">import</span> com.google.common.util.concurrent.MoreExecutors;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Executors;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Description</span>: 公用的线程池</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ListeningExecutors</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ListeningExecutorService <span class="title">createListeningExecutorService</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 创建线程池</span></span><br><span class="line">        <span class="keyword">return</span> MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(<span class="number">10</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.google.common.util.concurrent.FutureCallback;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Description</span>: ListenableFuture回调任务</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FutureCallBackTask</span> <span class="keyword">implements</span> <span class="title">FutureCallback</span>&lt;<span class="title">Object</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 成功的回调</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> result</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onSuccess</span><span class="params">(Object result)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//执行回调函数</span></span><br><span class="line">        System.out.println(<span class="string">"进入正确的回调函数"</span>);</span><br><span class="line">        <span class="comment">//得到任务执行的结果</span></span><br><span class="line">        System.out.printf(<span class="string">"任务执行的结果是：%s%n"</span>, result);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 失败的回调</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> thrown</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onFailure</span><span class="params">(Throwable thrown)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"进入错误的回调函数"</span>);</span><br><span class="line">        System.out.printf(<span class="string">"系统出错了，错误原因是：%s%n"</span>, thrown.getMessage());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Description</span>: Guava 线程简单测试</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GuavaThreadController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> ListeningExecutorService listeningExecutorService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"/test/guava"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 记录开始时间</span></span><br><span class="line">        Long start = System.currentTimeMillis();</span><br><span class="line">        <span class="comment">// 一个耗时的任务</span></span><br><span class="line">        ListenableFuture&lt;Boolean&gt; listenableFuture = listeningExecutorService.submit(() -&gt; &#123;</span><br><span class="line">            Thread.sleep(<span class="number">5000</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="comment">// 注册回调事件</span></span><br><span class="line">        Futures.addCallback(listenableFuture, <span class="keyword">new</span> FutureCallBackTask(), listeningExecutorService);</span><br><span class="line">        <span class="comment">// 记录结束时间</span></span><br><span class="line">        Long end = System.currentTimeMillis();</span><br><span class="line">        <span class="comment">// 执行时间</span></span><br><span class="line">        System.out.println(<span class="string">"execute()方法执行结束了，耗时="</span> + (end - start) + <span class="string">"毫秒"</span>);</span><br><span class="line">        System.out.println(<span class="string">"-----------------------华丽的分割线-----------------------"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Description</span>: 高级特性介绍</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * transform：对于ListenableFuture的返回值进行转换。</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * allAsList：对多个ListenableFuture的合并，返回一个当所有Future成功时返回多个Future返回值组成的List对象。</span></span><br><span class="line"><span class="comment"> * 注：当其中一个Future失败或者取消的时候，将会进入失败或者取消。</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * successfulAsList：和allAsList相似，唯一差别是对于失败或取消的Future返回值用null代替。不会进入失败或者取消流程。</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * immediateFuture/immediateCancelledFuture： 立即返回一个待返回值的ListenableFuture。</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * makeChecked: 将ListenableFuture 转换成CheckedFuture。CheckedFuture 是一个ListenableFuture 。</span></span><br><span class="line"><span class="comment"> * 其中包含了多个版本的get 方法，方法声明抛出检查异常.这样使得创建一个在执行逻辑中可以抛出异常的Future更加容易</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * JdkFutureAdapters.listenInPoolThread(jdkthread): guava同时提供了将JDK Future转换为ListenableFuture的接口函数。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SeniorListenableFutureController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> ListeningExecutorService listeningExecutorService;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> OuterService outerService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"/test/senior"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Map&lt;String, Object&gt; <span class="title">execute</span><span class="params">()</span> <span class="keyword">throws</span> ExecutionException, InterruptedException </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">long</span> start = System.currentTimeMillis();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 异步调用用户服务</span></span><br><span class="line">        ListenableFuture&lt;Long&gt; userServiceFuture = listeningExecutorService.submit(<span class="keyword">new</span> Callable&lt;Long&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> Long <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> outerService.userService();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 异步调用订单服务</span></span><br><span class="line">        ListenableFuture&lt;Long&gt; orderServiceFuture = listeningExecutorService.submit(<span class="keyword">new</span> Callable&lt;Long&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> Long <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> outerService.orderService();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 异步调用商品服务</span></span><br><span class="line">        ListenableFuture&lt;Long&gt; itemServiceFuture = listeningExecutorService.submit(<span class="keyword">new</span> Callable&lt;Long&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> Long <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> outerService.itemService();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="comment">//注册商品服务回调</span></span><br><span class="line">        addCallBack(itemServiceFuture);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// .......</span></span><br><span class="line">        <span class="comment">// 对多个ListenableFuture的合并，返回一个当所有Future成功时返回多个Future返回值组成的List对象。</span></span><br><span class="line">        <span class="comment">// 注：当其中一个Future失败或者取消的时候，会怎样？</span></span><br><span class="line">        <span class="keyword">final</span> ListenableFuture&lt;List&lt;Long&gt;&gt; threeServicesFutures = Futures.successfulAsList(userServiceFuture, orderServiceFuture, itemServiceFuture);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//对于多个ListenableFuture的进行转换，返回一个新的ListenableFuture</span></span><br><span class="line">        <span class="keyword">final</span> ListenableFuture&lt;Long&gt; transform = Futures.transformAsync(threeServicesFutures, <span class="keyword">new</span> AsyncFunction&lt;List&lt;Long&gt;, Long&gt;() &#123;</span><br><span class="line">            <span class="comment">/**</span></span><br><span class="line"><span class="comment">             * 用给定的输入封装一个特定的ListenableFuture作为输出</span></span><br><span class="line"><span class="comment">             *</span></span><br><span class="line"><span class="comment">             * <span class="doctag">@param</span> input 输入的ListenableFuture对象</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> ListenableFuture&lt;Long&gt; <span class="title">apply</span><span class="params">(@Nullable List&lt;Long&gt; input)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (input == <span class="keyword">null</span> || input.isEmpty()) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// 这里可以对input进行复杂的处理，返回最终的一个结果</span></span><br><span class="line">                <span class="comment">// 比如：对用户服务，订单服务，商品服务的远程调用结果进行封装</span></span><br><span class="line">                <span class="keyword">long</span> result = <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">for</span> (Long serviceResult : input) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (serviceResult != <span class="keyword">null</span>) &#123;</span><br><span class="line">                        result += serviceResult;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// 立即返回一个带返回值的ListenableFuture</span></span><br><span class="line">                <span class="keyword">return</span> Futures.immediateFuture(result);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, listeningExecutorService);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 异步调用地址服务</span></span><br><span class="line">        ListenableFuture&lt;Long&gt; addressServiceFuture = listeningExecutorService.submit(<span class="keyword">new</span> Callable&lt;Long&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> Long <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> outerService.addressService();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> ListenableFuture&lt;List&lt;Long&gt;&gt; finalFutures = Futures.successfulAsList(transform, addressServiceFuture);</span><br><span class="line"></span><br><span class="line">        ListenableFuture&lt;Long&gt; finalResult = Futures.transformAsync(finalFutures, <span class="keyword">new</span> AsyncFunction&lt;List&lt;Long&gt;, Long&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> ListenableFuture&lt;Long&gt; <span class="title">apply</span><span class="params">(@Nullable List&lt;Long&gt; input)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                <span class="keyword">if</span> (CollectionUtils.isEmpty(input)) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// 这里可以对input进行复杂的处理，返回最终的一个结果</span></span><br><span class="line">                <span class="keyword">long</span> result = <span class="number">0</span>;</span><br><span class="line">                <span class="comment">// 比如：对上面的用户服务，订单服务，商品服务的总结果和地址服务再封装</span></span><br><span class="line">                <span class="keyword">for</span> (Long serviceResult : input) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (serviceResult != <span class="keyword">null</span>) &#123;</span><br><span class="line">                        result += serviceResult;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// 立即返回一个带返回值的ListenableFuture</span></span><br><span class="line">                <span class="keyword">return</span> Futures.immediateFuture(result);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, listeningExecutorService);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 注册回调事件</span></span><br><span class="line">        addCallBack(finalResult);</span><br><span class="line">        <span class="keyword">long</span> end = System.currentTimeMillis();</span><br><span class="line">        String time = <span class="string">"总调用时间是："</span> + (end - start) + <span class="string">"毫秒"</span>;</span><br><span class="line">        <span class="comment">//为什么要初始化4个容量的Map</span></span><br><span class="line">        Map&lt;String, Object&gt; resultMap = <span class="keyword">new</span> HashMap&lt;&gt;(<span class="number">3</span>);</span><br><span class="line">        resultMap.put(<span class="string">"time"</span>, time);</span><br><span class="line">        <span class="comment">//结果</span></span><br><span class="line">        <span class="keyword">return</span> resultMap;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 添加回调</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> listenableFuture</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">addCallBack</span><span class="params">(ListenableFuture&lt;Long&gt; listenableFuture)</span> </span>&#123;</span><br><span class="line">        Futures.addCallback(listenableFuture, <span class="keyword">new</span> FutureCallback&lt;Long&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onSuccess</span><span class="params">(@Nullable Long result)</span> </span>&#123;</span><br><span class="line">                System.out.printf(<span class="string">"服务调用成功,执行结果是%s%n"</span>,result);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onFailure</span><span class="params">(Throwable t)</span> </span>&#123;</span><br><span class="line">                System.out.printf(<span class="string">"服务调用异常%s%n"</span>, t);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, listeningExecutorService);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Description</span>:  JdkFutureAdapters.listenInPoolThread(jdkthread)</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * guava同时提供了将JDK Future转换为ListenableFuture的接口函数。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JdkFutureAdaptersController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> ListeningExecutorService listeningExecutorService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"/test/adapter"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 固定大小的线程池 核心线程数和最大线程数=10</span></span><br><span class="line">        ExecutorService executorService = Executors.newFixedThreadPool(<span class="number">10</span>);</span><br><span class="line">        <span class="comment">// 记录开始时间</span></span><br><span class="line">        Long start = System.currentTimeMillis();</span><br><span class="line">        <span class="comment">// 一个耗时的任务</span></span><br><span class="line">        Future&lt;Boolean&gt; future = executorService.submit(<span class="keyword">new</span> Callable&lt;Boolean&gt;() &#123;</span><br><span class="line">            <span class="comment">/**</span></span><br><span class="line"><span class="comment">             * Computes a result, or throws an exception if unable to do so.</span></span><br><span class="line"><span class="comment">             *</span></span><br><span class="line"><span class="comment">             * <span class="doctag">@return</span> computed result</span></span><br><span class="line"><span class="comment">             * <span class="doctag">@throws</span> Exception if unable to compute a result</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> Boolean <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                <span class="comment">//模拟耗时5s</span></span><br><span class="line">                Thread.sleep(<span class="number">5000</span>);</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        ListenableFuture listenableFuture = JdkFutureAdapters.listenInPoolThread(future);</span><br><span class="line">        Futures.addCallback(listenableFuture, <span class="keyword">new</span> FutureCallBackTask(), listeningExecutorService);</span><br><span class="line">        <span class="comment">// 记录结束时间</span></span><br><span class="line">        Long end = System.currentTimeMillis();</span><br><span class="line">        <span class="comment">// 执行时间</span></span><br><span class="line">        System.out.println(<span class="string">"线程执行结束了，耗时="</span> + (end - start) + <span class="string">"毫秒"</span>);</span><br><span class="line">        System.out.println(<span class="string">"-----------------------华丽的分割线-----------------------"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>参考：<br><a href="https://github.com/online-demo/yunxi-guava-thread" target="_blank" rel="noopener">https://github.com/online-demo/yunxi-guava-thread</a></p>
+
+            
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">标签</span><br>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/云析学院/">云析学院</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/07/01/集群无忧-SpringSession原理与坑/" data-tooltip="集群无忧-SpringSession原理与坑" aria-label="下一篇: 集群无忧-SpringSession原理与坑">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/08/12/云析学院-原生JDK线程扩展-Guava/" title="分享到 Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/08/12/云析学院-原生JDK线程扩展-Guava/" title="分享到 Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/08/12/云析学院-原生JDK线程扩展-Guava/" title="分享到 Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2020 Brotherc. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/07/01/集群无忧-SpringSession原理与坑/" data-tooltip="集群无忧-SpringSession原理与坑" aria-label="下一篇: 集群无忧-SpringSession原理与坑">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/08/12/云析学院-原生JDK线程扩展-Guava/" title="分享到 Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/08/12/云析学院-原生JDK线程扩展-Guava/" title="分享到 Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/08/12/云析学院-原生JDK线程扩展-Guava/" title="分享到 Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/08/12/云析学院-原生JDK线程扩展-Guava/">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>分享到 Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/08/12/云析学院-原生JDK线程扩展-Guava/">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/08/12/云析学院-原生JDK线程扩展-Guava/">
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>分享到 Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/head.jpg" alt="作者的图片">
+        
+            <h4 id="about-card-name">Brotherc</h4>
+        
+            <div id="about-card-bio"><p>java development</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br>
+                <p>java</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br>
+                zhuhai
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-dbd16rvloemmuxdzniplmnxxvwoz24eya9wol0b7vvmlokgqsjivmb8dnscy.min.js"></script>
+<!--SCRIPTS END-->
+
+    
+
+
+
+    </body>
+</html>
