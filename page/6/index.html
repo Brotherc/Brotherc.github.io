@@ -165,6 +165,66 @@
             <div class="postShorten-header">
                 <h1 class="postShorten-title">
                     
+                        <a class="link-unstyled" href="/2019/12/28/googel_map集成/">
+                            Google Map集成
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2019-12-28T23:01:54+08:00">
+	
+		    12月 28, 2019
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <h3 id="Get-an-API-Key"><a href="#Get-an-API-Key" class="headerlink" title="Get an API Key"></a>Get an API Key</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">参考：</span><br><span class="line">https://developers.google.cn/maps/documentation/javascript/get-api-key</span><br></pre></td></tr></table></figure>
+<h3 id="Demo"><a href="#Demo" class="headerlink" title="Demo"></a>Demo</h3><p>googleMap.html:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">  &lt;head&gt;</span><br><span class="line">    &lt;title&gt;Simple Map&lt;/title&gt;</span><br><span class="line">    &lt;meta name=&quot;viewport&quot; content=&quot;initial-scale=1.0&quot;&gt;</span><br><span class="line">    &lt;meta charset=&quot;utf-8&quot;&gt;</span><br><span class="line">    &lt;style&gt;</span><br><span class="line">      #map &#123;</span><br><span class="line">        height: 100%;</span><br><span class="line">      &#125;</span><br><span class="line">      html, body &#123;</span><br><span class="line">        height: 100%;</span><br><span class="line">        margin: 0;</span><br><span class="line">        padding: 0;</span><br><span class="line">      &#125;</span><br><span class="line">    &lt;/style&gt;</span><br><span class="line">  &lt;/head&gt;</span><br><span class="line">  &lt;body&gt;</span><br><span class="line">    &lt;div id=&quot;map&quot;&gt;&lt;/div&gt;</span><br><span class="line">    &lt;script&gt;</span><br><span class="line">      var map;</span><br><span class="line">      function initMap() &#123;</span><br><span class="line">        map = new google.maps.Map(document.getElementById(&apos;map&apos;), &#123;</span><br><span class="line">          center: &#123;lat: -34.397, lng: 150.644&#125;,</span><br><span class="line">          zoom: 8</span><br><span class="line">        &#125;);</span><br><span class="line">      &#125;</span><br><span class="line">    &lt;/script&gt;</span><br><span class="line">    &lt;!-- 将YOUR_API_KEY替换成可用的API Key --&gt;</span><br><span class="line">    &lt;script src=&quot;https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&amp;callback=initMap&quot;</span><br><span class="line">    async defer&gt;&lt;/script&gt;</span><br><span class="line">  &lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure></p>
+<h3 id="Vue集成Google-Map"><a href="#Vue集成Google-Map" class="headerlink" title="Vue集成Google Map"></a>Vue集成Google Map</h3><h4 id="Get-an-API-Key-1"><a href="#Get-an-API-Key-1" class="headerlink" title="Get an API Key"></a>Get an API Key</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">参考上述操作</span><br></pre></td></tr></table></figure>
+<h4 id="Typescript版本集成"><a href="#Typescript版本集成" class="headerlink" title="Typescript版本集成"></a>Typescript版本集成</h4><h5 id="1-安装依赖"><a href="#1-安装依赖" class="headerlink" title="1.安装依赖"></a>1.安装依赖</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install vue2-google-maps</span><br></pre></td></tr></table></figure>
+<h5 id="2-googleMap-ts代码"><a href="#2-googleMap-ts代码" class="headerlink" title="2.googleMap.ts代码"></a>2.googleMap.ts代码</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">import Vue from &apos;vue&apos;</span><br><span class="line">import * as VueGoogleMaps from &apos;vue2-google-maps&apos;</span><br><span class="line"></span><br><span class="line">Vue.use(VueGoogleMaps, &#123;</span><br><span class="line">  load: &#123;</span><br><span class="line">    key: &apos;YOUR_API_TOKEN&apos;,// 替换成可用的API Key</span><br><span class="line">    libraries: &apos;places&apos;,</span><br><span class="line">  &#125;,</span><br><span class="line">  installComponents: true</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>错误：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Could not find a declaration file for module &apos;vue2-google-maps&apos;.</span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
+<p>解决：<br>创建vue2-google-maps.d.ts,并添加以下内容<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">declare module &apos;vue2-google-maps&apos; &#123;</span><br><span class="line"></span><br><span class="line">  //如果Vue.use报错则加入以下两行</span><br><span class="line">  import &#123; PluginFunction &#125; from &quot;vue&quot;;</span><br><span class="line">  export const install: PluginFunction&lt;&#123;&#125;&gt;;</span><br><span class="line"></span><br><span class="line">  // 将下列url返回的内容添加在这里</span><br><span class="line">  // https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/master/types/googlemaps/index.d.ts</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>参考：<a href="https://github.com/xkjyeah/vue-google-maps/issues/560" target="_blank" rel="noopener">https://github.com/xkjyeah/vue-google-maps/issues/560</a></p>
+<h5 id="3-googleMap-html"><a href="#3-googleMap-html" class="headerlink" title="3.googleMap.html"></a>3.googleMap.html</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;GmapMap</span><br><span class="line">  :center=&quot;&#123;lat:10, lng:10&#125;&quot;</span><br><span class="line">  :zoom=&quot;7&quot;</span><br><span class="line">  map-type-id=&quot;terrain&quot;</span><br><span class="line">  style=&quot;width: 500px; height: 300px&quot;</span><br><span class="line">&gt;</span><br><span class="line">&lt;/GmapMap&gt;</span><br></pre></td></tr></table></figure>
+<p>错误：如果是单页面应用则不会出现以下错误<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">error .../node_modules/vue2-google-maps/dist/components/infoWindow.vue:3</span><br><span class="line">^</span><br><span class="line"></span><br><span class="line">SyntaxError: Unexpected token &lt;</span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
+<p>解决：需要将ssr相关配置关闭，不同框架修改不同，本人是使用Quasar框架需修改以下配置<br>package.json<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  ...</span><br><span class="line">  &quot;scripts&quot;: &#123;</span><br><span class="line">    &quot;serve&quot;: &quot;quasar dev -m ssr&quot; // 将ssr修改为spa</span><br><span class="line">    ...</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>quasar.conf.js<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">module.exports = function () &#123;</span><br><span class="line">  return &#123;</span><br><span class="line">    ...</span><br><span class="line">    preFetch: true // 修改为false</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="Typescript版本集成-服务端渲染"><a href="#Typescript版本集成-服务端渲染" class="headerlink" title="Typescript版本集成(服务端渲染)"></a>Typescript版本集成(服务端渲染)</h4><h5 id="1-googleMap-ts代码"><a href="#1-googleMap-ts代码" class="headerlink" title="1.googleMap.ts代码"></a>1.googleMap.ts代码</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">mounted() &#123;</span><br><span class="line">  this.loadAMapJS().then(result =&gt; &#123;</span><br><span class="line">    if (result) &#123;</span><br><span class="line">      //刷新地图初始化</span><br><span class="line">      this.initialize();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">loadAMapJS() &#123;</span><br><span class="line">  return new Promise((resolve, reject) =&gt; &#123;</span><br><span class="line">    // 替换成可用的API Key</span><br><span class="line">    this.asyncLoadJs(&apos;https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&apos;)</span><br><span class="line">      .then((result) =&gt; &#123;</span><br><span class="line">        resolve(result)</span><br><span class="line">      &#125;)</span><br><span class="line">      .catch(err =&gt; &#123;</span><br><span class="line">        reject(err)</span><br><span class="line">      &#125;)</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">asyncLoadJs(url: any) &#123;</span><br><span class="line">  return new Promise((resolve, reject) =&gt; &#123;</span><br><span class="line">    const hasLoaded = document.getElementById(&quot;googleMapScript&quot;);</span><br><span class="line">    if (hasLoaded) &#123;</span><br><span class="line">      resolve(true)</span><br><span class="line">      return</span><br><span class="line">    &#125;</span><br><span class="line">    const script = document.createElement(&apos;script&apos;)</span><br><span class="line">    script.type = &apos;text/javascript&apos;</span><br><span class="line">    script.id = &quot;googleMapScript&quot;</span><br><span class="line">    script.src = url</span><br><span class="line">    document.body.appendChild(script)</span><br><span class="line">    script.onload = () =&gt; &#123;</span><br><span class="line">      resolve(true)</span><br><span class="line">    &#125;</span><br><span class="line">    script.onerror = () =&gt; &#123;</span><br><span class="line">      reject(false)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//初始化地圖</span><br><span class="line">initialize() &#123;</span><br><span class="line">  this.centerDot = new google.maps.LatLng(22.2041179884, 113.557519102);</span><br><span class="line">  const options = &#123;</span><br><span class="line">    zoom: 12,</span><br><span class="line">    center: this.centerDot, // 設定地圖中心點</span><br><span class="line">    mapTypeId: google.maps.MapTypeId.ROADMAP // HYBRID,ROADMAP,SATELLITE,TERRAIN</span><br><span class="line">  &#125;;</span><br><span class="line">  this.map = new google.maps.Map(document.getElementById(&quot;map&quot;), options);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>错误：有可能会出现<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Cannot find name &apos;google&apos;</span><br></pre></td></tr></table></figure></p>
+<p>解决：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">declare let google: any;</span><br></pre></td></tr></table></figure></p>
+<h5 id="2-googleMap-html"><a href="#2-googleMap-html" class="headerlink" title="2.googleMap.html"></a>2.googleMap.html</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;div id=&quot;map&quot; style=&quot;height: 600px; width: 1000px;&quot;&gt;&lt;/div&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="界面问题"><a href="#界面问题" class="headerlink" title="界面问题"></a>界面问题</h4><h5 id="1-出现此页面无法正确加载Google地图。的弹窗"><a href="#1-出现此页面无法正确加载Google地图。的弹窗" class="headerlink" title="1.出现此页面无法正确加载Google地图。的弹窗"></a>1.出现此页面无法正确加载Google地图。的弹窗</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">限制密钥</span><br><span class="line">在Google云平台的[应用限制]里我们对密钥使用进行限制，只允许特定的地址使用密钥，这样可以防止我们的配额泄露或被窃取。</span><br></pre></td></tr></table></figure>
+<h5 id="2-出现For-development-purposes-only的覆盖层"><a href="#2-出现For-development-purposes-only的覆盖层" class="headerlink" title="2.出现For development purposes only的覆盖层"></a>2.出现For development purposes only的覆盖层</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">正常使用API Key需要开通结算账户</span><br><span class="line">在Google云平台的[导航菜单]-[结算]中关联结算账户，注意需要信用卡验证身份，支持VISA、运通、JCB、MasterCard，暂不支持银联。</span><br><span class="line">验证身份时会先扣除一美元，验证成功后会返还。</span><br></pre></td></tr></table></figure>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2019/12/28/googel_map集成/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
                         <a class="link-unstyled" href="/2019/12/28/树形结构业务模型/">
                             树形结构业务模型实践
                         </a>
@@ -930,55 +990,6 @@
                     
                         <p>
                             <a href="/2019/08/25/并发编程与高并发解决方案/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2019/07/10/docker安装Oracle 12c/">
-                            docker安装Oracle 12c
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-07-10T16:35:48+08:00">
-	
-		    7月 10, 2019
-    	
-    </time>
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-content">
-                    <p>1.配置阿里的docker源<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/docker/daemon.json</span><br><span class="line">&#123;</span><br><span class="line">&quot;registry-mirrors&quot;: [&quot;https://pee6w651.mirror.aliyuncs.com&quot;]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>2.重启docker服务<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart docker</span><br></pre></td></tr></table></figure></p>
-<p>3.拉取镜像<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull sath89/oracle-12c</span><br></pre></td></tr></table></figure></p>
-<p>4.运行容器<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name oracle -p 8080:8080 -p 1521:1521 -v $PWD/data:/mnt -e TZ=Asia/Shanghai sath89/oracle-12c</span><br></pre></td></tr></table></figure></p>
-<p>5.进行容器<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it ef7e5bc1c20e /bin/bash (ef7e5bc1c20e自己容器的ID)</span><br></pre></td></tr></table></figure></p>
-<p>6.相关操作<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">#root用户切换到oracle用户</span><br><span class="line">su oracle</span><br><span class="line"></span><br><span class="line">#使用sysdba登陆</span><br><span class="line">/u01/app/oracle-product/12.1.0/xe/bin/sqlplus / as sysdba</span><br><span class="line"></span><br><span class="line">#create tablespace 表空间名称 datafile 表空间路劲 size 3000m;</span><br><span class="line">SQL&gt;create tablespace bspdb datafile &apos;/u01/app/oracle/oradata/xe/bspdb.dbf&apos; size 3000m;</span><br><span class="line"></span><br><span class="line">#create user 用户名 identified by 密码 default tablespace 用户默认使用哪一个表空间;</span><br><span class="line">SQL&gt;create user bspdb identified by 123456 default tablespace bspdb;</span><br><span class="line"></span><br><span class="line">#grant 角色1,角色2 to 用户名;</span><br><span class="line">SQL&gt;grant dba, connect to bspdb;</span><br></pre></td></tr></table></figure></p>
-<p>参考：<br><a href="https://www.cnblogs.com/Dev0ps/p/10676930.html" target="_blank" rel="noopener">https://www.cnblogs.com/Dev0ps/p/10676930.html</a><br><a href="https://blog.csdn.net/Damionew/article/details/84566718" target="_blank" rel="noopener">https://blog.csdn.net/Damionew/article/details/84566718</a><br><a href="https://www.cnblogs.com/forturn/p/9371841.html" target="_blank" rel="noopener">https://www.cnblogs.com/forturn/p/9371841.html</a>  </p>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2019/07/10/docker安装Oracle 12c/#post-footer" class="postShorten-excerpt_link link">
                                 评论和共享
                             </a>
                         </p>
