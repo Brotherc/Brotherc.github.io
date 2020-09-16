@@ -166,6 +166,60 @@
             <div class="postShorten-header">
                 <h1 class="postShorten-title">
                     
+                        <a class="link-unstyled" href="/2020/04/04/中介者模式/">
+                            中介者模式
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2020-04-04T15:50:56+08:00">
+	
+		    4月 04, 2020
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/72.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/72.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/73.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/73.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/74.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/74.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/75.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/75.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:100%;"><a class="fancybox" href="/assets/设计模式/76.jpg" title="" data-caption="" data-fancybox="travel"><img class="fig-img" src="/assets/设计模式/76.jpg" style="width:100%;height:100%;" alt=""></a></div><div style="clear:both;"></div>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">//同事类的接口</span><br><span class="line">public interface Department &#123;</span><br><span class="line">	void selfAction(); //做本部门的事情</span><br><span class="line">	void outAction();  //向总经理发出申请</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public interface Mediator &#123;</span><br><span class="line">	void register(String dname,Department d);</span><br><span class="line">	void command(String dname);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public class Development implements Department &#123;</span><br><span class="line"></span><br><span class="line">	private Mediator m;  //持有中介者(总经理)的引用</span><br><span class="line"></span><br><span class="line">	public Development(Mediator m) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.m = m;</span><br><span class="line">		m.register(&quot;development&quot;, this);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void outAction() &#123;</span><br><span class="line">		System.out.println(&quot;汇报工作！没钱了，需要资金支持！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void selfAction() &#123;</span><br><span class="line">		System.out.println(&quot;专心科研，开发项目！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">public class Finacial implements Department &#123;</span><br><span class="line">	private Mediator m;  //持有中介者(总经理)的引用</span><br><span class="line"></span><br><span class="line">	public Finacial(Mediator m) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.m = m;</span><br><span class="line">		m.register(&quot;finacial&quot;, this);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void outAction() &#123;</span><br><span class="line">		System.out.println(&quot;汇报工作！没钱了，钱太多了！怎么花?&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void selfAction() &#123;</span><br><span class="line">		System.out.println(&quot;数钱！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">public class Market implements Department &#123;</span><br><span class="line">	private Mediator m;  //持有中介者(总经理)的引用</span><br><span class="line"></span><br><span class="line">	public Market(Mediator m) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.m = m;</span><br><span class="line">		m.register(&quot;market&quot;, this);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void outAction() &#123;</span><br><span class="line">		System.out.println(&quot;汇报工作！项目承接的进度，需要资金支持！&quot;);</span><br><span class="line"></span><br><span class="line">		m.command(&quot;finacial&quot;);</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void selfAction() &#123;</span><br><span class="line">		System.out.println(&quot;跑去接项目！&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public class President implements Mediator &#123;</span><br><span class="line">	private Map&lt;String,Department&gt; map = new HashMap&lt;String , Department&gt;();</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void command(String dname) &#123;</span><br><span class="line">		map.get(dname).selfAction();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void register(String dname, Department d) &#123;</span><br><span class="line">		map.put(dname, d);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public class Client &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		Mediator m = new President();</span><br><span class="line"></span><br><span class="line">		Market   market = new Market(m);</span><br><span class="line">		Development devp = new Development(m);</span><br><span class="line">		Finacial f = new Finacial(m);</span><br><span class="line"></span><br><span class="line">		market.selfAction();</span><br><span class="line">		market.outAction();</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2020/04/04/中介者模式/#post-footer" class="postShorten-excerpt_link link">
+                                评论和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
                         <a class="link-unstyled" href="/2020/04/04/责任链模式/">
                             责任链模式
                         </a>
@@ -620,49 +674,6 @@
                     
                         <p>
                             <a href="/2020/02/08/java按汉字首字母排序/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a class="link-unstyled" href="/2020/02/08/Chrome使用Restlet Client-REST API/">
-                            Chrome使用Restlet Client-REST API
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2020-02-08T20:12:00+08:00">
-	
-		    2月 08, 2020
-    	
-    </time>
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-content">
-                    <p>参考：<br><a href="https://chrome.google.com/webstore/detail/talend-api-tester-free-ed/aejoelaoggembcahagimdiliamlcdmfm?hl=en-US" target="_blank" rel="noopener">https://chrome.google.com/webstore/detail/talend-api-tester-free-ed/aejoelaoggembcahagimdiliamlcdmfm?hl=en-US</a></p>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2020/02/08/Chrome使用Restlet Client-REST API/#post-footer" class="postShorten-excerpt_link link">
                                 评论和共享
                             </a>
                         </p>
